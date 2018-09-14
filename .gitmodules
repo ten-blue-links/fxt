@@ -1,0 +1,9 @@
+[submodule "external/CLI11"]
+	path = external/CLI11
+	url = https://github.com/CLIUtils/CLI11.git
+[submodule "external/FastPFor"]
+	path = external/FastPFor
+	url = https://github.com/lemire/FastPFor.git
+[submodule "external/cereal"]
+	path = external/cereal
+	url = https://github.com/USCiLab/cereal.git
