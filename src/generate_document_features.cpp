@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 
             auto &doc_idx = fwd_idx[docid];
 
-            doc_entry doc_entry(docid, doc_idx.pagerank());
+            doc_entry doc_entry(docid);
 
             // set url_slash_count as feature for training
             doc_entry.url_slash_count = doc_idx.url_slash_count();

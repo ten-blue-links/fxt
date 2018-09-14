@@ -54,16 +54,13 @@ int main(int argc, char const *argv[]) {
     uint64_t                            docid = index->documentBase();
     indri::index::TermListFileIterator *iter  = index->termListFileIterator();
     iter->startIteration();
-    auto *priorIt = repo.priorListIterator("pagerank");
-    priorIt->startIteration();
+
     while (!iter->finished()) {
         indri::index::TermList *list       = iter->currentEntry();
-        auto *                  priorEntry = priorIt->currentEntry();
         auto &                  doc_terms  = list->terms();
         Document                document;
         auto url = indri_env.documentMetadata(std::vector<lemur::api::DOCID_T>{docid}, "url");
 
-        document.set_pagerank(priorEntry->score);
         document.set_url_stats({url_slash_count(url.at(0)), url.at(0).size()});
 
         std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
@@ -115,7 +112,6 @@ int main(int argc, char const *argv[]) {
         }
         fwd_idx.push_back(document);
         iter->nextEntry();
-        priorIt->nextEntry();
         if (docid % 10000 == 0) {
             std::cout << "Processed " << docid << " documents." << std::endl;
         }

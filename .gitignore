@@ -19,3 +19,14 @@ CMakeCache.txt
 CMakeFiles/
 Makefile
 Testing/
+
+# project specific
+*.qry
+*.lens
+*fwd
+*.inv
+*.lex
+*.csv
+*.txt
+*.run
+*gov2*

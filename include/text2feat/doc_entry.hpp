@@ -16,7 +16,6 @@ struct doc_entry {
 
     size_t length = 0;
 
-    double pagerank = 0;
     // Score from training trec run file
     double stage0_score = 0;
     // BM25 Atire
@@ -174,13 +173,12 @@ struct doc_entry {
     // URL length
     size_t url_length = 0;
 
-    doc_entry(int i, double pr) : id(i), pagerank(pr) {}
+    doc_entry(int i) : id(i) {}
 
     friend std::ostream &operator<<(std::ostream &os, const doc_entry &de);
 };
 
 std::ostream &operator<<(std::ostream &os, const doc_entry &de) {
-    os << "," << de.pagerank;
     os << "," << de.stage0_score;
     os << "," << de.bm25_atire;
     os << "," << de.bm25_atire_body;

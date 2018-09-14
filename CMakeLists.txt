@@ -20,7 +20,7 @@ add_definitions(-Wall -Wextra)
 
 add_subdirectory(external)
 
-include_directories(include external)
+include_directories(include external include/text2feat)
 add_library(text2feat INTERFACE)
 target_include_directories(text2feat INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

@@ -90,7 +90,6 @@ class Field {
 };
 
 class Document {
-    double                        m_pagerank = 0;
     UrlStats                      m_url_stats;
     std::vector<uint32_t>         m_terms;
     std::map<uint32_t, TermStats> m_term_stats;
@@ -102,10 +101,6 @@ class Document {
     uint16_t url_slash_count() const { return m_url_stats.url_slash_count(); }
 
     uint16_t url_length() const { return m_url_stats.url_length(); }
-
-    double pagerank() const { return m_pagerank; }
-
-    void set_pagerank(double pagerank) { m_pagerank = pagerank; }
 
     void set_url_stats(const UrlStats &url_stats) { m_url_stats = url_stats; }
 
@@ -201,7 +196,7 @@ class Document {
 
     template <class Archive>
     void serialize(Archive &archive) {
-        archive(m_pagerank, m_url_stats, m_terms, m_term_stats, m_field_stats);
+        archive(m_url_stats, m_terms, m_term_stats, m_field_stats);
     }
 };
 

@@ -65,3 +65,16 @@ target_link_libraries(preret_csv
     CLI11
     cereal
 )
+
+# generate_document_features
+add_executable(generate_document_features generate_document_features.cpp
+    fgen_term_qry.c query_features.c
+    fgen_bigram_qry.c
+    strbuf.c)
+target_link_libraries(generate_document_features
+    FastPFor
+    CLI11
+    cereal
+    indri
+)
+
