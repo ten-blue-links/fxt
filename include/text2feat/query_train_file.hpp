@@ -65,10 +65,7 @@ class query_train_file {
     }
 
    public:
-    query_train_file(std::ifstream &infile, Lexicon &lex)
-        : ifs(infile), lexicon(lex) {
-        parse();
-    }
+    query_train_file(std::ifstream &infile, Lexicon &lex) : ifs(infile), lexicon(lex) { parse(); }
 
     std::vector<query_train> &get_queries() { return rows; }
 };

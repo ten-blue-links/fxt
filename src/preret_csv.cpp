@@ -6,11 +6,10 @@
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
 
-#include "text2feat/query_train_file.hpp"
-#include "query_features.h"
 #include "fgen_bigram_qry.h"
 #include "fgen_term_qry.h"
-
+#include "query_features.h"
+#include "text2feat/query_train_file.hpp"
 
 char *stdstr_to_cstr(const std::string &s) {
     char *cstr = new char[s.size() + 1];
@@ -32,7 +31,7 @@ int main(int argc, char **argv) {
     app.add_option("lexicon_file", lexicon_file, "Lexicon file")->required();
     CLI11_PARSE(app, argc, argv);
 
-        // load lexicon
+    // load lexicon
     std::ifstream              lexicon_f(lexicon_file);
     cereal::BinaryInputArchive iarchive_lex(lexicon_f);
     Lexicon                    lexicon;

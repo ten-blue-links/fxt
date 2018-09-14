@@ -33,7 +33,7 @@ int main(int argc, char const *argv[]) {
 
         indri::index::TermData *termData = entry->termData;
 
-        PostingList pl(termData->term, termData->corpus.totalCount);
+        PostingList           pl(termData->term, termData->corpus.totalCount);
         std::vector<uint32_t> docs;
         std::vector<uint32_t> freqs;
 
@@ -46,7 +46,7 @@ int main(int argc, char const *argv[]) {
         pl.add_list(docs, freqs);
         inv_idx.push_back(pl);
         iter->nextEntry();
-        if(inv_idx.size() % 10000 == 0) {
+        if (inv_idx.size() % 10000 == 0) {
             std::cout << "Processed " << inv_idx.size() << " terms." << std::endl;
         }
     }

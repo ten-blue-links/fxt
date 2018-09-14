@@ -1,8 +1,8 @@
-#include "cereal/archives/binary.hpp"
 #include "CLI/CLI.hpp"
+#include "cereal/archives/binary.hpp"
 
-#include "indri/Repository.hpp"
 #include "indri/QueryEnvironment.hpp"
+#include "indri/Repository.hpp"
 
 #include "text2feat/lexicon.hpp"
 
@@ -15,7 +15,6 @@ int main(int argc, char const *argv[]) {
     app.add_option("lexicon_file", lexicon_file, "Lexicon file")->required();
     CLI11_PARSE(app, argc, argv);
 
-
     std::ofstream               os(lexicon_file, std::ios::binary);
     cereal::BinaryOutputArchive archive(os);
 
@@ -24,7 +23,7 @@ int main(int argc, char const *argv[]) {
     indri::collection::Repository::index_state state = repo.indexes();
     const auto &                               index = (*state)[0];
 
-    indri::api::QueryEnvironment         env;
+    indri::api::QueryEnvironment env;
     env.addIndex(repo_path);
     auto fields = env.fieldList();
 
@@ -38,11 +37,11 @@ int main(int argc, char const *argv[]) {
         indri::index::DiskTermData *entry    = iter->currentEntry();
         indri::index::TermData *    termData = entry->termData;
 
-
         FieldCounts field_counts;
         for (const std::string &field_str : fields) {
-            int field_id = index-> field(field_str);
-            Counts c(termData->fields[field_id - 1].documentCount, termData->fields[field_id - 1].totalCount);
+            int    field_id = index->field(field_str);
+            Counts c(termData->fields[field_id - 1].documentCount,
+                     termData->fields[field_id - 1].totalCount);
             field_counts.insert(std::make_pair(field_id, c));
         }
         Counts counts(termData->corpus.documentCount, termData->corpus.totalCount);

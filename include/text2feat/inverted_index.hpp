@@ -1,8 +1,8 @@
 #pragma once
 #include <cassert>
 
-#include "cereal/types/vector.hpp"
 #include "cereal/types/string.hpp"
+#include "cereal/types/vector.hpp"
 
 #include "FastPFor/headers/codecfactory.h"
 #include "FastPFor/headers/deltautil.h"
@@ -13,9 +13,9 @@ struct PostingList {
 
     IntegerCODEC &codec = *CODECFactory::getFromName("simdfastpfor256");
 
-    std::string term;
-    uint32_t totalCount = 0;
-    uint32_t m_size;
+    std::string           term;
+    uint32_t              totalCount = 0;
+    uint32_t              m_size;
     std::vector<uint32_t> m_docs;
     std::vector<uint32_t> m_freqs;
 
@@ -44,18 +44,18 @@ struct PostingList {
     }
 
     std::pair<std::vector<uint32_t>, std::vector<uint32_t>> list() {
-      std::vector<uint32_t> docs(m_size);
-      std::vector<uint32_t> freqs(m_size);
+        std::vector<uint32_t> docs(m_size);
+        std::vector<uint32_t> freqs(m_size);
 
-      size_t recoveredsize = docs.size();
-      codec.decodeArray(m_docs.data(), m_docs.size(), docs.data(), recoveredsize);
-      docs.resize(recoveredsize);
-      Delta::inverseDeltaSIMD(docs.data(), docs.size());
+        size_t recoveredsize = docs.size();
+        codec.decodeArray(m_docs.data(), m_docs.size(), docs.data(), recoveredsize);
+        docs.resize(recoveredsize);
+        Delta::inverseDeltaSIMD(docs.data(), docs.size());
 
-      recoveredsize = freqs.size();
-      codec.decodeArray(m_freqs.data(), m_freqs.size(), freqs.data(), recoveredsize);
-      freqs.resize(recoveredsize);
-      return std::make_pair(docs, freqs);
+        recoveredsize = freqs.size();
+        codec.decodeArray(m_freqs.data(), m_freqs.size(), freqs.data(), recoveredsize);
+        freqs.resize(recoveredsize);
+        return std::make_pair(docs, freqs);
     }
 
     template <class Archive>

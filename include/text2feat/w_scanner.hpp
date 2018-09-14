@@ -1,12 +1,11 @@
 #pragma once
 #include "indri/DocListIterator.hpp"
-#include "lemur/IndexTypes.hpp"
-#include <utility>
-#include <vector>
 #include "indri/greedy_vector"
+#include "lemur/IndexTypes.hpp"
 #include <algorithm>
 #include <bitset>
-
+#include <utility>
+#include <vector>
 
 /**
  * for combine cdf use
@@ -36,12 +35,10 @@ struct TermPos {
 class WScanner {
 
    public:
-
     WScanner(int w_size) {
         _w_size         = w_size;
         _collection_cnt = 0;
     }
-
 
     //!< scanning func
     /**
@@ -50,7 +47,7 @@ class WScanner {
      * @return inv file
      */
     std::vector<std::pair<lemur::api::DOCID_T, uint64_t>> window_count(
-    std::vector<indri::index::DocListIterator *> &doc_iters, size_t min_term) {
+        std::vector<indri::index::DocListIterator *> &doc_iters, size_t min_term) {
         _collection_cnt = 0;
         std::vector<std::pair<lemur::api::DOCID_T, uint64_t>> window_postings;
         if (_w_size == -1) {
@@ -60,8 +57,9 @@ class WScanner {
         lemur::api::DOCID_T                curr_doc = doc_iters[min_term]->currentEntry()->document;
         lemur::api::DOCID_T                max_doc  = curr_doc; //!< always keep current largest doc
         std::vector<TermPos>               position_list; //!< CDF container
-        bool                               is_end   = false;
-        indri::utility::greedy_vector<int> pos_list = doc_iters[min_term]->currentEntry()->positions;
+        bool                               is_end = false;
+        indri::utility::greedy_vector<int> pos_list =
+            doc_iters[min_term]->currentEntry()->positions;
         for (size_t j = 0; j < pos_list.size(); ++j) { //!< init
             position_list.push_back(TermPos(min_term, pos_list[j]));
         }
@@ -99,7 +97,7 @@ class WScanner {
             if (!position_list.empty()) {
                 //!< create CDF, by min heap
                 uint64_t w_cnt = 0;
-                w_cnt = _get_uwindows(position_list, doc_iters.size());
+                w_cnt          = _get_uwindows(position_list, doc_iters.size());
 
                 if (w_cnt > 0) {
                     window_postings.push_back(std::make_pair(max_doc, w_cnt));
@@ -172,4 +170,3 @@ class WScanner {
     int      _w_size;
     uint64_t _collection_cnt;
 };
-

@@ -412,4 +412,3 @@ const char *fgen_krovetz_stopwords[] = {"a",
                                         "yours",
                                         "yourself",
                                         NULL};
-

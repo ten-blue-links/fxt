@@ -35,11 +35,11 @@ int main(int argc, char const *argv[]) {
     iter->startIteration();
 
     while (!iter->finished()) {
-        indri::index::TermList *list       = iter->currentEntry();
-        auto &                  doc_terms  = list->terms();
+        indri::index::TermList *list      = iter->currentEntry();
+        auto &                  doc_terms = list->terms();
         doc_lens.push_back(doc_terms.size());
         iter->nextEntry();
-        if(docid % 10000 == 0) {
+        if (docid % 10000 == 0) {
             std::cout << "Processed " << docid << " documents." << std::endl;
         }
         ++docid;

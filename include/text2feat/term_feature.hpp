@@ -1,9 +1,9 @@
 #pragma once
 
-#include <string.h>
-#include <numeric>
 #include <cmath>
 #include <cstdio>
+#include <numeric>
+#include <string.h>
 
 #include "features/bm25/bm25.hpp"
 #include "features/bose_einstein/be.hpp"
@@ -183,14 +183,14 @@ double compute_geo_mean(const std::vector<uint32_t> &freqs) {
     return pow(sum, (1.0 / freqs.size()));
 }
 
-void compute_prob_stats(feature_t &                               f,
-                        const std::vector<size_t> &               doclen,
+void compute_prob_stats(feature_t &                                                    f,
+                        const std::vector<size_t> &                                    doclen,
                         const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
-                        double &                                  max) {
-    uint32_t            size = list.first.size();
-    uint32_t            mid  = size / 2;
-    uint32_t            lq   = size / 4;
-    uint32_t            uq   = 3 * size / 4;
+                        double &                                                       max) {
+    uint32_t size = list.first.size();
+    uint32_t mid  = size / 2;
+    uint32_t lq   = size / 4;
+    uint32_t uq   = 3 * size / 4;
 
     std::vector<double> bmtmp;
     for (size_t i = 0; i < size; ++i) {
@@ -208,14 +208,13 @@ void compute_prob_stats(feature_t &                               f,
     f.pr_max    = bmtmp[0];
     f.pr_min    = bmtmp[size - 1];
 
-    double sum =std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
+    double sum      = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
     double sum_sqrs = std::inner_product(bmtmp.begin(), bmtmp.end(), bmtmp.begin(), 0.0);
-    double hmsum = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) {
-                                        return a + (1.0/b);
-                                    });
-    double avg = sum / size;
+    double hmsum    = std::accumulate(
+        bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) { return a + (1.0 / b); });
+    double avg      = sum / size;
     double variance = std::abs((sum_sqrs / size) - avg * avg);
-    double std_dev = std::sqrt(variance);
+    double std_dev  = std::sqrt(variance);
 
     f.pr_avg        = avg;
     f.pr_variance   = variance;
@@ -224,13 +223,13 @@ void compute_prob_stats(feature_t &                               f,
     f.pr_hmean      = (double)size / hmsum;
 }
 
-void compute_be_stats(feature_t &                               f,
-                      const std::vector<size_t> &               doclen,
+void compute_be_stats(feature_t &                                                    f,
+                      const std::vector<size_t> &                                    doclen,
                       const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
-                      uint64_t                                  ndocs,
-                      double                                    avg_dlen,
-                      uint64_t                                  c_f,
-                      double &                                  max) {
+                      uint64_t                                                       ndocs,
+                      double                                                         avg_dlen,
+                      uint64_t                                                       c_f,
+                      double &                                                       max) {
     uint32_t            size = list.first.size();
     uint32_t            mid  = size / 2;
     uint32_t            lq   = size / 4;
@@ -252,14 +251,13 @@ void compute_be_stats(feature_t &                               f,
     f.be_max    = bmtmp[0];
     f.be_min    = bmtmp[size - 1];
 
-    double sum =std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
+    double sum      = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
     double sum_sqrs = std::inner_product(bmtmp.begin(), bmtmp.end(), bmtmp.begin(), 0.0);
-    double hmsum = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) {
-                                        return a + (1.0/b);
-                                    });
-    double avg = sum / size;
+    double hmsum    = std::accumulate(
+        bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) { return a + (1.0 / b); });
+    double avg      = sum / size;
     double variance = std::abs((sum_sqrs / size) - avg * avg);
-    double std_dev = std::sqrt(variance);
+    double std_dev  = std::sqrt(variance);
 
     f.be_avg        = avg;
     f.be_variance   = variance;
@@ -268,13 +266,13 @@ void compute_be_stats(feature_t &                               f,
     f.be_hmean      = (double)size / hmsum;
 }
 
-void compute_dph_stats(feature_t &                               f,
-                       const std::vector<size_t> &               doclen,
+void compute_dph_stats(feature_t &                                                    f,
+                       const std::vector<size_t> &                                    doclen,
                        const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
-                       uint64_t                                  ndocs,
-                       double                                    avg_dlen,
-                       uint64_t                                  c_f,
-                       double &                                  max) {
+                       uint64_t                                                       ndocs,
+                       double                                                         avg_dlen,
+                       uint64_t                                                       c_f,
+                       double &                                                       max) {
     uint32_t            size = list.first.size();
     uint32_t            mid  = size / 2;
     uint32_t            lq   = size / 4;
@@ -296,14 +294,13 @@ void compute_dph_stats(feature_t &                               f,
     f.dph_max    = bmtmp[0];
     f.dph_min    = bmtmp[size - 1];
 
-    double sum =std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
+    double sum      = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
     double sum_sqrs = std::inner_product(bmtmp.begin(), bmtmp.end(), bmtmp.begin(), 0.0);
-    double hmsum = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) {
-                                        return a + (1.0/b);
-                                    });
-    double avg = sum / size;
+    double hmsum    = std::accumulate(
+        bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) { return a + (1.0 / b); });
+    double avg      = sum / size;
     double variance = std::abs((sum_sqrs / size) - avg * avg);
-    double std_dev = std::sqrt(variance);
+    double std_dev  = std::sqrt(variance);
 
     f.dph_avg        = avg;
     f.dph_variance   = variance;
@@ -312,13 +309,13 @@ void compute_dph_stats(feature_t &                               f,
     f.dph_hmean      = (double)size / hmsum;
 }
 
-void compute_dfr_stats(feature_t &                               f,
-                       const std::vector<size_t> &               doclen,
+void compute_dfr_stats(feature_t &                                                    f,
+                       const std::vector<size_t> &                                    doclen,
                        const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
-                       uint64_t                                  ndocs,
-                       double                                    avg_dlen,
-                       uint64_t                                  c_f,
-                       double &                                  max) {
+                       uint64_t                                                       ndocs,
+                       double                                                         avg_dlen,
+                       uint64_t                                                       c_f,
+                       double &                                                       max) {
     uint32_t            size = list.first.size();
     uint32_t            mid  = size / 2;
     uint32_t            lq   = size / 4;
@@ -341,14 +338,13 @@ void compute_dfr_stats(feature_t &                               f,
     f.dfr_max    = bmtmp[0];
     f.dfr_min    = bmtmp[size - 1];
 
-    double sum =std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
+    double sum      = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
     double sum_sqrs = std::inner_product(bmtmp.begin(), bmtmp.end(), bmtmp.begin(), 0.0);
-    double hmsum = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) {
-                                        return a + (1.0/b);
-                                    });
-    double avg = sum / size;
+    double hmsum    = std::accumulate(
+        bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) { return a + (1.0 / b); });
+    double avg      = sum / size;
     double variance = std::abs((sum_sqrs / size) - avg * avg);
-    double std_dev = std::sqrt(variance);
+    double std_dev  = std::sqrt(variance);
 
     f.dfr_avg        = avg;
     f.dfr_variance   = variance;
@@ -357,11 +353,11 @@ void compute_dfr_stats(feature_t &                               f,
     f.dfr_hmean      = (double)size / hmsum;
 }
 
-void compute_tfidf_stats(feature_t &                               f,
-                         const std::vector<size_t> &               doclen,
+void compute_tfidf_stats(feature_t &                                                    f,
+                         const std::vector<size_t> &                                    doclen,
                          const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
-                         uint64_t                                  ndocs,
-                         double &                                  max) {
+                         uint64_t                                                       ndocs,
+                         double &                                                       max) {
     size_t              size = list.first.size();
     uint32_t            mid  = size / 2;
     uint32_t            lq   = size / 4;
@@ -383,14 +379,13 @@ void compute_tfidf_stats(feature_t &                               f,
     f.tfidf_max    = bmtmp[0];
     f.tfidf_min    = bmtmp[size - 1];
 
-    double sum =std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
+    double sum      = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
     double sum_sqrs = std::inner_product(bmtmp.begin(), bmtmp.end(), bmtmp.begin(), 0.0);
-    double hmsum = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) {
-                                        return a + (1.0/b);
-                                    });
-    double avg = sum / size;
+    double hmsum    = std::accumulate(
+        bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) { return a + (1.0 / b); });
+    double avg      = sum / size;
     double variance = std::abs((sum_sqrs / size) - avg * avg);
-    double std_dev = std::sqrt(variance);
+    double std_dev  = std::sqrt(variance);
 
     f.tfidf_avg        = avg;
     f.tfidf_variance   = variance;
@@ -399,12 +394,12 @@ void compute_tfidf_stats(feature_t &                               f,
     f.tfidf_hmean      = (double)size / hmsum;
 }
 
-void compute_bm25_stats(feature_t &                               f,
-                        const std::vector<size_t> &               doclen,
+void compute_bm25_stats(feature_t &                                                    f,
+                        const std::vector<size_t> &                                    doclen,
                         const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
-                        uint64_t                                  ndocs,
-                        double                                    avg_dlen,
-                        double &                                  max) {
+                        uint64_t                                                       ndocs,
+                        double                                                         avg_dlen,
+                        double &                                                       max) {
     uint32_t            size = list.first.size();
     uint32_t            mid  = size / 2;
     uint32_t            lq   = size / 4;
@@ -432,14 +427,13 @@ void compute_bm25_stats(feature_t &                               f,
     f.bm25_max    = bmtmp[0];
     f.bm25_min    = bmtmp[size - 1];
 
-    double sum =std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
+    double sum      = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
     double sum_sqrs = std::inner_product(bmtmp.begin(), bmtmp.end(), bmtmp.begin(), 0.0);
-    double hmsum = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) {
-                                        return a + (1.0/b);
-                                    });
-    double avg = sum / size;
+    double hmsum    = std::accumulate(
+        bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) { return a + (1.0 / b); });
+    double avg      = sum / size;
     double variance = std::abs((sum_sqrs / size) - avg * avg);
-    double std_dev = std::sqrt(variance);
+    double std_dev  = std::sqrt(variance);
 
     f.bm25_avg        = avg;
     f.bm25_variance   = variance;
@@ -448,17 +442,17 @@ void compute_bm25_stats(feature_t &                               f,
     f.bm25_hmean      = (double)size / hmsum;
 }
 
-void compute_lm_stats(feature_t &                               f,
-                      const std::vector<size_t> &               doclen,
+void compute_lm_stats(feature_t &                                                    f,
+                      const std::vector<size_t> &                                    doclen,
                       const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
-                      uint64_t                                  clen,
-                      uint64_t                                  cf,
-                      double &                                  max) {
+                      uint64_t                                                       clen,
+                      uint64_t                                                       cf,
+                      double &                                                       max) {
     uint32_t            size = list.first.size();
     uint32_t            mid  = size / 2;
     uint32_t            lq   = size / 4;
     uint32_t            uq   = 3 * size / 4;
-    double              mu    = 2500.00;
+    double              mu   = 2500.00;
     std::vector<double> bmtmp;
 
     for (size_t i = 0; i < size; ++i) {
@@ -476,14 +470,13 @@ void compute_lm_stats(feature_t &                               f,
     f.lm_max    = bmtmp[0];
     f.lm_min    = bmtmp[size - 1];
 
-    double sum =std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
+    double sum      = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0);
     double sum_sqrs = std::inner_product(bmtmp.begin(), bmtmp.end(), bmtmp.begin(), 0.0);
-    double hmsum = std::accumulate(bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) {
-                                        return a + (1.0/b);
-                                    });
-    double avg = sum / size;
+    double hmsum    = std::accumulate(
+        bmtmp.begin(), bmtmp.end(), 0.0, [](double a, double b) { return a + (1.0 / b); });
+    double avg      = sum / size;
     double variance = std::abs((sum_sqrs / size) - avg * avg);
-    double std_dev = std::sqrt(variance);
+    double std_dev  = std::sqrt(variance);
 
     f.lm_avg        = avg;
     f.lm_variance   = variance;

@@ -19,5 +19,4 @@ class query_environment_adapter {
                                                             const std::vector<std::string> &value) {
         return env->documentIDsFromMetadata(name, value);
     }
-
 };

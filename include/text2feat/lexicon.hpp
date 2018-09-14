@@ -3,7 +3,6 @@
 #include "cereal/types/map.hpp"
 #include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
-#include "cereal/types/map.hpp"
 
 #include <limits>
 #include <map>
@@ -67,9 +66,9 @@ class Lexicon {
     inline const Term &operator[](size_t pos) const { return terms[pos]; }
     inline Term &      operator[](size_t pos) { return terms[pos]; }
 
-    inline size_t term(const std::string& t) {
+    inline size_t term(const std::string &t) {
         auto it = term_id.find(t);
-        if(it != term_id.end()){
+        if (it != term_id.end()) {
             return it->second;
         }
         return oov_term();
@@ -86,9 +85,7 @@ class Lexicon {
         terms.push_back(term);
     }
 
-    void push_back(Term &&t) {
-        terms.push_back(t);
-    }
+    void push_back(Term &&t) { terms.push_back(t); }
 
     Lexicon() = default;
     Lexicon(Counts c) : counts(c) {}
@@ -99,7 +96,7 @@ class Lexicon {
     }
 
    private:
-    Counts            counts;
-    std::vector<Term> terms;
+    Counts                        counts;
+    std::vector<Term>             terms;
     std::map<std::string, size_t> term_id;
 };

@@ -174,8 +174,7 @@ struct doc_entry {
     // URL length
     size_t url_length = 0;
 
-    doc_entry(int i, double pr)
-        : id(i), pagerank(pr) {}
+    doc_entry(int i, double pr) : id(i), pagerank(pr) {}
 
     friend std::ostream &operator<<(std::ostream &os, const doc_entry &de);
 };

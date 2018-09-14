@@ -29,7 +29,6 @@ size_t url_slash_count(const std::string &url) {
 
 static const std::vector<std::string> _fields = {"body", "title", "heading", "inlink", "a"};
 
-
 int main(int argc, char const *argv[]) {
     std::string repo_path;
     std::string forward_index_file;
@@ -75,7 +74,7 @@ int main(int argc, char const *argv[]) {
             positions[terms[i]].push_back(i);
         }
 
-        for (auto& p : positions) {
+        for (auto &p : positions) {
             document.set_positions(p.first, p.second);
         }
 

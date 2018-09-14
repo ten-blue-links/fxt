@@ -7,12 +7,12 @@
 #include "indri/Index.hpp"
 #include "indri/Repository.hpp"
 
-#include "cereal/archives/binary.hpp"
 #include "CLI/CLI.hpp"
+#include "cereal/archives/binary.hpp"
 
 #include "text2feat/inverted_index.hpp"
-#include "text2feat/w_scanner.hpp"
 #include "text2feat/query_train_file.hpp"
+#include "text2feat/w_scanner.hpp"
 
 using namespace indri::api;
 
@@ -33,11 +33,11 @@ struct bigram {
 
 int main(int argc, char *argv[]) {
 
-    constexpr int   w_size     = 8; //!< window size
-    std::string query_file;
-    std::string lexicon_file;
-    std::string repo_path;
-    std::string output_file;
+    constexpr int w_size = 8; //!< window size
+    std::string   query_file;
+    std::string   lexicon_file;
+    std::string   repo_path;
+    std::string   output_file;
 
     CLI::App app{"Create bigram inverted index."};
     app.add_option("-q,--query-file", query_file, "Query filename")->required();
@@ -62,14 +62,13 @@ int main(int argc, char *argv[]) {
 
     InvertedIndex inv_idx;
 
-
     // load lexicon
     std::ifstream              lexicon_f(lexicon_file);
     cereal::BinaryInputArchive iarchive_lex(lexicon_f);
     Lexicon                    lexicon;
     iarchive_lex(lexicon);
 
-    uint64_t                                   tot_doc    = lexicon.document_count();
+    uint64_t tot_doc = lexicon.document_count();
     std::cerr << "Open Index, containing: " << tot_doc << " docs\n";
 
     //!< load query set
@@ -82,7 +81,7 @@ int main(int argc, char *argv[]) {
     query_train_file qtfile(ifs, lexicon);
     ifs.close();
     std::vector<std::vector<std::string>> qry_set;
-    auto queries = qtfile.get_queries();
+    auto                                  queries = qtfile.get_queries();
     for (auto &qry : queries) {
         qry_set.push_back(qry.stems);
     }
@@ -115,14 +114,13 @@ int main(int argc, char *argv[]) {
 
                 std::map<bigram, bool>::iterator found;
 
-                found = std::find_if(bigram_seen.begin(),
-                                     bigram_seen.end(),
-                                     [&](const std::pair<bigram, bool> &el) {
-                                         return (el.first.term_a == term_bigram.term_a &&
-                                                 el.first.term_b == term_bigram.term_b) ||
-                                                (el.first.term_a == term_bigram.term_b &&
-                                                 el.first.term_b == term_bigram.term_a);
-                                     });
+                found = std::find_if(
+                    bigram_seen.begin(), bigram_seen.end(), [&](const std::pair<bigram, bool> &el) {
+                        return (el.first.term_a == term_bigram.term_a &&
+                                el.first.term_b == term_bigram.term_b) ||
+                               (el.first.term_a == term_bigram.term_b &&
+                                el.first.term_b == term_bigram.term_a);
+                    });
 
                 if (found == bigram_seen.end()) {
                     std::vector<indri::index::DocListIterator *> doc_iters(2);
@@ -136,8 +134,8 @@ int main(int argc, char *argv[]) {
                         // df
                         size_t tid = lexicon.term(curr_str);
                         if (lexicon.is_oov(tid)) {
-                          // skip terms that don't exist
-                          break;
+                            // skip terms that don't exist
+                            break;
                         }
                         uint64_t curr_df = lexicon[tid].document_count();
                         doc_iters[i]     = index->docListIterator(curr_str);
@@ -160,10 +158,12 @@ int main(int argc, char *argv[]) {
                     std::vector<std::pair<lemur::api::DOCID_T, uint64_t>> window_postings =
                         w_scanner.window_count(doc_iters, min_term);
 
-                    PostingList pl(qry_str, w_scanner.collection_cnt());
+                    PostingList           pl(qry_str, w_scanner.collection_cnt());
                     std::vector<uint32_t> docs;
                     std::vector<uint32_t> freqs;
-                    for (auto post_iter = window_postings.begin(); post_iter != window_postings.end(); ++post_iter) {
+                    for (auto post_iter = window_postings.begin();
+                         post_iter != window_postings.end();
+                         ++post_iter) {
                         docs.push_back(post_iter->first);
                         freqs.push_back(post_iter->second);
                     }
@@ -175,8 +175,7 @@ int main(int argc, char *argv[]) {
                     inv_idx.push_back(pl);
 
                     bigram_seen.emplace(std::pair<bigram, bool>(
-                        {lexicon.term(curr_bigram.first), lexicon.term(curr_bigram.second)},
-                        true));
+                        {lexicon.term(curr_bigram.first), lexicon.term(curr_bigram.second)}, true));
                     delete doc_iters[0];
                     delete doc_iters[1];
                 }

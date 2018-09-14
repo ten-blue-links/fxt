@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
             freq++;
         }
         done++;
-        if(done % 10000 == 0) {
+        if (done % 10000 == 0) {
             std::cout << "Processed " << done << " terms." << std::endl;
         }
     }

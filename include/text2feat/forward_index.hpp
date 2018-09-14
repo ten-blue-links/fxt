@@ -41,7 +41,7 @@ class TermStats {
     void set_freq(uint16_t field, uint32_t freq) { m_field_freq[field] = freq; }
 
     const std::vector<uint32_t> &positions() const { return m_positions; }
-    void positions(const std::vector<uint32_t> & positions) { m_positions = positions; }
+    void positions(const std::vector<uint32_t> &positions) { m_positions = positions; }
 
     template <class Archive>
     void serialize(Archive &archive) {
@@ -50,10 +50,10 @@ class TermStats {
 };
 
 class Field {
-    uint16_t m_tag_count = 0;
-    uint16_t m_field_len = 0;
-    uint16_t m_field_min_len = std::numeric_limits<uint16_t>::max();
-    uint16_t m_field_max_len = 0;
+    uint16_t m_tag_count          = 0;
+    uint16_t m_field_len          = 0;
+    uint16_t m_field_min_len      = std::numeric_limits<uint16_t>::max();
+    uint16_t m_field_max_len      = 0;
     uint32_t m_field_len_sum_sqrs = 0;
 
    public:
@@ -79,7 +79,9 @@ class Field {
     void field_len(uint16_t field_len) { m_field_len = field_len; };
     void field_min_len(uint16_t field_min_len) { m_field_min_len = field_min_len; };
     void field_max_len(uint16_t field_max_len) { m_field_max_len = field_max_len; };
-    void field_len_sum_sqrs(uint32_t field_len_sum_sqrs) { m_field_len_sum_sqrs = field_len_sum_sqrs; };
+    void field_len_sum_sqrs(uint32_t field_len_sum_sqrs) {
+        m_field_len_sum_sqrs = field_len_sum_sqrs;
+    };
 
     template <class Archive>
     void serialize(Archive &archive) {
@@ -88,13 +90,13 @@ class Field {
 };
 
 class Document {
-    double m_pagerank = 0;
-    UrlStats m_url_stats;
-    std::vector<uint32_t> m_terms;
+    double                        m_pagerank = 0;
+    UrlStats                      m_url_stats;
+    std::vector<uint32_t>         m_terms;
     std::map<uint32_t, TermStats> m_term_stats;
-    std::map<uint16_t, Field> m_field_stats;
+    std::map<uint16_t, Field>     m_field_stats;
 
-public:
+   public:
     Document() = default;
 
     uint16_t url_slash_count() const { return m_url_stats.url_slash_count(); }
@@ -105,13 +107,13 @@ public:
 
     void set_pagerank(double pagerank) { m_pagerank = pagerank; }
 
-    void set_url_stats(const UrlStats& url_stats) { m_url_stats = url_stats; }
+    void set_url_stats(const UrlStats &url_stats) { m_url_stats = url_stats; }
 
     uint32_t length() const { return m_terms.size(); }
 
     const std::vector<uint32_t> &terms() const { return m_terms; }
 
-    void set_terms(const std::vector<uint32_t> & terms) { m_terms = terms; }
+    void set_terms(const std::vector<uint32_t> &terms) { m_terms = terms; }
 
     uint32_t freq(uint32_t term) const {
         if (m_term_stats.find(term) == m_term_stats.end()) {
@@ -126,7 +128,7 @@ public:
         }
         return m_term_stats.at(term).positions();
     }
-    void set_positions(uint32_t term, std::vector<uint32_t>& positions) {
+    void set_positions(uint32_t term, std::vector<uint32_t> &positions) {
         m_term_stats[term].positions(positions);
     }
 
@@ -201,7 +203,6 @@ public:
     void serialize(Archive &archive) {
         archive(m_pagerank, m_url_stats, m_terms, m_term_stats, m_field_stats);
     }
-
 };
 
 using ForwardIndex = std::vector<Document>;
