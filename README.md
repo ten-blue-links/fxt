@@ -15,3 +15,7 @@ $ make
 
 ## Usage
 
+
+```
+make all INDRI_INDEX=<indri index path> QUERIES=<queries file> STAGE0=<TREC run>
+```
