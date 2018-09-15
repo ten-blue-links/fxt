@@ -6,6 +6,7 @@ add_executable(create_forward_index create_forward_index.cpp)
 target_link_libraries(create_forward_index
     FastPFor
     indri
+    pthread
     CLI11
     cereal
 )
@@ -15,6 +16,7 @@ add_executable(create_doc_lens create_doc_lens.cpp)
 target_link_libraries(create_doc_lens
     FastPFor
     indri
+    pthread
     CLI11
     cereal
 )
@@ -24,6 +26,7 @@ add_executable(create_lexicon create_lexicon.cpp)
 target_link_libraries(create_lexicon
     FastPFor
     indri
+    pthread
     CLI11
     cereal
 )
@@ -33,6 +36,7 @@ add_executable(create_inverted_index create_inverted_index.cpp)
 target_link_libraries(create_inverted_index
     FastPFor
     indri
+    pthread
     CLI11
     cereal
 )
@@ -42,6 +46,7 @@ add_executable(create_bigram_inverted_index create_bigram_inverted_index.cpp)
 target_link_libraries(create_bigram_inverted_index
     FastPFor
     indri
+    pthread
     CLI11
     cereal
 )
@@ -60,8 +65,9 @@ add_executable(preret_csv preret_csv.cpp
     fgen_bigram_qry.c
     strbuf.c)
 target_link_libraries(preret_csv
-    indri
     FastPFor
+    indri
+    pthread
     CLI11
     cereal
 )
@@ -73,8 +79,9 @@ add_executable(generate_document_features generate_document_features.cpp
     strbuf.c)
 target_link_libraries(generate_document_features
     FastPFor
+    indri
+    pthread
     CLI11
     cereal
-    indri
 )
 

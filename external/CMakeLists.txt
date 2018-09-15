@@ -12,7 +12,7 @@ add_subdirectory(CLI11 EXCLUDE_FROM_ALL)
 add_subdirectory(cereal EXCLUDE_FROM_ALL)
 
 remove_definitions(-Wall -Wextra)
-add_definitions(-Wno-deprecated -Wno-write-strings -Wno-deprecated-declarations)
+add_definitions(-fPIC -Wno-deprecated -Wno-write-strings -Wno-deprecated-declarations)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DP_NEEDS_GNU_CXX_NAMESPACE=1")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DP_NEEDS_GNU_CXX_NAMESPACE=1")
 
