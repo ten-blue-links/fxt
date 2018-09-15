@@ -53,3 +53,7 @@ $(ALL_SVM): $(ALL_CSV)
 	script/csv2svm.awk $(ALL_CSV) > $(ALL_SVM)
 
 all: $(ALL_SVM)
+
+clean:
+	$(RM) -r $(FWD) $(INV) $(LEX) $(LENS) $(BIGRAM_INV) \
+	$(UNIGRAM) $(BIGRAM) $(DOCFEAT) $(TERMFEAT) $(ALL_CSV) $(ALL_SVM)
