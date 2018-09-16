@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
             auto doc_idx = fwd_idx[docid];
             doc_idx.decompress();
 
-            doc_entry doc_entry(docid);
+            doc_entry doc_entry;
 
             auto terms = doc_idx.terms();
             std::unordered_map<uint32_t, std::vector<uint32_t>> positions;

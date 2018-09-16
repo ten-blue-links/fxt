@@ -11,9 +11,6 @@
 
 struct doc_entry {
 
-    // doc id for convenience
-    int id = 0;
-
     size_t length = 0;
 
     // Score from training trec run file
@@ -172,8 +169,6 @@ struct doc_entry {
     int url_slash_count = 0;
     // URL length
     size_t url_length = 0;
-
-    doc_entry(int i) : id(i) {}
 
     friend std::ostream &operator<<(std::ostream &os, const doc_entry &de);
 };
