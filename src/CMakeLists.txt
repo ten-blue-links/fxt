@@ -87,3 +87,7 @@ target_link_libraries(generate_static_doc_features
     pthread
     CLI11
 )
+
+add_executable(inlink_count inlink.cpp)
+
+add_executable(outlink_count outlink.cpp)
