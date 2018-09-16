@@ -81,3 +81,9 @@ target_link_libraries(generate_document_features
     cereal
 )
 
+add_executable(generate_static_doc_features generate_static_doc_features.cpp)
+target_link_libraries(generate_static_doc_features
+    indri
+    pthread
+    CLI11
+)
