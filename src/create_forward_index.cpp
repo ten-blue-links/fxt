@@ -1,6 +1,7 @@
 #include "indri/CompressedCollection.hpp"
 #include "indri/QueryEnvironment.hpp"
 #include "indri/Repository.hpp"
+#include <future>
 
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
@@ -50,39 +51,48 @@ int main(int argc, char const *argv[]) {
     indri_env.addIndex(repo_path);
 
     ForwardIndex fwd_idx;
-    fwd_idx.push_back({});
+    fwd_idx.reserve(index->documentCount());
+    fwd_idx.emplace_back();
     uint64_t                            docid = index->documentBase();
     indri::index::TermListFileIterator *iter  = index->termListFileIterator();
     iter->startIteration();
 
     while (!iter->finished()) {
+        std::vector<std::future<void>> futures;
+
         indri::index::TermList *list       = iter->currentEntry();
         auto &                  doc_terms  = list->terms();
         Document                document;
-        auto url = indri_env.documentMetadata(std::vector<lemur::api::DOCID_T>{docid}, "url");
 
-        document.set_url_stats({url_slash_count(url.at(0)), url.at(0).size()});
+        futures.push_back( std::async([&]() {
+            auto url = indri_env.documentMetadata(std::vector<lemur::api::DOCID_T>{docid}, "url");
+            document.set_url_stats({url_slash_count(url.at(0)), url.at(0).size()});
+        }));
+
 
         std::set<uint32_t> unique_terms_set(doc_terms.begin(), doc_terms.end());
         std::vector<uint32_t> unique_terms(unique_terms_set.begin(), unique_terms_set.end());
         document.set_unique_terms(unique_terms);
 
-        std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
-        document.set_terms(terms);
+        futures.push_back( std::async([&]() {
+            std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
+            document.set_terms(terms);
+            std::unordered_map<uint32_t, uint32_t> freqs;
+            for (size_t i = 0; i < terms.size(); i++) {
+                freqs[terms[i]] += 1;
+            }
 
-        std::unordered_map<uint32_t, uint32_t> freqs;
-        for (size_t i = 0; i < terms.size(); i++) {
-            freqs[terms[i]] += 1;
-        }
+            for (auto &f : freqs) {
+                document.set_freq(f.first, f.second);
+            }
 
-        for (auto &f : freqs) {
-            document.set_freq(f.first, f.second);
-        }
+        }));
 
         auto fields = list->fields();
         for (auto &f : fields) {
             document.set_tag_count(f.id, document.tag_count(f.id) + 1);
         }
+
 
         std::vector<uint16_t> f;
         for (const std::string &field_str : _fields) {
@@ -130,10 +140,13 @@ int main(int argc, char const *argv[]) {
             }
         }
 
-
+        for(auto &e : futures) {
+            e.get();
+        }
 
         document.compress();
-        fwd_idx.push_back(document);
+        fwd_idx.push_back(std::move(document));
+
         iter->nextEntry();
         if (docid % 10000 == 0) {
             std::cout << "Processed " << docid << " documents." << std::endl;
