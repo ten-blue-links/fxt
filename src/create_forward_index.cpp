@@ -66,6 +66,10 @@ int main(int argc, char const *argv[]) {
         std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
         document.set_terms(terms);
 
+        std::set<uint32_t> unique_terms_set(doc_terms.begin(), doc_terms.end());
+        std::vector<uint32_t> unique_terms(unique_terms_set.begin(), unique_terms_set.end());
+        document.set_unique_terms(unique_terms);
+
         std::unordered_map<uint32_t, std::vector<uint32_t>> positions;
         for (size_t i = 0; i < terms.size(); i++) {
             positions[terms[i]].push_back(i);

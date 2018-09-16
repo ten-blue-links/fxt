@@ -131,7 +131,6 @@ int main(int argc, char **argv) {
             auto const label = docno_labels[i];
 
             auto &doc_idx = fwd_idx[docid];
-
             doc_entry doc_entry(docid);
 
             // set url_slash_count as feature for training

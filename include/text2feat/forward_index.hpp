@@ -4,6 +4,12 @@
 #include "cereal/types/utility.hpp"
 #include "cereal/types/vector.hpp"
 
+#include "FastPFor/headers/codecfactory.h"
+#include "FastPFor/headers/deltautil.h"
+
+using namespace FastPForLib;
+IntegerCODEC &codec = *CODECFactory::getFromName("varintgb");
+
 class UrlStats {
     uint16_t m_url_slash_count = 0;
     uint16_t m_url_length      = 0;
@@ -92,7 +98,11 @@ class Field {
 class Document {
     UrlStats                      m_url_stats;
     std::vector<uint32_t>         m_terms;
-    std::map<uint32_t, TermStats> m_term_stats;
+    size_t                        m_num_terms = 0;
+    std::vector<uint32_t>         m_unique_terms;
+    size_t                        m_num_unique = 0;
+
+    std::vector<TermStats>        m_term_freqs;
     std::map<uint16_t, Field>     m_field_stats;
 
    public:
@@ -110,33 +120,47 @@ class Document {
 
     void set_terms(const std::vector<uint32_t> &terms) { m_terms = terms; }
 
+    void set_unique_terms(const std::vector<uint32_t> &terms) {
+        m_unique_terms = terms;
+        m_term_freqs.resize(terms.size());
+    }
+
     uint32_t freq(uint32_t term) const {
-        if (m_term_stats.find(term) == m_term_stats.end()) {
+        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
+        if (it == m_unique_terms.end()) {
             return 0;
         }
-        return m_term_stats.at(term).freq();
+        auto idx = std::distance(m_unique_terms.begin(), it);
+        return m_term_freqs.at(idx).freq();
     }
 
     std::vector<uint32_t> positions(uint32_t term) const {
-        if (m_term_stats.find(term) == m_term_stats.end()) {
+        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
+        if (it == m_unique_terms.end()) {
             return {};
         }
-        return m_term_stats.at(term).positions();
+        auto idx = std::distance(m_unique_terms.begin(), it);
+        return m_term_freqs.at(idx).positions();
     }
     void set_positions(uint32_t term, std::vector<uint32_t> &positions) {
-        m_term_stats[term].positions(positions);
+        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
+        auto idx = std::distance(m_unique_terms.begin(), it);
+        m_term_freqs[idx].positions(positions);
     }
 
     uint32_t freq(uint16_t field_id, uint32_t term) const {
-        auto term_it = m_term_stats.find(term);
-        if (term_it == m_term_stats.end()) {
+        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
+        if (it == m_unique_terms.end()) {
             return 0;
         }
-        return term_it->second.freq(field_id);
+        auto idx = std::distance(m_unique_terms.begin(), it);
+        return m_term_freqs.at(idx).freq(field_id);
     }
 
     void set_freq(uint16_t field_id, uint32_t term, uint32_t freq) {
-        m_term_stats[term].set_freq(field_id, freq);
+        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
+        auto idx = std::distance(m_unique_terms.begin(), it);
+        m_term_freqs[idx].set_freq(field_id, freq);
     }
 
     uint16_t tag_count(uint16_t field_id) const {
@@ -194,9 +218,29 @@ class Document {
         m_field_stats[field_id].field_len_sum_sqrs(field_len_sum_sqrs);
     }
 
+    void compress() {
+        m_num_terms = m_terms.size();
+        std::vector<uint32_t> buffer(m_num_terms * 2);
+
+        size_t compressedsize = m_terms.size();
+        codec.encodeArray(m_terms.data(), m_terms.size(), buffer.data(), compressedsize);
+        buffer.resize(compressedsize);
+        buffer.shrink_to_fit();
+        m_terms = buffer;
+    }
+
+    void decompress() {
+        std::vector<uint32_t> terms(m_num_terms);
+        size_t recoveredsize = terms.size();
+        codec.decodeArray(m_terms.data(), m_terms.size(), terms.data(), recoveredsize);
+        terms.resize(recoveredsize);
+        m_terms =  terms;
+    }
+
+
     template <class Archive>
     void serialize(Archive &archive) {
-        archive(m_url_stats, m_terms, m_term_stats, m_field_stats);
+        archive(m_url_stats, m_terms, m_num_terms, m_unique_terms, m_num_unique, m_term_freqs, m_field_stats);
     }
 };
 
