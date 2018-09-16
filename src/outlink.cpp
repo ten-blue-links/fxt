@@ -1,7 +1,7 @@
 /*
- * Dump number of inlinks for each document.
+ * Dump number of outlinks for each document.
  *
- * Currently this program is structured around dumping inlinks in a format from
+ * Currently this program is structured around dumping outlinks in a format from
  * the ClueWeb collections.
  *
  * See also scipt/mk-nodeid-docno.sh.
