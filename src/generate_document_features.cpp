@@ -130,7 +130,9 @@ int main(int argc, char **argv) {
             auto const docno = docnos[i];
             auto const label = docno_labels[i];
 
-            auto &doc_idx = fwd_idx[docid];
+            auto doc_idx = fwd_idx[docid];
+            doc_idx.decompress();
+
             doc_entry doc_entry(docid);
 
             auto terms = doc_idx.terms();

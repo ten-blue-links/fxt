@@ -63,20 +63,20 @@ int main(int argc, char const *argv[]) {
 
         document.set_url_stats({url_slash_count(url.at(0)), url.at(0).size()});
 
-        std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
-        document.set_terms(terms);
-
         std::set<uint32_t> unique_terms_set(doc_terms.begin(), doc_terms.end());
         std::vector<uint32_t> unique_terms(unique_terms_set.begin(), unique_terms_set.end());
         document.set_unique_terms(unique_terms);
 
-        std::unordered_map<uint32_t, std::vector<uint32_t>> positions;
+        std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
+        document.set_terms(terms);
+
+        std::unordered_map<uint32_t, uint32_t> freqs;
         for (size_t i = 0; i < terms.size(); i++) {
-            positions[terms[i]].push_back(i);
+            freqs[terms[i]] += 1;
         }
 
-        for (auto &p : positions) {
-            document.set_freq(p.first, p.second.size());
+        for (auto &f : freqs) {
+            document.set_freq(f.first, f.second);
         }
 
         auto fields = list->fields();
@@ -114,6 +114,7 @@ int main(int argc, char const *argv[]) {
                 }
             }
         }
+        document.compress();
         fwd_idx.push_back(document);
         iter->nextEntry();
         if (docid % 10000 == 0) {
