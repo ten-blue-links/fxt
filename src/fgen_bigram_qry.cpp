@@ -1,14 +1,17 @@
-#include "fgen_bigram_qry.h"
-#include "strbuf.h"
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+
+#include "fgen_bigram_qry.hpp"
 
 /* Create a new hash table, with init_size buckets */
 bigramhash_t *new_bigramhash(void) {
     bigramhash_t *bigramhash;
 
-    bigramhash          = safe_malloc(sizeof(bigramhash_t));
+    bigramhash          = (bigramhash_t *)safe_malloc(sizeof(bigramhash_t));
     bigramhash->buckets = INITIAL_SIZE;
     bigramhash->items   = 0;
-    bigramhash->array   = safe_malloc(bigramhash->buckets * sizeof(void *));
+    bigramhash->array   = (bigram_t **)safe_malloc(bigramhash->buckets * sizeof(void *));
     return (bigramhash);
 }
 
@@ -64,7 +67,7 @@ static void check_bigramhash(bigramhash_t *bigrammap) {
     old_array   = bigrammap->array;
     old_buckets = bigrammap->buckets;
     bigrammap->buckets *= GROW_RATE;
-    bigrammap->array = safe_malloc(bigrammap->buckets * sizeof(void *));
+    bigrammap->array = (bigram_t **)safe_malloc(bigrammap->buckets * sizeof(void *));
     for (i = 0; i < old_buckets; i++) {
         bigram_t *value = old_array[i];
         if (value) {
@@ -289,7 +292,7 @@ bigramhash_t *load_bigrammap(const char *fname) {
             fprintf(stderr, "ERROR: Duplicate bigram <%s>!\n", d_str);
             exit(EXIT_FAILURE);
         } else {
-            curr           = safe_malloc(sizeof(bigram_t));
+            curr           = (bigram_t *)safe_malloc(sizeof(bigram_t));
             curr->bigram   = safe_strdup(d_str);
             curr->cf       = cf;
             curr->cdf      = cdf;
@@ -453,25 +456,25 @@ int dfr_max_score_bigram_cmp(const void *a, const void *b) {
 
 static bool count_done    = false;
 static int  feature_count = 0;
-static void ffmt(struct strbuf *buf, long double val) {
+static void ffmt(std::stringstream &buf, long double val) {
     if (!count_done) {
         ++feature_count;
     }
-    strbuf_append(buf, ",%.5Lf", val);
+    buf << "," << std::fixed << std::setprecision(5) << val;
 }
 
-char *fgen_bigram_qry_main(bigramhash_t *bigrammap, int qnum, char **termv, size_t termc) {
+
+std::string fgen_bigram_qry_main(bigramhash_t *bigrammap, int qnum, char **termv, size_t termc) {
     int            tcnt = 0, i = 0;
     int            num_bigrams = termc * termc - termc;
-    struct strbuf *buf         = strbuf_new();
-    char *         ret_buf     = NULL;
+    std::stringstream buf;
 
     if (MAXTERM < num_bigrams) {
         fprintf(stderr, "Too many bigrams: %d\n", num_bigrams);
         exit(EXIT_FAILURE);
     }
 
-    bigram_t *terms = safe_malloc(MAXTERM * sizeof(bigram_t));
+    bigram_t *terms = (bigram_t *)safe_malloc(MAXTERM * sizeof(bigram_t));
 
     char *bigram;
     for (size_t j = 0; j < termc; ++j) {
@@ -1130,12 +1133,9 @@ char *fgen_bigram_qry_main(bigramhash_t *bigrammap, int qnum, char **termv, size
 
     free(terms);
 
-    ret_buf = safe_strdup(buf->data);
-    strbuf_free(buf);
-
     if (!count_done) {
         count_done = true;
     }
 
-    return ret_buf;
+    return buf.str();
 }

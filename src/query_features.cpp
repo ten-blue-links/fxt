@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "fgen_term_qry.h"
+#include "fgen_term_qry.hpp"
 #include "query_features.h"
 
 #define ZETA 1.960

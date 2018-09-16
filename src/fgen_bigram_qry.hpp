@@ -1,57 +1,14 @@
-#ifndef FGEN_TERM_QRY_H
-#define FGEN_TERM_QRY_H
+#ifndef FGEN_BIGRAM_QRY_H
+#define FGEN_BIGRAM_QRY_H
 
-#include <ctype.h>
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <float.h>
-#include <getopt.h>
-#include <inttypes.h>
-#include <limits.h>
-#include <math.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <time.h>
-#include <unistd.h>
+#include "fgen_term_qry.hpp"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Global Max Score in ClueWeb09B */
-#define GLOBAL_MAX 32.895705374152627
-#define NORM 10
-
-#define REALLOC_INCREMENT 4096
-#define MAXLINELEN 4096
-#define MAXTERM 1024
-
-#define INITIAL_SIZE 4096 /* Initial table size, must be a power of 2 */
-#define GROW_RATE (1 << 1) /* Must be a power of 2 */
-#define GOOD_RATIO_N 4 /* Good ratio numerator */
-#define GOOD_RATIO_D 5 /* Good ratio denominator */
-
-#undef get16bits
-#if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) || defined(_MSC_VER) || \
-    defined(__BORLANDC__) || defined(__TURBOC__)
-#define get16bits(d) (*((const short *)(d)))
-#endif
-#if !defined(get16bits)
-#define get16bits(d) \
-    ((((const unsigned char *)(d))[1] << UINT32_C(8)) + ((const unsigned char *)(d))[0])
-#endif
-
 typedef struct {
-    char *   term;
+    char *   bigram;
     uint64_t cf;
     uint64_t cdf;
     double   geo_mean;
@@ -125,32 +82,17 @@ typedef struct {
     double   pr_score_stddev;
     double   pr_score_confidence;
     double   pr_score_harmonic_mean;
-} term_t;
+} bigram_t;
 
 typedef struct {
-    uint32_t buckets;
-    uint32_t items;
-    term_t **array;
-} termhash_t;
+    uint32_t   buckets;
+    uint32_t   items;
+    bigram_t **array;
+} bigramhash_t;
 
-void *      safe_malloc(size_t size);
-void *      safe_realloc(void *old_mem, size_t new_size);
-char *      safe_strdup(const char *str);
-uint32_t    murmur_hash(const char *key, uint32_t buckets);
-termhash_t *new_termhash(void);
-void        destroy_termhash(termhash_t *termhash);
-term_t *    find_term(termhash_t *termmap, char *buf);
-void        add_term(termhash_t *termmap, term_t *buf);
-int64_t     load_file(const char *filename, char **result);
-void        strip_newline(char *str);
-int         is_space(const char *candidate);
-void        to_lcase(char *str);
-char *      safe_str_append(char *str1, const char *str2);
-termhash_t *load_termmap(const char *fname);
-int         max_score_cmp(const void *a, const void *b);
-int         tf_max_score_cmp(const void *a, const void *b);
-int         lm_max_score_cmp(const void *a, const void *b);
-char *      fgen_term_qry_main(termhash_t *termmap, int qnum, char **termv, size_t termc);
+bigramhash_t *load_bigrammap(const char *fname);
+void          destroy_bigramhash(bigramhash_t *bigramhash);
+std::string         fgen_bigram_qry_main(bigramhash_t *bigrammap, int qnum, char **termv, size_t termc);
 
 #ifdef __cplusplus
 }
