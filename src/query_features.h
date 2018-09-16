@@ -4,7 +4,7 @@
 
 #ifndef QUERY_FEATURES_H
 #define QUERY_FEATURES_H
-#include "fgen_term_qry.h"
+#include "fgen_term_qry.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif

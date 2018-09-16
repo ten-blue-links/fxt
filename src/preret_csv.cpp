@@ -6,8 +6,8 @@
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
 
-#include "fgen_bigram_qry.h"
-#include "fgen_term_qry.h"
+#include "fgen_bigram_qry.hpp"
+#include "fgen_term_qry.hpp"
 #include "query_features.h"
 #include "text2feat/query_train_file.hpp"
 
@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
         std::transform(
             qry.stems.begin(), qry.stems.end(), std::back_inserter(stems), stdstr_to_cstr);
 
-        char *buf_unigram, *buf_bigram;
+        std::string buf_unigram, buf_bigram;
 
         // dump unigram features
         buf_unigram = fgen_term_qry_main(termmap, qry.id, &stems[0], stems.size());
@@ -75,8 +75,6 @@ int main(int argc, char **argv) {
         buf_bigram = fgen_bigram_qry_main(bigrammap, qry.id, &stems[0], stems.size());
         std::string buf_common(buf_unigram);
         buf_common.append(buf_bigram);
-        free(buf_unigram);
-        free(buf_bigram);
 
         std::cout << qry.id;
         if (buf_common.length()) {

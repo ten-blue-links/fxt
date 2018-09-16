@@ -61,9 +61,8 @@ target_link_libraries(generate_term_features
 
 # pre-retrieval csv
 add_executable(preret_csv preret_csv.cpp
-    fgen_term_qry.c query_features.c
-    fgen_bigram_qry.c
-    strbuf.c)
+    fgen_term_qry.cpp query_features.cpp
+    fgen_bigram_qry.cpp)
 target_link_libraries(preret_csv
     FastPFor
     indri
@@ -73,10 +72,7 @@ target_link_libraries(preret_csv
 )
 
 # generate_document_features
-add_executable(generate_document_features generate_document_features.cpp
-    fgen_term_qry.c query_features.c
-    fgen_bigram_qry.c
-    strbuf.c)
+add_executable(generate_document_features generate_document_features.cpp)
 target_link_libraries(generate_document_features
     FastPFor
     indri

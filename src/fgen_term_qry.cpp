@@ -1,7 +1,10 @@
-#include "fgen_term_qry.h"
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+
+#include "fgen_term_qry.hpp"
 #include "query_features.h"
 #include "text2feat/stopwords.h"
-#include "strbuf.h"
 
 void *safe_malloc(size_t size) {
     void *mem_block = NULL;
@@ -58,7 +61,7 @@ char *safe_strdup(const char *str) {
     }
 
     len  = strlen(str) + 1;
-    copy = safe_malloc(len * sizeof(char));
+    copy = (char *)safe_malloc(len * sizeof(char));
 
     /* strlcpy is not implemented everywhere ... */
     (void)bsd_strlcpy(copy, str, len);
@@ -127,10 +130,10 @@ uint32_t murmur_hash(const char *key, uint32_t buckets) {
 termhash_t *new_termhash(void) {
     termhash_t *termhash;
 
-    termhash          = safe_malloc(sizeof(termhash_t));
+    termhash          = (termhash_t *)safe_malloc(sizeof(termhash_t));
     termhash->buckets = INITIAL_SIZE;
     termhash->items   = 0;
-    termhash->array   = safe_malloc(termhash->buckets * sizeof(void *));
+    termhash->array   = (term_t**)safe_malloc(termhash->buckets * sizeof(void *));
     return (termhash);
 }
 
@@ -186,7 +189,7 @@ static void check_termhash(termhash_t *termmap) {
     old_array   = termmap->array;
     old_buckets = termmap->buckets;
     termmap->buckets *= GROW_RATE;
-    termmap->array = safe_malloc(termmap->buckets * sizeof(void *));
+    termmap->array = (term_t**)safe_malloc(termmap->buckets * sizeof(void *));
     for (i = 0; i < old_buckets; i++) {
         term_t *value = old_array[i];
         if (value) {
@@ -290,7 +293,7 @@ char *safe_str_append(char *str1, const char *str2) {
         exit(EXIT_FAILURE);
     }
     len = strlen(str1) + strlen(str2) + 1;
-    rv  = safe_malloc(len * sizeof(char));
+    rv  = (char *)safe_malloc(len * sizeof(char));
     (void)strcpy(rv, str1);
     rv = strcat(rv, str2);
     free(str1);
@@ -474,7 +477,7 @@ termhash_t *load_termmap(const char *fname) {
             fprintf(stderr, "ERROR: Duplicate term <%s>!\n", d_str);
             exit(EXIT_FAILURE);
         } else {
-            curr           = safe_malloc(sizeof(term_t));
+            curr           = (term_t *)safe_malloc(sizeof(term_t));
             curr->term     = safe_strdup(d_str);
             curr->cf       = cf;
             curr->cdf      = cdf;
@@ -640,10 +643,10 @@ int dfr_max_score_cmp(const void *a, const void *b) {
 stophash_t *new_stophash(void) {
     stophash_t *stophash;
 
-    stophash          = safe_malloc(sizeof(stophash_t));
+    stophash          = (stophash_t *)safe_malloc(sizeof(stophash_t));
     stophash->buckets = INITIAL_SIZE;
     stophash->items   = 0;
-    stophash->array   = safe_malloc(stophash->buckets * sizeof(void *));
+    stophash->array   = (stopword_t**)safe_malloc(stophash->buckets * sizeof(void *));
     return (stophash);
 }
 
@@ -699,7 +702,7 @@ static void check_stophash(stophash_t *termmap) {
     old_array   = termmap->array;
     old_buckets = termmap->buckets;
     termmap->buckets *= GROW_RATE;
-    termmap->array = safe_malloc(termmap->buckets * sizeof(void *));
+    termmap->array = (stopword_t**)safe_malloc(termmap->buckets * sizeof(void *));
     for (i = 0; i < old_buckets; i++) {
         stopword_t *value = old_array[i];
         if (value) {
@@ -753,7 +756,7 @@ stophash_t *load_stopmap(void) {
             fprintf(stderr, "ERROR: Duplicate stopword <%s>!\n", stopwords[i]);
             exit(EXIT_FAILURE);
         } else {
-            curr       = safe_malloc(sizeof(stopword_t));
+            curr       = (stopword_t*)safe_malloc(sizeof(stopword_t));
             curr->term = safe_strdup(stopwords[i]);
             add_stopword(map, curr);
         }
@@ -768,10 +771,10 @@ stophash_t *load_stopmap(void) {
 queryhash_t *new_queryhash(void) {
     queryhash_t *queryhash;
 
-    queryhash          = safe_malloc(sizeof(queryhash_t));
+    queryhash          = (queryhash_t*)safe_malloc(sizeof(queryhash_t));
     queryhash->buckets = INITIAL_SIZE;
     queryhash->items   = 0;
-    queryhash->array   = safe_malloc(queryhash->buckets * sizeof(void *));
+    queryhash->array   = (queryterm_t**)safe_malloc(queryhash->buckets * sizeof(void *));
     return (queryhash);
 }
 
@@ -827,7 +830,7 @@ static void check_queryhash(queryhash_t *termmap) {
     old_array   = termmap->array;
     old_buckets = termmap->buckets;
     termmap->buckets *= GROW_RATE;
-    termmap->array = safe_malloc(termmap->buckets * sizeof(void *));
+    termmap->array = (queryterm_t**)safe_malloc(termmap->buckets * sizeof(void *));
     for (i = 0; i < old_buckets; i++) {
         queryterm_t *value = old_array[i];
         if (value) {
@@ -877,7 +880,7 @@ queryhash_t *load_querymap(char **termv, size_t len) {
         if (curr != NULL) {
             ++curr->count;
         } else {
-            curr        = safe_malloc(sizeof(queryterm_t));
+            curr        = (queryterm_t*)safe_malloc(sizeof(queryterm_t));
             curr->term  = safe_strdup(termv[i]);
             curr->count = 1;
             add_queryterm(map, curr);
@@ -888,9 +891,9 @@ queryhash_t *load_querymap(char **termv, size_t len) {
 }
 
 query_t *load_query(char **termv, size_t len) {
-    query_t *q = safe_malloc(sizeof(*q));
+    query_t *q = (query_t*)safe_malloc(sizeof(*q));
     memset(q, 0x0, sizeof(*q));
-    q->terms = safe_malloc(sizeof(void *) * MAXTERM);
+    q->terms = (char**)safe_malloc(sizeof(void *) * MAXTERM);
 
     q->qry = NULL; // not used
     for (size_t i = 0; i < len; ++i) {
@@ -912,22 +915,21 @@ void destroy_query(query_t *q) {
 
 static bool count_done    = false;
 static int  feature_count = 0;
-static void ffmt(struct strbuf *buf, long double val) {
+static void ffmt(std::stringstream &buf, long double val) {
     if (!count_done) {
         ++feature_count;
     }
-    strbuf_append(buf, ",%.5Lf", val);
+    buf << "," << std::fixed << std::setprecision(5) << val;
 }
 
-char *fgen_term_qry_main(termhash_t *termmap, int qnum, char **termv, size_t termc) {
+std::string fgen_term_qry_main(termhash_t *termmap, int qnum, char **termv, size_t termc) {
     int            tcnt = 0, i = 0;
     stophash_t *   stopmap  = NULL;
     queryhash_t *  querymap = NULL;
     query_t *      query    = NULL;
-    struct strbuf *buf      = strbuf_new();
-    char *         ret_buf  = NULL;
+    std::stringstream buf;
 
-    term_t *terms = safe_malloc(MAXTERM * sizeof(term_t));
+    term_t *terms = (term_t*)safe_malloc(MAXTERM * sizeof(term_t));
 
     /* pre-retrieval query features */
     stopmap            = load_stopmap();
@@ -1610,12 +1612,9 @@ char *fgen_term_qry_main(termhash_t *termmap, int qnum, char **termv, size_t ter
     destroy_queryhash(querymap);
     destroy_query(query);
 
-    ret_buf = safe_strdup(buf->data);
-    strbuf_free(buf);
-
     if (!count_done) {
         count_done = true;
     }
 
-    return ret_buf;
+    return buf.str();
 }
