@@ -91,12 +91,15 @@ int main(int argc, char const *argv[]) {
         }
         document.set_fields(f);
 
+        std::unordered_map<size_t, std::unordered_map<uint32_t, uint32_t>> field_freqs;
         for (const std::string &field_str : _fields) {
             int field_id = index->field(field_str);
             if (field_id < 1) {
                 // field is not indexed
                 continue;
             }
+
+
             for (auto &f : fields) {
                 if (f.id != static_cast<size_t>(field_id)) {
                     continue;
@@ -116,11 +119,19 @@ int main(int argc, char const *argv[]) {
                 }
 
                 for (size_t i = f.begin; i < f.end; ++i) {
-                    auto freq = document.freq(f.id, doc_terms[i]) + 1;
-                    document.set_freq(f.id, doc_terms[i], freq);
+                    field_freqs[f.id][doc_terms[i]] += 1;
                 }
             }
+
         }
+        for(auto&& freq : field_freqs) {
+            for(auto&& f : freq.second) {
+                document.set_freq(freq.first, f.first, f.second);
+            }
+        }
+
+
+
         document.compress();
         fwd_idx.push_back(document);
         iter->nextEntry();

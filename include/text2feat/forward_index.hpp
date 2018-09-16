@@ -101,7 +101,7 @@ class Document {
     void set_terms(const std::vector<uint32_t> &terms) {
         std::vector<uint32_t> tmp;
         for(auto&& t : terms) {
-            auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), t);
+            auto it = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), t);
             auto idx = std::distance(m_unique_terms.begin(), it);
             tmp.push_back(idx);
         }
@@ -115,7 +115,7 @@ class Document {
     }
 
     uint32_t freq(uint32_t term) const {
-        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
+        auto it = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
         if (it == m_unique_terms.end()) {
             return 0;
         }
@@ -123,13 +123,13 @@ class Document {
         return m_freqs.at(idx);
     }
     void set_freq(uint32_t term, uint32_t freq) {
-        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
+        auto it = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
         auto idx = std::distance(m_unique_terms.begin(), it);
         m_freqs[idx] = freq;
     }
 
     uint32_t freq(uint16_t field_id, uint32_t term) const {
-        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
+        auto it = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
         if (it == m_unique_terms.end()) {
             return 0;
         }
@@ -144,7 +144,7 @@ class Document {
     }
 
     void set_freq(uint16_t field_id, uint32_t term, uint32_t freq) {
-        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
+        auto it = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
         auto idx = std::distance(m_unique_terms.begin(), it);
         auto f_it = std::find(m_fields.begin(), m_fields.end(), field_id);
         auto idx2 = std::distance(m_fields.begin(), f_it);
