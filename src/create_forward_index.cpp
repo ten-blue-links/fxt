@@ -76,7 +76,7 @@ int main(int argc, char const *argv[]) {
         }
 
         for (auto &p : positions) {
-            document.set_positions(p.first, p.second);
+            document.set_freq(p.first, p.second.size());
         }
 
         auto fields = list->fields();

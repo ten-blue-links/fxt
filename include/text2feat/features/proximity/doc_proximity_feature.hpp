@@ -49,7 +49,7 @@ class doc_proximity_feature {
         ranker.avg_doc_len = (double)num_terms / ranker.num_docs;
     }
 
-    void compute(doc_entry &doc, query_train &query, Document &doc_idx) {
+    void compute(doc_entry &doc, query_train &query, Document &doc_idx, std::unordered_map<uint32_t, std::vector<uint32_t>> &positions) {
         score = 0.0;
 
         // condensed direct file
@@ -73,9 +73,9 @@ class doc_proximity_feature {
                                     query.pos[i]);
                 term_data_map.insert(std::pair<uint64_t, term_data>(tid, curr_term));
 
-                _acc_positions_insert(acc_positions, doc_idx.positions(tid), acc_terms, curr_term);
+                _acc_positions_insert(acc_positions, positions[tid], acc_terms, curr_term);
 
-                for (auto pos : doc_idx.positions(tid)) {
+                for (auto pos : positions[tid]) {
                     cdf.push_back(std::make_pair(tid, pos));
                 }
             }

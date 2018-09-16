@@ -133,6 +133,13 @@ int main(int argc, char **argv) {
             auto &doc_idx = fwd_idx[docid];
             doc_entry doc_entry(docid);
 
+            auto terms = doc_idx.terms();
+            std::unordered_map<uint32_t, std::vector<uint32_t>> positions;
+            for (size_t i = 0; i < terms.size(); i++) {
+                positions[terms[i]].push_back(i);
+            }
+
+
             // set url_slash_count as feature for training
             doc_entry.url_slash_count = doc_idx.url_slash_count();
             doc_entry.url_length      = doc_idx.url_length();
@@ -153,7 +160,7 @@ int main(int argc, char **argv) {
             dfr_feature.compute(qry, doc_entry, doc_idx, field_id_map);
             f_stream.compute(qry, doc_entry, doc_idx, field_id_map);
             features.compute(qry, doc_entry, doc_idx, field_id_map);
-            prox_feature.compute(doc_entry, qry, doc_idx);
+            prox_feature.compute(doc_entry, qry, doc_idx, positions);
             f_tpscore.compute(qry, doc_entry, doc_idx, field_id_map);
 
             outfile << label << "," << qry.id << "," << docno << doc_entry << std::endl;

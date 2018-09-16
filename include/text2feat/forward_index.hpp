@@ -28,14 +28,15 @@ class UrlStats {
     }
 };
 
-class TermStats {
-    std::vector<uint32_t>        m_positions;
+class TermFreqs {
+    uint32_t                     m_freq;
     std::map<uint16_t, uint32_t> m_field_freq;
 
    public:
-    TermStats() = default;
+    TermFreqs() = default;
 
-    uint32_t freq() const { return m_positions.size(); }
+    uint32_t freq() const { return m_freq; }
+    void set_freq(uint32_t f) { m_freq = f; }
 
     uint32_t freq(uint16_t field) const {
         auto field_freq_it = m_field_freq.find(field);
@@ -46,12 +47,9 @@ class TermStats {
     }
     void set_freq(uint16_t field, uint32_t freq) { m_field_freq[field] = freq; }
 
-    const std::vector<uint32_t> &positions() const { return m_positions; }
-    void positions(const std::vector<uint32_t> &positions) { m_positions = positions; }
-
     template <class Archive>
     void serialize(Archive &archive) {
-        archive(m_positions, m_field_freq);
+        archive(m_freq, m_field_freq);
     }
 };
 
@@ -102,7 +100,7 @@ class Document {
     std::vector<uint32_t>         m_unique_terms;
     size_t                        m_num_unique = 0;
 
-    std::vector<TermStats>        m_term_freqs;
+    std::vector<TermFreqs>        m_term_freqs;
     std::map<uint16_t, Field>     m_field_stats;
 
    public:
@@ -133,19 +131,10 @@ class Document {
         auto idx = std::distance(m_unique_terms.begin(), it);
         return m_term_freqs.at(idx).freq();
     }
-
-    std::vector<uint32_t> positions(uint32_t term) const {
-        auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
-        if (it == m_unique_terms.end()) {
-            return {};
-        }
-        auto idx = std::distance(m_unique_terms.begin(), it);
-        return m_term_freqs.at(idx).positions();
-    }
-    void set_positions(uint32_t term, std::vector<uint32_t> &positions) {
+    void set_freq(uint32_t term, uint32_t freq) {
         auto it = std::find(m_unique_terms.begin(), m_unique_terms.end(), term);
         auto idx = std::distance(m_unique_terms.begin(), it);
-        m_term_freqs[idx].positions(positions);
+        m_term_freqs[idx].set_freq(freq);
     }
 
     uint32_t freq(uint16_t field_id, uint32_t term) const {
