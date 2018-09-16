@@ -84,6 +84,13 @@ int main(int argc, char const *argv[]) {
             document.set_tag_count(f.id, document.tag_count(f.id) + 1);
         }
 
+        std::vector<uint16_t> f;
+        for (const std::string &field_str : _fields) {
+            int field_id = index->field(field_str);
+            f.push_back(field_id);
+        }
+        document.set_fields(f);
+
         for (const std::string &field_str : _fields) {
             int field_id = index->field(field_str);
             if (field_id < 1) {
