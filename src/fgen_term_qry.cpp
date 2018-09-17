@@ -374,82 +374,82 @@ std::unordered_map<std::string, term_t> load_termmap(const char *fname) {
             fprintf(stderr, "ERROR: Duplicate term <%s>!\n", d_str);
             exit(EXIT_FAILURE);
         } else {
-            term_t *curr           = (term_t *)safe_malloc(sizeof(term_t));
-            curr->term     = safe_strdup(d_str);
-            curr->cf       = cf;
-            curr->cdf      = cdf;
-            curr->geo_mean = geo_mean;
+            term_t curr;
+            curr.term     = safe_strdup(d_str);
+            curr.cf       = cf;
+            curr.cdf      = cdf;
+            curr.geo_mean = geo_mean;
 
-            curr->bm25_median_score        = bm25_median_score;
-            curr->bm25_firstq_score        = bm25_firstq_score;
-            curr->bm25_thirdq_score        = bm25_thirdq_score;
-            curr->bm25_max_score           = bm25_max_score;
-            curr->bm25_min_score           = bm25_min_score;
-            curr->bm25_mean_score          = bm25_mean_score;
-            curr->bm25_score_variance      = bm25_score_variance;
-            curr->bm25_score_stddev        = bm25_score_stddev;
-            curr->bm25_score_harmonic_mean = bm25_score_harmonic_mean;
+            curr.bm25_median_score        = bm25_median_score;
+            curr.bm25_firstq_score        = bm25_firstq_score;
+            curr.bm25_thirdq_score        = bm25_thirdq_score;
+            curr.bm25_max_score           = bm25_max_score;
+            curr.bm25_min_score           = bm25_min_score;
+            curr.bm25_mean_score          = bm25_mean_score;
+            curr.bm25_score_variance      = bm25_score_variance;
+            curr.bm25_score_stddev        = bm25_score_stddev;
+            curr.bm25_score_harmonic_mean = bm25_score_harmonic_mean;
 
-            curr->tf_median_score        = tf_median_score;
-            curr->tf_firstq_score        = tf_firstq_score;
-            curr->tf_thirdq_score        = tf_thirdq_score;
-            curr->tf_max_score           = tf_max_score;
-            curr->tf_min_score           = tf_min_score;
-            curr->tf_mean_score          = tf_mean_score;
-            curr->tf_score_variance      = tf_score_variance;
-            curr->tf_score_stddev        = tf_score_stddev;
-            curr->tf_score_harmonic_mean = tf_score_harmonic_mean;
-            curr->lm_median_score        = lm_median_score;
-            curr->lm_firstq_score        = lm_firstq_score;
-            curr->lm_thirdq_score        = lm_thirdq_score;
-            curr->lm_max_score           = lm_max_score;
-            curr->lm_min_score           = lm_min_score;
-            curr->lm_mean_score          = lm_mean_score;
-            curr->lm_score_variance      = lm_score_variance;
-            curr->lm_score_stddev        = lm_score_stddev;
-            curr->lm_score_harmonic_mean = lm_score_harmonic_mean;
+            curr.tf_median_score        = tf_median_score;
+            curr.tf_firstq_score        = tf_firstq_score;
+            curr.tf_thirdq_score        = tf_thirdq_score;
+            curr.tf_max_score           = tf_max_score;
+            curr.tf_min_score           = tf_min_score;
+            curr.tf_mean_score          = tf_mean_score;
+            curr.tf_score_variance      = tf_score_variance;
+            curr.tf_score_stddev        = tf_score_stddev;
+            curr.tf_score_harmonic_mean = tf_score_harmonic_mean;
+            curr.lm_median_score        = lm_median_score;
+            curr.lm_firstq_score        = lm_firstq_score;
+            curr.lm_thirdq_score        = lm_thirdq_score;
+            curr.lm_max_score           = lm_max_score;
+            curr.lm_min_score           = lm_min_score;
+            curr.lm_mean_score          = lm_mean_score;
+            curr.lm_score_variance      = lm_score_variance;
+            curr.lm_score_stddev        = lm_score_stddev;
+            curr.lm_score_harmonic_mean = lm_score_harmonic_mean;
 
-            curr->pr_median_score        = pr_median_score;
-            curr->pr_firstq_score        = pr_firstq_score;
-            curr->pr_thirdq_score        = pr_thirdq_score;
-            curr->pr_max_score           = pr_max_score;
-            curr->pr_min_score           = pr_min_score;
-            curr->pr_mean_score          = pr_mean_score;
-            curr->pr_score_variance      = pr_score_variance;
-            curr->pr_score_stddev        = pr_score_stddev;
-            curr->pr_score_harmonic_mean = pr_score_harmonic_mean;
+            curr.pr_median_score        = pr_median_score;
+            curr.pr_firstq_score        = pr_firstq_score;
+            curr.pr_thirdq_score        = pr_thirdq_score;
+            curr.pr_max_score           = pr_max_score;
+            curr.pr_min_score           = pr_min_score;
+            curr.pr_mean_score          = pr_mean_score;
+            curr.pr_score_variance      = pr_score_variance;
+            curr.pr_score_stddev        = pr_score_stddev;
+            curr.pr_score_harmonic_mean = pr_score_harmonic_mean;
 
-            curr->be_median_score        = be_median_score;
-            curr->be_firstq_score        = be_firstq_score;
-            curr->be_thirdq_score        = be_thirdq_score;
-            curr->be_max_score           = be_max_score;
-            curr->be_min_score           = be_min_score;
-            curr->be_mean_score          = be_mean_score;
-            curr->be_score_variance      = be_score_variance;
-            curr->be_score_stddev        = be_score_stddev;
-            curr->be_score_harmonic_mean = be_score_harmonic_mean;
+            curr.be_median_score        = be_median_score;
+            curr.be_firstq_score        = be_firstq_score;
+            curr.be_thirdq_score        = be_thirdq_score;
+            curr.be_max_score           = be_max_score;
+            curr.be_min_score           = be_min_score;
+            curr.be_mean_score          = be_mean_score;
+            curr.be_score_variance      = be_score_variance;
+            curr.be_score_stddev        = be_score_stddev;
+            curr.be_score_harmonic_mean = be_score_harmonic_mean;
 
-            curr->dph_median_score        = dph_median_score;
-            curr->dph_firstq_score        = dph_firstq_score;
-            curr->dph_thirdq_score        = dph_thirdq_score;
-            curr->dph_max_score           = dph_max_score;
-            curr->dph_min_score           = dph_min_score;
-            curr->dph_mean_score          = dph_mean_score;
-            curr->dph_score_variance      = dph_score_variance;
-            curr->dph_score_stddev        = dph_score_stddev;
-            curr->dph_score_harmonic_mean = dph_score_harmonic_mean;
+            curr.dph_median_score        = dph_median_score;
+            curr.dph_firstq_score        = dph_firstq_score;
+            curr.dph_thirdq_score        = dph_thirdq_score;
+            curr.dph_max_score           = dph_max_score;
+            curr.dph_min_score           = dph_min_score;
+            curr.dph_mean_score          = dph_mean_score;
+            curr.dph_score_variance      = dph_score_variance;
+            curr.dph_score_stddev        = dph_score_stddev;
+            curr.dph_score_harmonic_mean = dph_score_harmonic_mean;
 
-            curr->dfr_median_score        = dfr_median_score;
-            curr->dfr_firstq_score        = dfr_firstq_score;
-            curr->dfr_thirdq_score        = dfr_thirdq_score;
-            curr->dfr_max_score           = dfr_max_score;
-            curr->dfr_min_score           = dfr_min_score;
-            curr->dfr_mean_score          = dfr_mean_score;
-            curr->dfr_score_variance      = dfr_score_variance;
-            curr->dfr_score_stddev        = dfr_score_stddev;
-            curr->dfr_score_harmonic_mean = dfr_score_harmonic_mean;
+            curr.dfr_median_score        = dfr_median_score;
+            curr.dfr_firstq_score        = dfr_firstq_score;
+            curr.dfr_thirdq_score        = dfr_thirdq_score;
+            curr.dfr_max_score           = dfr_max_score;
+            curr.dfr_min_score           = dfr_min_score;
+            curr.dfr_mean_score          = dfr_mean_score;
+            curr.dfr_score_variance      = dfr_score_variance;
+            curr.dfr_score_stddev        = dfr_score_stddev;
+            curr.dfr_score_harmonic_mean = dfr_score_harmonic_mean;
 
-            map[curr->term] = *curr;
+            map[curr.term] = curr;
         }
         num++;
     }
@@ -536,251 +536,36 @@ int dfr_max_score_cmp(const void *a, const void *b) {
     return (0);
 }
 
-/* Create a new hash table, with init_size buckets */
-stophash_t *new_stophash(void) {
-    stophash_t *stophash;
-
-    stophash          = (stophash_t *)safe_malloc(sizeof(stophash_t));
-    stophash->buckets = INITIAL_SIZE;
-    stophash->items   = 0;
-    stophash->array   = (stopword_t**)safe_malloc(stophash->buckets * sizeof(void *));
-    return (stophash);
-}
-
-static void delete_stopword(stopword_t *data) {
-    if (data->term) {
-        free(data->term);
-    }
-    free(data);
-    return;
-}
-
-void destroy_stophash(stophash_t *stophash) {
-    uint32_t    i;
-    stopword_t *value;
-
-    for (i = 0; i < stophash->buckets; i++) {
-        if ((value = stophash->array[i])) {
-            delete_stopword(value);
-        }
-    }
-    free(stophash->array);
-    free(stophash);
-    return;
-}
-
-static size_t get_stopword_pos(stophash_t *termmap, const char *buf, size_t *pos) {
-    stopword_t *value;
-    *pos = murmur_hash(buf, termmap->buckets);
-
-    do {
-        value = termmap->array[*pos];
-        if (!value) {
-            return (false);
-        } else if (strcmp((char *)value->term, buf) == 0) {
-            return (true);
-        }
-        *pos += 1;
-        *pos &= (termmap->buckets - 1);
-    } while (true);
-
-    return (false);
-}
-
-static void check_stophash(stophash_t *termmap) {
-    size_t       i;
-    size_t       old_buckets;
-    stopword_t **old_array;
-
-    if ((termmap->buckets * GOOD_RATIO_N) > (termmap->items * GOOD_RATIO_D)) {
-        return;
-    }
-
-    old_array   = termmap->array;
-    old_buckets = termmap->buckets;
-    termmap->buckets *= GROW_RATE;
-    termmap->array = (stopword_t**)safe_malloc(termmap->buckets * sizeof(void *));
-    for (i = 0; i < old_buckets; i++) {
-        stopword_t *value = old_array[i];
-        if (value) {
-            size_t pos;
-            get_stopword_pos(termmap, (char *)value->term, &pos);
-            termmap->array[pos] = value;
-        }
-    }
-    free(old_array);
-    return;
-}
-
-stopword_t *find_stopword(stophash_t *termmap, const char *buf) {
-    size_t pos;
-    int    found;
-
-    found = get_stopword_pos(termmap, buf, &pos);
-    if (!found) {
-        return (NULL);
-    }
-    return (termmap->array[pos]);
-}
-
-void add_stopword(stophash_t *termmap, stopword_t *buf) {
-    int    found;
-    size_t pos;
-
-    check_stophash(termmap);
-
-    found = get_stopword_pos(termmap, buf->term, &pos);
-
-    if (found) {
-        fprintf(stderr, "ERROR: Word exists! Bailing out.\n");
-        exit(EXIT_FAILURE);
-    } else {
-        termmap->array[pos] = buf;
-        termmap->items++;
-    }
-    return;
-}
-
 const char **stopwords = fgen_krovetz_stopwords;
 
-stophash_t *load_stopmap(void) {
-    stophash_t *map = new_stophash();
+std::set<std::string> load_stopmap(void) {
+    std::set<std::string> set;
     int         i, num = 0;
 
     for (i = 0; stopwords[i] != NULL; i++) {
-        stopword_t *curr = find_stopword(map, stopwords[i]);
-        if (curr != NULL) {
+        auto curr = set.find(stopwords[i]);
+        if (curr != set.end()) {
             fprintf(stderr, "ERROR: Duplicate stopword <%s>!\n", stopwords[i]);
             exit(EXIT_FAILURE);
         } else {
-            curr       = (stopword_t*)safe_malloc(sizeof(stopword_t));
-            curr->term = safe_strdup(stopwords[i]);
-            add_stopword(map, curr);
+            set.insert(stopwords[i]);
         }
         num++;
     }
 
     // fprintf (stderr, "Number of stopwords loaded [%d]\n", num);
-    return map;
+    return set;
 }
 
-/* Create a new hash table, with init_size buckets */
-queryhash_t *new_queryhash(void) {
-    queryhash_t *queryhash;
-
-    queryhash          = (queryhash_t*)safe_malloc(sizeof(queryhash_t));
-    queryhash->buckets = INITIAL_SIZE;
-    queryhash->items   = 0;
-    queryhash->array   = (queryterm_t**)safe_malloc(queryhash->buckets * sizeof(void *));
-    return (queryhash);
-}
-
-static void delete_queryterm(queryterm_t *data) {
-    if (data->term) {
-        free(data->term);
-    }
-    free(data);
-    return;
-}
-
-void destroy_queryhash(queryhash_t *queryhash) {
-    uint32_t     i;
-    queryterm_t *value;
-
-    for (i = 0; i < queryhash->buckets; i++) {
-        if ((value = queryhash->array[i])) {
-            delete_queryterm(value);
-        }
-    }
-    free(queryhash->array);
-    free(queryhash);
-    return;
-}
-
-static size_t get_queryterm_pos(queryhash_t *termmap, const char *buf, size_t *pos) {
-    queryterm_t *value;
-    *pos = murmur_hash(buf, termmap->buckets);
-
-    do {
-        value = termmap->array[*pos];
-        if (!value) {
-            return (false);
-        } else if (strcmp((char *)value->term, buf) == 0) {
-            return (true);
-        }
-        *pos += 1;
-        *pos &= (termmap->buckets - 1);
-    } while (true);
-
-    return (false);
-}
-
-static void check_queryhash(queryhash_t *termmap) {
-    size_t        i;
-    size_t        old_buckets;
-    queryterm_t **old_array;
-
-    if ((termmap->buckets * GOOD_RATIO_N) > (termmap->items * GOOD_RATIO_D)) {
-        return;
-    }
-
-    old_array   = termmap->array;
-    old_buckets = termmap->buckets;
-    termmap->buckets *= GROW_RATE;
-    termmap->array = (queryterm_t**)safe_malloc(termmap->buckets * sizeof(void *));
-    for (i = 0; i < old_buckets; i++) {
-        queryterm_t *value = old_array[i];
-        if (value) {
-            size_t pos;
-            get_queryterm_pos(termmap, (char *)value->term, &pos);
-            termmap->array[pos] = value;
-        }
-    }
-    free(old_array);
-    return;
-}
-
-queryterm_t *find_queryterm(queryhash_t *termmap, const char *buf) {
-    size_t pos;
-    int    found;
-
-    found = get_queryterm_pos(termmap, buf, &pos);
-    if (!found) {
-        return (NULL);
-    }
-    return (termmap->array[pos]);
-}
-
-void add_queryterm(queryhash_t *termmap, queryterm_t *buf) {
-    int    found;
-    size_t pos;
-
-    check_queryhash(termmap);
-
-    found = get_queryterm_pos(termmap, buf->term, &pos);
-
-    if (found) {
-        fprintf(stderr, "ERROR: Word exists! Bailing out.\n");
-        exit(EXIT_FAILURE);
-    } else {
-        termmap->array[pos] = buf;
-        termmap->items++;
-    }
-    return;
-}
-
-queryhash_t *load_querymap(char **termv, size_t len) {
-    queryhash_t *map = new_queryhash();
+std::unordered_map<std::string, size_t> load_querymap(char **termv, size_t len) {
+    std::unordered_map<std::string, size_t> map;
 
     for (size_t i = 0; i < len; ++i) {
-        queryterm_t *curr = find_queryterm(map, termv[i]);
-        if (curr != NULL) {
-            ++curr->count;
+        auto curr = map.find(termv[i]);
+        if (curr != map.end()) {
+            ++curr->second;
         } else {
-            curr        = (queryterm_t*)safe_malloc(sizeof(queryterm_t));
-            curr->term  = safe_strdup(termv[i]);
-            curr->count = 1;
-            add_queryterm(map, curr);
+            map[termv[i]] = 1;
         }
     }
 
@@ -821,16 +606,14 @@ static void ffmt(std::stringstream &buf, long double val) {
 
 std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap, int qnum, char **termv, size_t termc) {
     int            tcnt = 0, i = 0;
-    stophash_t *   stopmap  = NULL;
-    queryhash_t *  querymap = NULL;
     query_t *      query    = NULL;
     std::stringstream buf;
 
     term_t *terms = (term_t*)safe_malloc(MAXTERM * sizeof(term_t));
 
     /* pre-retrieval query features */
-    stopmap            = load_stopmap();
-    querymap           = load_querymap(termv, termc);
+    auto stopmap            = load_stopmap();
+    auto querymap           = load_querymap(termv, termc);
     query              = load_query(termv, termc);
     query->len_stopped = q_stopped_len(stopmap, query);
     query->scs_score   = scs_score(query, querymap, termmap, stopmap);
@@ -1505,8 +1288,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
     }
 
     free(terms);
-    destroy_stophash(stopmap);
-    destroy_queryhash(querymap);
     destroy_query(query);
 
     if (!count_done) {
