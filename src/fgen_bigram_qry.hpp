@@ -1,14 +1,13 @@
-#ifndef FGEN_BIGRAM_QRY_H
-#define FGEN_BIGRAM_QRY_H
+#pragma once
+
+#include <unordered_map>
+#include <string>
 
 #include "fgen_term_qry.hpp"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 typedef struct {
-    char *   bigram;
+    std::string   bigram;
     uint64_t cf;
     uint64_t cdf;
     double   geo_mean;
@@ -84,18 +83,6 @@ typedef struct {
     double   pr_score_harmonic_mean;
 } bigram_t;
 
-typedef struct {
-    uint32_t   buckets;
-    uint32_t   items;
-    bigram_t **array;
-} bigramhash_t;
 
-bigramhash_t *load_bigrammap(const char *fname);
-void          destroy_bigramhash(bigramhash_t *bigramhash);
-std::string         fgen_bigram_qry_main(bigramhash_t *bigrammap, int qnum, char **termv, size_t termc);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
+std::unordered_map<std::string, bigram_t> load_bigrammap(const char *fname);
+std::string         fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigrammap, int qnum, char **termv, size_t termc);

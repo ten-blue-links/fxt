@@ -52,14 +52,12 @@ int main(int argc, char **argv) {
 
     // load unigram features
     std::cerr << "loading unigram features...";
-    termhash_t *termmap = NULL;
-    termmap             = load_termmap(unigram_file.c_str());
+    auto termmap   = load_termmap(unigram_file.c_str());
     std::cerr << " done." << std::endl;
 
     // load bigram features
     std::cerr << "loading bigram features...";
-    bigramhash_t *bigrammap = NULL;
-    bigrammap               = load_bigrammap(bigram_file.c_str());
+    auto bigrammap               = load_bigrammap(bigram_file.c_str());
     std::cerr << " done." << std::endl;
 
     for (auto &qry : qtfile.get_queries()) {
@@ -86,9 +84,6 @@ int main(int argc, char **argv) {
             delete[] cstr;
         }
     }
-
-    destroy_termhash(termmap);
-    destroy_bigramhash(bigrammap);
 
     return 0;
 }

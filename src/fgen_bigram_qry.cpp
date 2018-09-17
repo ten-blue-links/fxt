@@ -1,116 +1,15 @@
 #include <sstream>
 #include <iostream>
 #include <iomanip>
+#include <unordered_map>
+#include <string>
+
+#include <unordered_map>
 
 #include "fgen_bigram_qry.hpp"
 
-/* Create a new hash table, with init_size buckets */
-bigramhash_t *new_bigramhash(void) {
-    bigramhash_t *bigramhash;
-
-    bigramhash          = (bigramhash_t *)safe_malloc(sizeof(bigramhash_t));
-    bigramhash->buckets = INITIAL_SIZE;
-    bigramhash->items   = 0;
-    bigramhash->array   = (bigram_t **)safe_malloc(bigramhash->buckets * sizeof(void *));
-    return (bigramhash);
-}
-
-static void delete_bigram(bigram_t *data) {
-    if (data->bigram) {
-        free(data->bigram);
-    }
-    free(data);
-    return;
-}
-
-void destroy_bigramhash(bigramhash_t *bigramhash) {
-    uint32_t  i;
-    bigram_t *value;
-
-    for (i = 0; i < bigramhash->buckets; i++) {
-        if ((value = bigramhash->array[i])) {
-            delete_bigram(value);
-        }
-    }
-    free(bigramhash->array);
-    free(bigramhash);
-    return;
-}
-
-static size_t get_bigram_pos(bigramhash_t *bigrammap, char *buf, size_t *pos) {
-    bigram_t *value;
-    *pos = murmur_hash(buf, bigrammap->buckets);
-
-    do {
-        value = bigrammap->array[*pos];
-        if (!value) {
-            return (false);
-        } else if (strcmp((char *)value->bigram, buf) == 0) {
-            return (true);
-        }
-        *pos += 1;
-        *pos &= (bigrammap->buckets - 1);
-    } while (true);
-
-    return (false);
-}
-
-static void check_bigramhash(bigramhash_t *bigrammap) {
-    size_t     i;
-    size_t     old_buckets;
-    bigram_t **old_array;
-
-    if ((bigrammap->buckets * GOOD_RATIO_N) > (bigrammap->items * GOOD_RATIO_D)) {
-        return;
-    }
-
-    old_array   = bigrammap->array;
-    old_buckets = bigrammap->buckets;
-    bigrammap->buckets *= GROW_RATE;
-    bigrammap->array = (bigram_t **)safe_malloc(bigrammap->buckets * sizeof(void *));
-    for (i = 0; i < old_buckets; i++) {
-        bigram_t *value = old_array[i];
-        if (value) {
-            size_t pos;
-            get_bigram_pos(bigrammap, (char *)value->bigram, &pos);
-            bigrammap->array[pos] = value;
-        }
-    }
-    free(old_array);
-    return;
-}
-
-bigram_t *find_bigram(bigramhash_t *bigrammap, char *buf) {
-    size_t pos;
-    int    found;
-
-    found = get_bigram_pos(bigrammap, buf, &pos);
-    if (!found) {
-        return (NULL);
-    }
-    return (bigrammap->array[pos]);
-}
-
-void add_bigram(bigramhash_t *bigrammap, bigram_t *buf) {
-    int    found;
-    size_t pos;
-
-    check_bigramhash(bigrammap);
-
-    found = get_bigram_pos(bigrammap, buf->bigram, &pos);
-
-    if (found) {
-        fprintf(stderr, "ERROR: Word exists! Bailing out.\n");
-        exit(EXIT_FAILURE);
-    } else {
-        bigrammap->array[pos] = buf;
-        bigrammap->items++;
-    }
-    return;
-}
-
-bigramhash_t *load_bigrammap(const char *fname) {
-    bigramhash_t *map   = new_bigramhash();
+std::unordered_map<std::string, bigram_t> load_bigrammap(const char *fname) {
+    std::unordered_map<std::string, bigram_t> map;
     FILE *        input = NULL;
     char          term_a[1024];
     char          term_b[1024];
@@ -287,12 +186,13 @@ bigramhash_t *load_bigrammap(const char *fname) {
         d_str = safe_strdup(term_a);
         d_str = safe_str_append(d_str, term_b);
         // fprintf(stderr, "bigram str: %s\n", d_str);
-        bigram_t *curr = find_bigram(map, d_str);
-        if (curr != NULL) {
+        // bigram_t *curr = find_bigram(map, d_str);
+        auto it = map.find(d_str);
+        if (it != map.end()) {
             fprintf(stderr, "ERROR: Duplicate bigram <%s>!\n", d_str);
             exit(EXIT_FAILURE);
         } else {
-            curr           = (bigram_t *)safe_malloc(sizeof(bigram_t));
+            bigram_t *curr           = (bigram_t *)safe_malloc(sizeof(bigram_t));
             curr->bigram   = safe_strdup(d_str);
             curr->cf       = cf;
             curr->cdf      = cdf;
@@ -367,7 +267,7 @@ bigramhash_t *load_bigrammap(const char *fname) {
             curr->dfr_score_stddev        = dfr_score_stddev;
             curr->dfr_score_harmonic_mean = dfr_score_harmonic_mean;
 
-            add_bigram(map, curr);
+            map[curr->bigram] = *curr;
         }
         num++;
     }
@@ -464,7 +364,7 @@ static void ffmt(std::stringstream &buf, long double val) {
 }
 
 
-std::string fgen_bigram_qry_main(bigramhash_t *bigrammap, int qnum, char **termv, size_t termc) {
+std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigrammap, int qnum, char **termv, size_t termc) {
     int            tcnt = 0, i = 0;
     int            num_bigrams = termc * termc - termc;
     std::stringstream buf;
@@ -483,75 +383,76 @@ std::string fgen_bigram_qry_main(bigramhash_t *bigrammap, int qnum, char **termv
                 continue;
             bigram       = safe_strdup(termv[j]);
             bigram       = safe_str_append(bigram, termv[k]);
-            bigram_t *ct = find_bigram(bigrammap, bigram);
-            if (ct) {
-                terms[tcnt].bigram                   = ct->bigram;
-                terms[tcnt].cdf                      = ct->cdf;
-                terms[tcnt].cf                       = ct->cf;
-                terms[tcnt].geo_mean                 = ct->geo_mean;
-                terms[tcnt].bm25_median_score        = ct->bm25_median_score;
-                terms[tcnt].bm25_firstq_score        = ct->bm25_firstq_score;
-                terms[tcnt].bm25_thirdq_score        = ct->bm25_thirdq_score;
-                terms[tcnt].bm25_max_score           = ct->bm25_max_score;
-                terms[tcnt].bm25_min_score           = ct->bm25_min_score;
-                terms[tcnt].bm25_mean_score          = ct->bm25_mean_score;
-                terms[tcnt].bm25_score_variance      = ct->bm25_score_variance;
-                terms[tcnt].bm25_score_stddev        = ct->bm25_score_stddev;
-                terms[tcnt].bm25_score_harmonic_mean = ct->bm25_score_harmonic_mean;
-                terms[tcnt].tf_median_score          = ct->tf_median_score;
-                terms[tcnt].tf_firstq_score          = ct->tf_firstq_score;
-                terms[tcnt].tf_thirdq_score          = ct->tf_thirdq_score;
-                terms[tcnt].tf_max_score             = ct->tf_max_score;
-                terms[tcnt].tf_min_score             = ct->tf_min_score;
-                terms[tcnt].tf_mean_score            = ct->tf_mean_score;
-                terms[tcnt].tf_score_variance        = ct->tf_score_variance;
-                terms[tcnt].tf_score_stddev          = ct->tf_score_stddev;
-                terms[tcnt].tf_score_harmonic_mean   = ct->tf_score_harmonic_mean;
-                terms[tcnt].lm_median_score          = ct->lm_median_score;
-                terms[tcnt].lm_firstq_score          = ct->lm_firstq_score;
-                terms[tcnt].lm_thirdq_score          = ct->lm_thirdq_score;
-                terms[tcnt].lm_max_score             = ct->lm_max_score;
-                terms[tcnt].lm_min_score             = ct->lm_min_score;
-                terms[tcnt].lm_mean_score            = ct->lm_mean_score;
-                terms[tcnt].lm_score_variance        = ct->lm_score_variance;
-                terms[tcnt].lm_score_stddev          = ct->lm_score_stddev;
-                terms[tcnt].lm_score_harmonic_mean   = ct->lm_score_harmonic_mean;
-                terms[tcnt].dfr_median_score         = ct->dfr_median_score;
-                terms[tcnt].dfr_firstq_score         = ct->dfr_firstq_score;
-                terms[tcnt].dfr_thirdq_score         = ct->dfr_thirdq_score;
-                terms[tcnt].dfr_max_score            = ct->dfr_max_score;
-                terms[tcnt].dfr_min_score            = ct->dfr_min_score;
-                terms[tcnt].dfr_mean_score           = ct->dfr_mean_score;
-                terms[tcnt].dfr_score_variance       = ct->dfr_score_variance;
-                terms[tcnt].dfr_score_stddev         = ct->dfr_score_stddev;
-                terms[tcnt].dfr_score_harmonic_mean  = ct->dfr_score_harmonic_mean;
-                terms[tcnt].dph_median_score         = ct->dph_median_score;
-                terms[tcnt].dph_firstq_score         = ct->dph_firstq_score;
-                terms[tcnt].dph_thirdq_score         = ct->dph_thirdq_score;
-                terms[tcnt].dph_max_score            = ct->dph_max_score;
-                terms[tcnt].dph_min_score            = ct->dph_min_score;
-                terms[tcnt].dph_mean_score           = ct->dph_mean_score;
-                terms[tcnt].dph_score_variance       = ct->dph_score_variance;
-                terms[tcnt].dph_score_stddev         = ct->dph_score_stddev;
-                terms[tcnt].dph_score_harmonic_mean  = ct->dph_score_harmonic_mean;
-                terms[tcnt].be_median_score          = ct->be_median_score;
-                terms[tcnt].be_firstq_score          = ct->be_firstq_score;
-                terms[tcnt].be_thirdq_score          = ct->be_thirdq_score;
-                terms[tcnt].be_max_score             = ct->be_max_score;
-                terms[tcnt].be_min_score             = ct->be_min_score;
-                terms[tcnt].be_mean_score            = ct->be_mean_score;
-                terms[tcnt].be_score_variance        = ct->be_score_variance;
-                terms[tcnt].be_score_stddev          = ct->be_score_stddev;
-                terms[tcnt].be_score_harmonic_mean   = ct->be_score_harmonic_mean;
-                terms[tcnt].pr_median_score          = ct->pr_median_score;
-                terms[tcnt].pr_firstq_score          = ct->pr_firstq_score;
-                terms[tcnt].pr_thirdq_score          = ct->pr_thirdq_score;
-                terms[tcnt].pr_max_score             = ct->pr_max_score;
-                terms[tcnt].pr_min_score             = ct->pr_min_score;
-                terms[tcnt].pr_mean_score            = ct->pr_mean_score;
-                terms[tcnt].pr_score_variance        = ct->pr_score_variance;
-                terms[tcnt].pr_score_stddev          = ct->pr_score_stddev;
-                terms[tcnt].pr_score_harmonic_mean   = ct->pr_score_harmonic_mean;
+            auto ct = bigrammap.find(bigram);
+            // bigram_t *ct = find_bigram(bigrammap, bigram);
+            if (ct != bigrammap.end()) {
+                terms[tcnt].bigram                   = ct->second.bigram;
+                terms[tcnt].cdf                      = ct->second.cdf;
+                terms[tcnt].cf                       = ct->second.cf;
+                terms[tcnt].geo_mean                 = ct->second.geo_mean;
+                terms[tcnt].bm25_median_score        = ct->second.bm25_median_score;
+                terms[tcnt].bm25_firstq_score        = ct->second.bm25_firstq_score;
+                terms[tcnt].bm25_thirdq_score        = ct->second.bm25_thirdq_score;
+                terms[tcnt].bm25_max_score           = ct->second.bm25_max_score;
+                terms[tcnt].bm25_min_score           = ct->second.bm25_min_score;
+                terms[tcnt].bm25_mean_score          = ct->second.bm25_mean_score;
+                terms[tcnt].bm25_score_variance      = ct->second.bm25_score_variance;
+                terms[tcnt].bm25_score_stddev        = ct->second.bm25_score_stddev;
+                terms[tcnt].bm25_score_harmonic_mean = ct->second.bm25_score_harmonic_mean;
+                terms[tcnt].tf_median_score          = ct->second.tf_median_score;
+                terms[tcnt].tf_firstq_score          = ct->second.tf_firstq_score;
+                terms[tcnt].tf_thirdq_score          = ct->second.tf_thirdq_score;
+                terms[tcnt].tf_max_score             = ct->second.tf_max_score;
+                terms[tcnt].tf_min_score             = ct->second.tf_min_score;
+                terms[tcnt].tf_mean_score            = ct->second.tf_mean_score;
+                terms[tcnt].tf_score_variance        = ct->second.tf_score_variance;
+                terms[tcnt].tf_score_stddev          = ct->second.tf_score_stddev;
+                terms[tcnt].tf_score_harmonic_mean   = ct->second.tf_score_harmonic_mean;
+                terms[tcnt].lm_median_score          = ct->second.lm_median_score;
+                terms[tcnt].lm_firstq_score          = ct->second.lm_firstq_score;
+                terms[tcnt].lm_thirdq_score          = ct->second.lm_thirdq_score;
+                terms[tcnt].lm_max_score             = ct->second.lm_max_score;
+                terms[tcnt].lm_min_score             = ct->second.lm_min_score;
+                terms[tcnt].lm_mean_score            = ct->second.lm_mean_score;
+                terms[tcnt].lm_score_variance        = ct->second.lm_score_variance;
+                terms[tcnt].lm_score_stddev          = ct->second.lm_score_stddev;
+                terms[tcnt].lm_score_harmonic_mean   = ct->second.lm_score_harmonic_mean;
+                terms[tcnt].dfr_median_score         = ct->second.dfr_median_score;
+                terms[tcnt].dfr_firstq_score         = ct->second.dfr_firstq_score;
+                terms[tcnt].dfr_thirdq_score         = ct->second.dfr_thirdq_score;
+                terms[tcnt].dfr_max_score            = ct->second.dfr_max_score;
+                terms[tcnt].dfr_min_score            = ct->second.dfr_min_score;
+                terms[tcnt].dfr_mean_score           = ct->second.dfr_mean_score;
+                terms[tcnt].dfr_score_variance       = ct->second.dfr_score_variance;
+                terms[tcnt].dfr_score_stddev         = ct->second.dfr_score_stddev;
+                terms[tcnt].dfr_score_harmonic_mean  = ct->second.dfr_score_harmonic_mean;
+                terms[tcnt].dph_median_score         = ct->second.dph_median_score;
+                terms[tcnt].dph_firstq_score         = ct->second.dph_firstq_score;
+                terms[tcnt].dph_thirdq_score         = ct->second.dph_thirdq_score;
+                terms[tcnt].dph_max_score            = ct->second.dph_max_score;
+                terms[tcnt].dph_min_score            = ct->second.dph_min_score;
+                terms[tcnt].dph_mean_score           = ct->second.dph_mean_score;
+                terms[tcnt].dph_score_variance       = ct->second.dph_score_variance;
+                terms[tcnt].dph_score_stddev         = ct->second.dph_score_stddev;
+                terms[tcnt].dph_score_harmonic_mean  = ct->second.dph_score_harmonic_mean;
+                terms[tcnt].be_median_score          = ct->second.be_median_score;
+                terms[tcnt].be_firstq_score          = ct->second.be_firstq_score;
+                terms[tcnt].be_thirdq_score          = ct->second.be_thirdq_score;
+                terms[tcnt].be_max_score             = ct->second.be_max_score;
+                terms[tcnt].be_min_score             = ct->second.be_min_score;
+                terms[tcnt].be_mean_score            = ct->second.be_mean_score;
+                terms[tcnt].be_score_variance        = ct->second.be_score_variance;
+                terms[tcnt].be_score_stddev          = ct->second.be_score_stddev;
+                terms[tcnt].be_score_harmonic_mean   = ct->second.be_score_harmonic_mean;
+                terms[tcnt].pr_median_score          = ct->second.pr_median_score;
+                terms[tcnt].pr_firstq_score          = ct->second.pr_firstq_score;
+                terms[tcnt].pr_thirdq_score          = ct->second.pr_thirdq_score;
+                terms[tcnt].pr_max_score             = ct->second.pr_max_score;
+                terms[tcnt].pr_min_score             = ct->second.pr_min_score;
+                terms[tcnt].pr_mean_score            = ct->second.pr_mean_score;
+                terms[tcnt].pr_score_variance        = ct->second.pr_score_variance;
+                terms[tcnt].pr_score_stddev          = ct->second.pr_score_stddev;
+                terms[tcnt].pr_score_harmonic_mean   = ct->second.pr_score_harmonic_mean;
                 tcnt++;
             } else {
                 // printf ("TERM=%s not found.\n", term);

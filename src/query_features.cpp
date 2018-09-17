@@ -12,6 +12,7 @@
  *   * AvICTF on non-stopwords in the query
  */
 
+#include <unordered_map>
 #include <float.h>
 #include <math.h>
 #include <stdint.h>
@@ -69,22 +70,22 @@ int q_stopped_len(stophash_t *map, query_t *query) {
  * He and Ounis. Inferring Query Performance Using Pre-retrieval Predictors,
  * SPIRE 2004.
  */
-void gamma1(query_t *q, termhash_t *termmap, stophash_t *stopmap) {
+void gamma1(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap) {
     size_t i;
     double avg = 0.0, sum = 0.0, sum_sqrs = 0.0, variance = 0.0;
     double std_dev = 0.0, idf = 0.0;
 
     for (i = 0; i < q->len; i++) {
         char *  term = q->terms[i];
-        term_t *ct   = find_term(termmap, term);
-        if (!ct) {
+        auto ct   = termmap.find(term);
+        if (ct == termmap.end()) {
             continue;
         }
         if (is_stopword(stopmap, term)) {
             continue;
         }
 
-        idf = (log2(total_docs + 0.5) / ct->cdf) / log2(total_docs + 1);
+        idf = (log2(total_docs + 0.5) / ct->second.cdf) / log2(total_docs + 1);
         sum += idf;
         sum_sqrs += idf * idf;
     }
@@ -107,25 +108,25 @@ void gamma1(query_t *q, termhash_t *termmap, stophash_t *stopmap) {
  * He and Ounis. Inferring Query Performance Using Pre-retrieval Predictors,
  * SPIRE 2004.
  */
-double gamma2(query_t *q, termhash_t *termmap, stophash_t *stopmap) {
+double gamma2(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap) {
     size_t i;
     double min = DBL_MAX, max = 0.0;
 
     for (i = 0; i < q->len; i++) {
         char *  term = q->terms[i];
-        term_t *ct   = find_term(termmap, term);
-        if (!ct) {
+        auto ct   = termmap.find(term);
+        if (ct == termmap.end()) {
             continue;
         }
         if (is_stopword(stopmap, term)) {
             continue;
         }
 
-        if (ct->tf_min_score < min) {
-            min = ct->tf_min_score;
+        if (ct->second.tf_min_score < min) {
+            min = ct->second.tf_min_score;
         }
-        if (ct->tf_max_score > max) {
-            max = ct->tf_max_score;
+        if (ct->second.tf_max_score > max) {
+            max = ct->second.tf_max_score;
         }
     }
 
@@ -138,7 +139,7 @@ double gamma2(query_t *q, termhash_t *termmap, stophash_t *stopmap) {
  * He and Ounis. Inferring Query Performance Using Pre-retrieval Predictors,
  * SPIRE 2004.
  */
-double scs_score(query_t *q, queryhash_t *qmap, termhash_t *termmap, stophash_t *stopmap) {
+double scs_score(query_t *q, queryhash_t *qmap, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap) {
     size_t i;
     double score = 0.0;
     double p_ml  = 0.0;
@@ -156,13 +157,13 @@ double scs_score(query_t *q, queryhash_t *qmap, termhash_t *termmap, stophash_t 
         if (is_stopword(stopmap, term)) {
             continue;
         }
-        term_t *ct = find_term(termmap, term);
-        if (!ct) {
+        auto ct   = termmap.find(term);
+        if (ct == termmap.end()) {
             continue;
         }
 
         p_ml = (double)qt->count / q->len_stopped;
-        score += p_ml * log2(p_ml / ((double)ct->cf / total_terms));
+        score += p_ml * log2(p_ml / ((double)ct->second.cf / total_terms));
     }
 
     return score;
@@ -175,21 +176,21 @@ double scs_score(query_t *q, queryhash_t *qmap, termhash_t *termmap, stophash_t 
  * Glasgow at the Web Track: Dynamic application of hyperlink analysis using
  * the query scope.
  */
-double query_scope(query_t *q, termhash_t *termmap, stophash_t *stopmap) {
+double query_scope(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap) {
     size_t   i;
     uint64_t sum_cdf = 0;
 
     for (i = 0; i < q->len; i++) {
         char *  term = q->terms[i];
-        term_t *ct   = find_term(termmap, term);
-        if (!ct) {
+        auto ct   = termmap.find(term);
+        if (ct == termmap.end()) {
             continue;
         }
         if (is_stopword(stopmap, term)) {
             continue;
         }
 
-        sum_cdf += ct->cdf;
+        sum_cdf += ct->second.cdf;
     }
 
     return (double)sum_cdf / total_docs;
@@ -198,22 +199,22 @@ double query_scope(query_t *q, termhash_t *termmap, stophash_t *stopmap) {
 /*
  * Compute AvIDF for the non-stopwords of the query and the full query.
  */
-void avidf(query_t *q, termhash_t *termmap, stophash_t *stopmap) {
+void avidf(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap) {
     size_t i;
     double idf = 0.0, idf_full = 0.0;
 
     for (i = 0; i < q->len; i++) {
         char *  term = q->terms[i];
-        term_t *ct   = find_term(termmap, term);
-        if (!ct) {
+        auto ct   = termmap.find(term);
+        if (ct == termmap.end()) {
             continue;
         }
         if (is_stopword(stopmap, term)) {
-            idf_full += (log2(total_docs + 0.5) / ct->cdf) / log2(total_docs + 1);
+            idf_full += (log2(total_docs + 0.5) / ct->second.cdf) / log2(total_docs + 1);
             continue;
         }
 
-        idf += (log2(total_docs + 0.5) / ct->cdf) / log2(total_docs + 1);
+        idf += (log2(total_docs + 0.5) / ct->second.cdf) / log2(total_docs + 1);
     }
 
     if (q->len_stopped) {
@@ -225,22 +226,22 @@ void avidf(query_t *q, termhash_t *termmap, stophash_t *stopmap) {
 /*
  * Compute AvICTF for the non-stopwords of the query and the full query.
  */
-void avictf(query_t *q, termhash_t *termmap, stophash_t *stopmap) {
+void avictf(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap) {
     size_t i;
     double ictf = 0.0, ictf_full = 0.0;
 
     for (i = 0; i < q->len; i++) {
         char *  term = q->terms[i];
-        term_t *ct   = find_term(termmap, term);
-        if (!ct) {
+        auto ct   = termmap.find(term);
+        if (ct == termmap.end()) {
             continue;
         }
         if (is_stopword(stopmap, term)) {
-            ictf_full += (log2(total_terms + 0.5) / ct->cf) / log2(total_terms + 1);
+            ictf_full += (log2(total_terms + 0.5) / ct->second.cf) / log2(total_terms + 1);
             continue;
         }
 
-        ictf += (log2(total_terms + 0.5) / ct->cf) / log2(total_terms + 1);
+        ictf += (log2(total_terms + 0.5) / ct->second.cf) / log2(total_terms + 1);
     }
 
     if (q->len_stopped) {

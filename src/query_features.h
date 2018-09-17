@@ -52,17 +52,17 @@ void query_features_init(uint64_t num_docs, uint64_t num_terms);
 
 int q_stopped_len(stophash_t *map, query_t *query);
 
-double scs_score(query_t *q, queryhash_t *qmap, termhash_t *termmap, stophash_t *stopmap);
+double scs_score(query_t *q, queryhash_t *qmap, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap);
 
-double query_scope(query_t *q, termhash_t *termmap, stophash_t *stopmap);
+double query_scope(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap);
 
-void gamma1(query_t *q, termhash_t *termmap, stophash_t *stopmap);
+void gamma1(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap);
 
-double gamma2(query_t *q, termhash_t *termmap, stophash_t *stopmap);
+double gamma2(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap);
 
-void avidf(query_t *q, termhash_t *termmap, stophash_t *stopmap);
+void avidf(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap);
 
-void avictf(query_t *q, termhash_t *termmap, stophash_t *stopmap);
+void avictf(query_t *q, std::unordered_map<std::string, term_t> &termmap, stophash_t *stopmap);
 
 #ifdef __cplusplus
 }
