@@ -1,17 +1,15 @@
 #pragma once
 #include <set>
 #include <vector>
+#include <unordered_map>
+#include <float.h>
+#include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-// typedef struct {
-//     std::string term;
-//     int   count;
-// } queryterm_t;
-
-// typedef struct {
-//     uint32_t      buckets;
-//     uint32_t      items;
-//     queryterm_t **array;
-// } queryhash_t;
+#include "fgen_term_qry.hpp"
 
 typedef struct {
     std::string qry;
