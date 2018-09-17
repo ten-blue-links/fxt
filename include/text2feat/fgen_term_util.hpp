@@ -1,12 +1,12 @@
 #pragma once
 
-#include <set>
 #include "text2feat/stopwords.h"
+#include <set>
 
-const char **stopwords = fgen_krovetz_stopwords;
+const char **         stopwords = fgen_krovetz_stopwords;
 std::set<std::string> load_stopmap(void) {
     std::set<std::string> set;
-    int         i, num = 0;
+    int                   i, num = 0;
 
     for (i = 0; stopwords[i] != NULL; i++) {
         auto curr = set.find(stopwords[i]);
@@ -25,12 +25,12 @@ std::set<std::string> load_stopmap(void) {
 
 std::unordered_map<std::string, term_t> load_termmap(const char *fname) {
     std::unordered_map<std::string, term_t> map;
-    FILE *      input = NULL;
-    char        d_str[1024];
-    uint64_t    cf;
-    uint64_t    cdf;
-    double      geo_mean;
-    int         num = 0;
+    FILE *                                  input = NULL;
+    char                                    d_str[1024];
+    uint64_t                                cf;
+    uint64_t                                cdf;
+    double                                  geo_mean;
+    int                                     num = 0;
 
     double bm25_median_score;
     double bm25_firstq_score;

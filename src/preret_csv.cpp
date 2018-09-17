@@ -52,12 +52,12 @@ int main(int argc, char **argv) {
 
     // load unigram features
     std::cerr << "loading unigram features...";
-    auto termmap   = load_termmap(unigram_file.c_str());
+    auto termmap = load_termmap(unigram_file.c_str());
     std::cerr << " done." << std::endl;
 
     // load bigram features
     std::cerr << "loading bigram features...";
-    auto bigrammap               = load_termmap(bigram_file.c_str());
+    auto bigrammap = load_termmap(bigram_file.c_str());
     std::cerr << " done." << std::endl;
 
     for (auto &qry : qtfile.get_queries()) {

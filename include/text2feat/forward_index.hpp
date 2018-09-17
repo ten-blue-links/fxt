@@ -69,14 +69,14 @@ class Field {
 };
 
 class Document {
-    std::vector<uint16_t>         m_fields;
-    UrlStats                      m_url_stats;
-    size_t                        m_num_terms = 0;
-    std::vector<uint32_t>         m_terms;
-    std::vector<uint32_t>         m_unique_terms;
-    std::vector<uint32_t>         m_freqs;
-    std::vector<std::vector<uint32_t>>        m_field_freqs;
-    std::map<uint16_t, Field>     m_field_stats;
+    std::vector<uint16_t>              m_fields;
+    UrlStats                           m_url_stats;
+    size_t                             m_num_terms = 0;
+    std::vector<uint32_t>              m_terms;
+    std::vector<uint32_t>              m_unique_terms;
+    std::vector<uint32_t>              m_freqs;
+    std::vector<std::vector<uint32_t>> m_field_freqs;
+    std::map<uint16_t, Field>          m_field_stats;
 
    public:
     Document() = default;
@@ -89,9 +89,7 @@ class Document {
 
     uint32_t length() const { return m_terms.size(); }
 
-    const std::vector<uint32_t> terms() const {
-        return m_terms;
-    }
+    const std::vector<uint32_t> terms() const { return m_terms; }
 
     void set_fields(const std::vector<uint16_t> &fields) {
         m_fields = fields;
@@ -100,8 +98,8 @@ class Document {
 
     void set_terms(const std::vector<uint32_t> &terms) {
         std::vector<uint32_t> tmp;
-        for(auto&& t : terms) {
-            auto it = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), t);
+        for (auto &&t : terms) {
+            auto it  = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), t);
             auto idx = std::distance(m_unique_terms.begin(), it);
             tmp.push_back(idx);
         }
@@ -111,7 +109,6 @@ class Document {
     void set_unique_terms(const std::vector<uint32_t> &terms) {
         m_unique_terms = terms;
         m_freqs.resize(m_unique_terms.size());
-
     }
 
     uint32_t freq(uint32_t term) const {
@@ -123,8 +120,8 @@ class Document {
         return m_freqs.at(idx);
     }
     void set_freq(uint32_t term, uint32_t freq) {
-        auto it = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
-        auto idx = std::distance(m_unique_terms.begin(), it);
+        auto it      = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
+        auto idx     = std::distance(m_unique_terms.begin(), it);
         m_freqs[idx] = freq;
     }
 
@@ -133,19 +130,20 @@ class Document {
         if (it == m_unique_terms.end()) {
             return 0;
         }
-        auto idx = std::distance(m_unique_terms.begin(), it);
+        auto idx  = std::distance(m_unique_terms.begin(), it);
         auto f_it = std::find(m_fields.begin(), m_fields.end(), field_id);
         if (f_it == m_fields.end()) {
             return 0;
         }
         auto idx2 = std::distance(m_fields.begin(), f_it);
-        if(idx >= m_field_freqs.at(idx2).size()) return 0;
+        if (idx >= m_field_freqs.at(idx2).size())
+            return 0;
         return m_field_freqs.at(idx2).at(idx);
     }
 
     void set_freq(uint16_t field_id, uint32_t term, uint32_t freq) {
-        auto it = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
-        auto idx = std::distance(m_unique_terms.begin(), it);
+        auto it   = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
+        auto idx  = std::distance(m_unique_terms.begin(), it);
         auto f_it = std::find(m_fields.begin(), m_fields.end(), field_id);
         auto idx2 = std::distance(m_fields.begin(), f_it);
         m_field_freqs[idx2].resize(m_unique_terms.size());
@@ -212,30 +210,31 @@ class Document {
 
         {
             std::vector<uint32_t> buffer(m_num_terms);
-            size_t compressedsize = m_unique_terms.size();
+            size_t                compressedsize = m_unique_terms.size();
             Delta::deltaSIMD(m_unique_terms.data(), m_unique_terms.size());
-            codec.encodeArray(m_unique_terms.data(), m_unique_terms.size(), buffer.data(), compressedsize);
+            codec.encodeArray(
+                m_unique_terms.data(), m_unique_terms.size(), buffer.data(), compressedsize);
             buffer.resize(compressedsize);
             m_unique_terms = buffer;
         }
         {
             std::vector<uint32_t> buffer(m_num_terms);
-            size_t compressedsize = m_terms.size();
+            size_t                compressedsize = m_terms.size();
             codec.encodeArray(m_terms.data(), m_terms.size(), buffer.data(), compressedsize);
             buffer.resize(compressedsize);
             m_terms = buffer;
         }
         {
             std::vector<uint32_t> buffer(m_num_terms);
-            size_t compressedsize = m_unique_terms.size();
+            size_t                compressedsize = m_unique_terms.size();
             codec.encodeArray(m_freqs.data(), m_freqs.size(), buffer.data(), compressedsize);
             buffer.resize(compressedsize);
             m_freqs = buffer;
         }
         {
-            for(auto&& ff : m_field_freqs) {
+            for (auto &&ff : m_field_freqs) {
                 std::vector<uint32_t> buffer(m_num_terms);
-                size_t compressedsize = ff.size();
+                size_t                compressedsize = ff.size();
                 codec.encodeArray(ff.data(), ff.size(), buffer.data(), compressedsize);
                 buffer.resize(compressedsize);
                 ff = buffer;
@@ -246,45 +245,52 @@ class Document {
     void decompress() {
         {
             std::vector<uint32_t> terms(m_num_terms);
-            size_t recoveredsize = terms.size();
-            codec.decodeArray(m_unique_terms.data(), m_unique_terms.size(), terms.data(), recoveredsize);
+            size_t                recoveredsize = terms.size();
+            codec.decodeArray(
+                m_unique_terms.data(), m_unique_terms.size(), terms.data(), recoveredsize);
             terms.resize(recoveredsize);
             Delta::inverseDeltaSIMD(terms.data(), terms.size());
-            m_unique_terms =  terms;
+            m_unique_terms = terms;
         }
         {
             std::vector<uint32_t> terms(m_num_terms);
-            size_t recoveredsize = terms.size();
+            size_t                recoveredsize = terms.size();
             codec.decodeArray(m_terms.data(), m_terms.size(), terms.data(), recoveredsize);
             terms.resize(recoveredsize);
             std::vector<uint32_t> tmp;
-            for(auto&& i : terms) {
+            for (auto &&i : terms) {
                 tmp.push_back(m_unique_terms[i]);
             }
             m_terms = tmp;
         }
         {
             std::vector<uint32_t> freqs(m_num_terms);
-            size_t recoveredsize = freqs.size();
+            size_t                recoveredsize = freqs.size();
             codec.decodeArray(m_freqs.data(), m_freqs.size(), freqs.data(), recoveredsize);
             freqs.resize(recoveredsize);
-            m_freqs =  freqs;
+            m_freqs = freqs;
         }
         {
-            for(auto&& ff : m_field_freqs) {
+            for (auto &&ff : m_field_freqs) {
                 std::vector<uint32_t> freqs(m_num_terms);
-                size_t recoveredsize = freqs.size();
+                size_t                recoveredsize = freqs.size();
                 codec.decodeArray(ff.data(), ff.size(), freqs.data(), recoveredsize);
                 freqs.resize(recoveredsize);
-                ff =  freqs;
+                ff = freqs;
             }
         }
     }
 
-
     template <class Archive>
     void serialize(Archive &archive) {
-        archive(m_fields, m_url_stats, m_num_terms, m_terms, m_unique_terms, m_freqs, m_field_freqs, m_field_stats);
+        archive(m_fields,
+                m_url_stats,
+                m_num_terms,
+                m_terms,
+                m_unique_terms,
+                m_freqs,
+                m_field_freqs,
+                m_field_stats);
     }
 };
 

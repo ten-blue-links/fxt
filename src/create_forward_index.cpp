@@ -60,21 +60,20 @@ int main(int argc, char const *argv[]) {
     while (!iter->finished()) {
         std::vector<std::future<void>> futures;
 
-        indri::index::TermList *list       = iter->currentEntry();
-        auto &                  doc_terms  = list->terms();
+        indri::index::TermList *list      = iter->currentEntry();
+        auto &                  doc_terms = list->terms();
         Document                document;
 
-        futures.push_back( std::async([&]() {
+        futures.push_back(std::async([&]() {
             auto url = indri_env.documentMetadata(std::vector<lemur::api::DOCID_T>{docid}, "url");
             document.set_url_stats({url_slash_count(url.at(0)), url.at(0).size()});
         }));
 
-
-        std::set<uint32_t> unique_terms_set(doc_terms.begin(), doc_terms.end());
+        std::set<uint32_t>    unique_terms_set(doc_terms.begin(), doc_terms.end());
         std::vector<uint32_t> unique_terms(unique_terms_set.begin(), unique_terms_set.end());
         document.set_unique_terms(unique_terms);
 
-        futures.push_back( std::async([&]() {
+        futures.push_back(std::async([&]() {
             std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
             document.set_terms(terms);
             std::unordered_map<uint32_t, uint32_t> freqs;
@@ -85,14 +84,12 @@ int main(int argc, char const *argv[]) {
             for (auto &f : freqs) {
                 document.set_freq(f.first, f.second);
             }
-
         }));
 
         auto fields = list->fields();
         for (auto &f : fields) {
             document.set_tag_count(f.id, document.tag_count(f.id) + 1);
         }
-
 
         std::vector<uint16_t> f;
         for (const std::string &field_str : _fields) {
@@ -108,7 +105,6 @@ int main(int argc, char const *argv[]) {
                 // field is not indexed
                 continue;
             }
-
 
             for (auto &f : fields) {
                 if (f.id != static_cast<size_t>(field_id)) {
@@ -132,15 +128,14 @@ int main(int argc, char const *argv[]) {
                     field_freqs[f.id][doc_terms[i]] += 1;
                 }
             }
-
         }
-        for(auto&& freq : field_freqs) {
-            for(auto&& f : freq.second) {
+        for (auto &&freq : field_freqs) {
+            for (auto &&f : freq.second) {
                 document.set_freq(freq.first, f.first, f.second);
             }
         }
 
-        for(auto &e : futures) {
+        for (auto &e : futures) {
             e.get();
         }
 

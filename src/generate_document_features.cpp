@@ -135,12 +135,11 @@ int main(int argc, char **argv) {
 
             doc_entry doc_entry;
 
-            auto terms = doc_idx.terms();
+            auto                                                terms = doc_idx.terms();
             std::unordered_map<uint32_t, std::vector<uint32_t>> positions;
             for (size_t i = 0; i < terms.size(); i++) {
                 positions[terms[i]].push_back(i);
             }
-
 
             // set url_slash_count as feature for training
             doc_entry.url_slash_count = doc_idx.url_slash_count();

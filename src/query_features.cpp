@@ -12,13 +12,10 @@
  *   * AvICTF on non-stopwords in the query
  */
 
+#include <cmath>
+#include <limits>
+#include <string>
 #include <unordered_map>
-#include <float.h>
-#include <math.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "fgen_term_qry.hpp"
 #include "query_features.h"
@@ -26,8 +23,8 @@
 #define ZETA 1.960
 
 static int is_stopword(std::set<std::string> &set, const std::string &term) {
-    int         ret = 0;
-    auto w = set.find(term);
+    int  ret = 0;
+    auto w   = set.find(term);
     if (w != set.end()) {
         ret = 1;
     }
@@ -65,14 +62,16 @@ int q_stopped_len(std::set<std::string> &set, query_t &query) {
  * He and Ounis. Inferring Query Performance Using Pre-retrieval Predictors,
  * SPIRE 2004.
  */
-void gamma1(query_t &q, std::unordered_map<std::string, term_t> &termmap, std::set<std::string> &set) {
+void gamma1(query_t &                                q,
+            std::unordered_map<std::string, term_t> &termmap,
+            std::set<std::string> &                  set) {
     size_t i;
     double avg = 0.0, sum = 0.0, sum_sqrs = 0.0, variance = 0.0;
     double std_dev = 0.0, idf = 0.0;
 
     for (i = 0; i < q.len; i++) {
-        std::string  term = q.terms[i];
-        auto ct   = termmap.find(term);
+        std::string term = q.terms[i];
+        auto        ct   = termmap.find(term);
         if (ct == termmap.end()) {
             continue;
         }
@@ -80,7 +79,7 @@ void gamma1(query_t &q, std::unordered_map<std::string, term_t> &termmap, std::s
             continue;
         }
 
-        idf = (log2(total_docs + 0.5) / ct->second.cdf) / log2(total_docs + 1);
+        idf = (std::log2(total_docs + 0.5) / ct->second.cdf) / std::log2(total_docs + 1);
         sum += idf;
         sum_sqrs += idf * idf;
     }
@@ -103,13 +102,16 @@ void gamma1(query_t &q, std::unordered_map<std::string, term_t> &termmap, std::s
  * He and Ounis. Inferring Query Performance Using Pre-retrieval Predictors,
  * SPIRE 2004.
  */
-double gamma2(query_t &q, std::unordered_map<std::string, term_t> &termmap, std::set<std::string> &set) {
+double gamma2(query_t &                                q,
+              std::unordered_map<std::string, term_t> &termmap,
+              std::set<std::string> &                  set) {
     size_t i;
-    double min = DBL_MAX, max = 0.0;
+    double min = std::numeric_limits<double>::max();
+    double max = 0.0;
 
     for (i = 0; i < q.len; i++) {
-        std::string  term = q.terms[i];
-        auto ct   = termmap.find(term);
+        std::string term = q.terms[i];
+        auto        ct   = termmap.find(term);
         if (ct == termmap.end()) {
             continue;
         }
@@ -134,7 +136,10 @@ double gamma2(query_t &q, std::unordered_map<std::string, term_t> &termmap, std:
  * He and Ounis. Inferring Query Performance Using Pre-retrieval Predictors,
  * SPIRE 2004.
  */
-double scs_score(query_t &q, std::unordered_map<std::string, size_t> &qmap, std::unordered_map<std::string, term_t> &termmap, std::set<std::string> &set) {
+double scs_score(query_t &                                q,
+                 std::unordered_map<std::string, size_t> &qmap,
+                 std::unordered_map<std::string, term_t> &termmap,
+                 std::set<std::string> &                  set) {
     size_t i;
     double score = 0.0;
     double p_ml  = 0.0;
@@ -145,20 +150,20 @@ double scs_score(query_t &q, std::unordered_map<std::string, size_t> &qmap, std:
 
     for (i = 0; i < q.len; i++) {
         std::string term = q.terms[i];
-        auto qt = qmap.find(term);
+        auto        qt   = qmap.find(term);
         if (qt == qmap.end()) {
             continue;
         }
         if (is_stopword(set, term)) {
             continue;
         }
-        auto ct   = termmap.find(term);
+        auto ct = termmap.find(term);
         if (ct == termmap.end()) {
             continue;
         }
 
         p_ml = (double)qt->second / q.len_stopped;
-        score += p_ml * log2(p_ml / ((double)ct->second.cf / total_terms));
+        score += p_ml * std::log2(p_ml / ((double)ct->second.cf / total_terms));
     }
 
     return score;
@@ -171,13 +176,15 @@ double scs_score(query_t &q, std::unordered_map<std::string, size_t> &qmap, std:
  * Glasgow at the Web Track: Dynamic application of hyperlink analysis using
  * the query scope.
  */
-double query_scope(query_t &q, std::unordered_map<std::string, term_t> &termmap, std::set<std::string> &set) {
+double query_scope(query_t &                                q,
+                   std::unordered_map<std::string, term_t> &termmap,
+                   std::set<std::string> &                  set) {
     size_t   i;
     uint64_t sum_cdf = 0;
 
     for (i = 0; i < q.len; i++) {
-        std::string  term = q.terms[i];
-        auto ct   = termmap.find(term);
+        std::string term = q.terms[i];
+        auto        ct   = termmap.find(term);
         if (ct == termmap.end()) {
             continue;
         }
@@ -194,22 +201,24 @@ double query_scope(query_t &q, std::unordered_map<std::string, term_t> &termmap,
 /*
  * Compute AvIDF for the non-stopwords of the query and the full query.
  */
-void avidf(query_t &q, std::unordered_map<std::string, term_t> &termmap, std::set<std::string> &set) {
+void avidf(query_t &                                q,
+           std::unordered_map<std::string, term_t> &termmap,
+           std::set<std::string> &                  set) {
     size_t i;
     double idf = 0.0, idf_full = 0.0;
 
     for (i = 0; i < q.len; i++) {
-        std::string  term = q.terms[i];
-        auto ct   = termmap.find(term);
+        std::string term = q.terms[i];
+        auto        ct   = termmap.find(term);
         if (ct == termmap.end()) {
             continue;
         }
         if (is_stopword(set, term)) {
-            idf_full += (log2(total_docs + 0.5) / ct->second.cdf) / log2(total_docs + 1);
+            idf_full += (std::log2(total_docs + 0.5) / ct->second.cdf) / std::log2(total_docs + 1);
             continue;
         }
 
-        idf += (log2(total_docs + 0.5) / ct->second.cdf) / log2(total_docs + 1);
+        idf += (std::log2(total_docs + 0.5) / ct->second.cdf) / std::log2(total_docs + 1);
     }
 
     if (q.len_stopped) {
@@ -221,22 +230,25 @@ void avidf(query_t &q, std::unordered_map<std::string, term_t> &termmap, std::se
 /*
  * Compute AvICTF for the non-stopwords of the query and the full query.
  */
-void avictf(query_t &q, std::unordered_map<std::string, term_t> &termmap, std::set<std::string> &set) {
+void avictf(query_t &                                q,
+            std::unordered_map<std::string, term_t> &termmap,
+            std::set<std::string> &                  set) {
     size_t i;
     double ictf = 0.0, ictf_full = 0.0;
 
     for (i = 0; i < q.len; i++) {
-        std::string  term = q.terms[i];
-        auto ct   = termmap.find(term);
+        std::string term = q.terms[i];
+        auto        ct   = termmap.find(term);
         if (ct == termmap.end()) {
             continue;
         }
         if (is_stopword(set, term)) {
-            ictf_full += (log2(total_terms + 0.5) / ct->second.cf) / log2(total_terms + 1);
+            ictf_full +=
+                (std::log2(total_terms + 0.5) / ct->second.cf) / std::log2(total_terms + 1);
             continue;
         }
 
-        ictf += (log2(total_terms + 0.5) / ct->second.cf) / log2(total_terms + 1);
+        ictf += (std::log2(total_terms + 0.5) / ct->second.cf) / std::log2(total_terms + 1);
     }
 
     if (q.len_stopped) {

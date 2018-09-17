@@ -1,19 +1,15 @@
 #pragma once
 
-#include <unordered_map>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "fgen_term_qry.hpp"
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <unordered_map>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <unordered_map>
-#include <sstream>
-
 
 static bool count_done    = false;
 static int  feature_count = 0;
@@ -24,11 +20,12 @@ static void ffmt(std::stringstream &buf, long double val) {
     buf << "," << std::fixed << std::setprecision(5) << val;
 }
 
-
-
-std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigrammap, int qnum, char **termv, size_t termc) {
-    int            tcnt = 0, i = 0;
-    int            num_bigrams = termc * termc - termc;
+std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigrammap,
+                                 int                                      qnum,
+                                 char **                                  termv,
+                                 size_t                                   termc) {
+    int               tcnt = 0, i = 0;
+    int               num_bigrams = termc * termc - termc;
     std::stringstream buf;
 
     if (MAXTERM < num_bigrams) {
@@ -42,8 +39,8 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
         for (size_t k = 0; k < termc; ++k) {
             if (j == k)
                 continue;
-            std::string  bigram       = std::string(termv[j]) + "," + std::string(termv[k]);
-            auto ct = bigrammap.find(bigram);
+            std::string bigram = std::string(termv[j]) + "," + std::string(termv[k]);
+            auto        ct     = bigrammap.find(bigram);
             if (ct != bigrammap.end()) {
                 terms[tcnt].term                     = ct->second.term;
                 terms[tcnt].cdf                      = ct->second.cdf;
@@ -141,15 +138,23 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
             double      avar    = 0.0;
             double      aiqr    = 0.0;
 
-            double   min = DBL_MAX, max = 0.0;
-            double   min_mean = DBL_MAX, max_mean = 0.0;
-            double   min_hmean = DBL_MAX, max_hmean = 0.0;
-            double   min_median = DBL_MAX, max_median = 0.0;
-            double   min_fq = DBL_MAX, max_fq = 0.0;
-            double   min_tq = DBL_MAX, max_tq = 0.0;
-            double   min_var = DBL_MAX, max_var = 0.0;
+            double   min        = std::numeric_limits<double>::max();
+            double   max        = 0.0;
+            double   min_mean   = std::numeric_limits<double>::max();
+            double   max_mean   = 0.0;
+            double   min_hmean  = std::numeric_limits<double>::max();
+            double   max_hmean  = 0.0;
+            double   min_median = std::numeric_limits<double>::max();
+            double   max_median = 0.0;
+            double   min_fq     = std::numeric_limits<double>::max();
+            double   max_fq     = 0.0;
+            double   min_tq     = std::numeric_limits<double>::max();
+            double   max_tq     = 0.0;
+            double   min_var    = std::numeric_limits<double>::max();
+            double   max_var    = 0.0;
             uint64_t cdf_max = 0, cdf_min = UINT64_MAX;
-            double   gm_min = DBL_MAX, gm_max = 0.0;
+            double   gm_min = std::numeric_limits<double>::max();
+            double   gm_max = 0.0;
 
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].bm25_max_score < min)
@@ -198,7 +203,7 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
                 avar += terms[i].bm25_score_variance;
                 aiqr += (terms[i].bm25_firstq_score - terms[i].bm25_thirdq_score);
             }
-            ffmt(buf, rintl(acdf / tcnt));
+            ffmt(buf, std::rintl(acdf / tcnt));
             ffmt(buf, agm / tcnt);
             ffmt(buf, aimpact / tcnt);
             ffmt(buf, amean / tcnt);
@@ -235,13 +240,20 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
             double avar    = 0.0;
             double aiqr    = 0.0;
 
-            double min = DBL_MAX, max = 0.0;
-            double min_mean = DBL_MAX, max_mean = 0.0;
-            double min_hmean = DBL_MAX, max_hmean = 0.0;
-            double min_median = DBL_MAX, max_median = 0.0;
-            double min_fq = DBL_MAX, max_fq = 0.0;
-            double min_tq = DBL_MAX, max_tq = 0.0;
-            double min_var = DBL_MAX, max_var = 0.0;
+            double min        = std::numeric_limits<double>::max();
+            double max        = 0.0;
+            double min_mean   = std::numeric_limits<double>::max();
+            double max_mean   = 0.0;
+            double min_hmean  = std::numeric_limits<double>::max();
+            double max_hmean  = 0.0;
+            double min_median = std::numeric_limits<double>::max();
+            double max_median = 0.0;
+            double min_fq     = std::numeric_limits<double>::max();
+            double max_fq     = 0.0;
+            double min_tq     = std::numeric_limits<double>::max();
+            double max_tq     = 0.0;
+            double min_var    = std::numeric_limits<double>::max();
+            double max_var    = 0.0;
 
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].tf_max_score < min)
@@ -311,13 +323,20 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
             double avar    = 0.0;
             double aiqr    = 0.0;
 
-            double min = DBL_MAX, max = 0.0;
-            double min_mean = DBL_MAX, max_mean = 0.0;
-            double min_hmean = DBL_MAX, max_hmean = 0.0;
-            double min_median = DBL_MAX, max_median = 0.0;
-            double min_fq = DBL_MAX, max_fq = 0.0;
-            double min_tq = DBL_MAX, max_tq = 0.0;
-            double min_var = DBL_MAX, max_var = 0.0;
+            double min        = std::numeric_limits<double>::max();
+            double max        = 0.0;
+            double min_mean   = std::numeric_limits<double>::max();
+            double max_mean   = 0.0;
+            double min_hmean  = std::numeric_limits<double>::max();
+            double max_hmean  = 0.0;
+            double min_median = std::numeric_limits<double>::max();
+            double max_median = 0.0;
+            double min_fq     = std::numeric_limits<double>::max();
+            double max_fq     = 0.0;
+            double min_tq     = std::numeric_limits<double>::max();
+            double max_tq     = 0.0;
+            double min_var    = std::numeric_limits<double>::max();
+            double max_var    = 0.0;
 
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].lm_max_score < min)
@@ -387,13 +406,20 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
             double avar    = 0.0;
             double aiqr    = 0.0;
 
-            double min = DBL_MAX, max = 0.0;
-            double min_mean = DBL_MAX, max_mean = 0.0;
-            double min_hmean = DBL_MAX, max_hmean = 0.0;
-            double min_median = DBL_MAX, max_median = 0.0;
-            double min_fq = DBL_MAX, max_fq = 0.0;
-            double min_tq = DBL_MAX, max_tq = 0.0;
-            double min_var = DBL_MAX, max_var = 0.0;
+            double min        = std::numeric_limits<double>::max();
+            double max        = 0.0;
+            double min_mean   = std::numeric_limits<double>::max();
+            double max_mean   = 0.0;
+            double min_hmean  = std::numeric_limits<double>::max();
+            double max_hmean  = 0.0;
+            double min_median = std::numeric_limits<double>::max();
+            double max_median = 0.0;
+            double min_fq     = std::numeric_limits<double>::max();
+            double max_fq     = 0.0;
+            double min_tq     = std::numeric_limits<double>::max();
+            double max_tq     = 0.0;
+            double min_var    = std::numeric_limits<double>::max();
+            double max_var    = 0.0;
 
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].pr_max_score < min)
@@ -463,13 +489,20 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
             double avar    = 0.0;
             double aiqr    = 0.0;
 
-            double min = DBL_MAX, max = 0.0;
-            double min_mean = DBL_MAX, max_mean = 0.0;
-            double min_hmean = DBL_MAX, max_hmean = 0.0;
-            double min_median = DBL_MAX, max_median = 0.0;
-            double min_fq = DBL_MAX, max_fq = 0.0;
-            double min_tq = DBL_MAX, max_tq = 0.0;
-            double min_var = DBL_MAX, max_var = 0.0;
+            double min        = std::numeric_limits<double>::max();
+            double max        = 0.0;
+            double min_mean   = std::numeric_limits<double>::max();
+            double max_mean   = 0.0;
+            double min_hmean  = std::numeric_limits<double>::max();
+            double max_hmean  = 0.0;
+            double min_median = std::numeric_limits<double>::max();
+            double max_median = 0.0;
+            double min_fq     = std::numeric_limits<double>::max();
+            double max_fq     = 0.0;
+            double min_tq     = std::numeric_limits<double>::max();
+            double max_tq     = 0.0;
+            double min_var    = std::numeric_limits<double>::max();
+            double max_var    = 0.0;
 
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].be_max_score < min)
@@ -539,13 +572,20 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
             double avar    = 0.0;
             double aiqr    = 0.0;
 
-            double min = DBL_MAX, max = 0.0;
-            double min_mean = DBL_MAX, max_mean = 0.0;
-            double min_hmean = DBL_MAX, max_hmean = 0.0;
-            double min_median = DBL_MAX, max_median = 0.0;
-            double min_fq = DBL_MAX, max_fq = 0.0;
-            double min_tq = DBL_MAX, max_tq = 0.0;
-            double min_var = DBL_MAX, max_var = 0.0;
+            double min        = std::numeric_limits<double>::max();
+            double max        = 0.0;
+            double min_mean   = std::numeric_limits<double>::max();
+            double max_mean   = 0.0;
+            double min_hmean  = std::numeric_limits<double>::max();
+            double max_hmean  = 0.0;
+            double min_median = std::numeric_limits<double>::max();
+            double max_median = 0.0;
+            double min_fq     = std::numeric_limits<double>::max();
+            double max_fq     = 0.0;
+            double min_tq     = std::numeric_limits<double>::max();
+            double max_tq     = 0.0;
+            double min_var    = std::numeric_limits<double>::max();
+            double max_var    = 0.0;
 
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].dph_max_score < min)
@@ -615,13 +655,20 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
             double avar    = 0.0;
             double aiqr    = 0.0;
 
-            double min = DBL_MAX, max = 0.0;
-            double min_mean = DBL_MAX, max_mean = 0.0;
-            double min_hmean = DBL_MAX, max_hmean = 0.0;
-            double min_median = DBL_MAX, max_median = 0.0;
-            double min_fq = DBL_MAX, max_fq = 0.0;
-            double min_tq = DBL_MAX, max_tq = 0.0;
-            double min_var = DBL_MAX, max_var = 0.0;
+            double min        = std::numeric_limits<double>::max();
+            double max        = 0.0;
+            double min_mean   = std::numeric_limits<double>::max();
+            double max_mean   = 0.0;
+            double min_hmean  = std::numeric_limits<double>::max();
+            double max_hmean  = 0.0;
+            double min_median = std::numeric_limits<double>::max();
+            double max_median = 0.0;
+            double min_fq     = std::numeric_limits<double>::max();
+            double max_fq     = 0.0;
+            double min_tq     = std::numeric_limits<double>::max();
+            double max_tq     = 0.0;
+            double min_var    = std::numeric_limits<double>::max();
+            double max_var    = 0.0;
 
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].dfr_max_score < min)
