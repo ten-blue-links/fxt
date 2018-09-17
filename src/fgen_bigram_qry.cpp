@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <unordered_map>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 #include <unordered_map>
 
@@ -13,7 +15,6 @@ std::unordered_map<std::string, bigram_t> load_bigrammap(const char *fname) {
     FILE *        input = NULL;
     char          term_a[1024];
     char          term_b[1024];
-    char *        d_str = NULL;
     uint64_t      cf;
     uint64_t      cdf;
     double        geo_mean;
@@ -183,17 +184,16 @@ std::unordered_map<std::string, bigram_t> load_bigrammap(const char *fname) {
                   &dfr_score_stddev,
                   &dfr_score_confidence,
                   &dfr_score_harmonic_mean) == 75) {
-        d_str = safe_strdup(term_a);
-        d_str = safe_str_append(d_str, term_b);
+        auto d_str = std::string(term_a) + std::string(term_b);
         // fprintf(stderr, "bigram str: %s\n", d_str);
         // bigram_t *curr = find_bigram(map, d_str);
         auto it = map.find(d_str);
         if (it != map.end()) {
-            fprintf(stderr, "ERROR: Duplicate bigram <%s>!\n", d_str);
+            std::cerr << "ERROR: Duplicate bigram " <<  d_str << std::endl;;
             exit(EXIT_FAILURE);
         } else {
             bigram_t curr;
-            curr.bigram   = safe_strdup(d_str);
+            curr.bigram   = d_str;
             curr.cf       = cf;
             curr.cdf      = cdf;
             curr.geo_mean = geo_mean;
@@ -277,83 +277,6 @@ std::unordered_map<std::string, bigram_t> load_bigrammap(const char *fname) {
     return map;
 }
 
-int max_score_bigram_cmp(const void *a, const void *b) {
-    bigram_t *bigram_a = (bigram_t *)a;
-    bigram_t *bigram_b = (bigram_t *)b;
-    if (bigram_a->bm25_max_score > bigram_b->bm25_max_score) {
-        return (-1);
-    } else if (bigram_a->bm25_max_score < bigram_b->bm25_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int tf_max_score_bigram_cmp(const void *a, const void *b) {
-    bigram_t *bigram_a = (bigram_t *)a;
-    bigram_t *bigram_b = (bigram_t *)b;
-    if (bigram_a->tf_max_score > bigram_b->tf_max_score) {
-        return (-1);
-    } else if (bigram_a->tf_max_score < bigram_b->tf_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int lm_max_score_bigram_cmp(const void *a, const void *b) {
-    bigram_t *bigram_a = (bigram_t *)a;
-    bigram_t *bigram_b = (bigram_t *)b;
-    if (bigram_a->lm_max_score > bigram_b->lm_max_score) {
-        return (-1);
-    } else if (bigram_a->lm_max_score < bigram_b->lm_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int be_max_score_bigram_cmp(const void *a, const void *b) {
-    bigram_t *bigram_a = (bigram_t *)a;
-    bigram_t *bigram_b = (bigram_t *)b;
-    if (bigram_a->be_max_score > bigram_b->be_max_score) {
-        return (-1);
-    } else if (bigram_a->be_max_score < bigram_b->be_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int pr_max_score_bigram_cmp(const void *a, const void *b) {
-    bigram_t *bigram_a = (bigram_t *)a;
-    bigram_t *bigram_b = (bigram_t *)b;
-    if (bigram_a->pr_max_score > bigram_b->pr_max_score) {
-        return (-1);
-    } else if (bigram_a->pr_max_score < bigram_b->pr_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int dph_max_score_bigram_cmp(const void *a, const void *b) {
-    bigram_t *bigram_a = (bigram_t *)a;
-    bigram_t *bigram_b = (bigram_t *)b;
-    if (bigram_a->dph_max_score > bigram_b->dph_max_score) {
-        return (-1);
-    } else if (bigram_a->dph_max_score < bigram_b->dph_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int dfr_max_score_bigram_cmp(const void *a, const void *b) {
-    bigram_t *bigram_a = (bigram_t *)a;
-    bigram_t *bigram_b = (bigram_t *)b;
-    if (bigram_a->dfr_max_score > bigram_b->dfr_max_score) {
-        return (-1);
-    } else if (bigram_a->dfr_max_score < bigram_b->dfr_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
 static bool count_done    = false;
 static int  feature_count = 0;
 static void ffmt(std::stringstream &buf, long double val) {
@@ -374,15 +297,15 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigr
         exit(EXIT_FAILURE);
     }
 
-    bigram_t *terms = (bigram_t *)safe_malloc(MAXTERM * sizeof(bigram_t));
+    std::vector<bigram_t> terms(MAXTERM);
 
-    char *bigram;
+    std::string bigram;
     for (size_t j = 0; j < termc; ++j) {
         for (size_t k = 0; k < termc; ++k) {
             if (j == k)
                 continue;
-            bigram       = safe_strdup(termv[j]);
-            bigram       = safe_str_append(bigram, termv[k]);
+            bigram       = termv[j];
+            bigram       = bigram + std::string(termv[k]);
             auto ct = bigrammap.find(bigram);
             // bigram_t *ct = find_bigram(bigrammap, bigram);
             if (ct != bigrammap.end()) {
@@ -492,7 +415,6 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigr
             uint64_t cdf_max = 0, cdf_min = UINT64_MAX;
             double   gm_min = DBL_MAX, gm_max = 0.0;
 
-            qsort(terms, tcnt, sizeof(bigram_t), max_score_bigram_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].bm25_max_score < min)
                     min = terms[i].bm25_max_score;
@@ -585,7 +507,6 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigr
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(bigram_t), tf_max_score_bigram_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].tf_max_score < min)
                     min = terms[i].tf_max_score;
@@ -662,7 +583,6 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigr
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(bigram_t), lm_max_score_bigram_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].lm_max_score < min)
                     min = terms[i].lm_max_score;
@@ -739,7 +659,6 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigr
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(bigram_t), pr_max_score_bigram_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].pr_max_score < min)
                     min = terms[i].pr_max_score;
@@ -816,7 +735,6 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigr
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(bigram_t), be_max_score_bigram_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].be_max_score < min)
                     min = terms[i].be_max_score;
@@ -893,7 +811,6 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigr
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(bigram_t), dph_max_score_bigram_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].dph_max_score < min)
                     min = terms[i].dph_max_score;
@@ -970,7 +887,6 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigr
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(bigram_t), dfr_max_score_bigram_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].dfr_max_score < min)
                     min = terms[i].dfr_max_score;
@@ -1031,8 +947,6 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, bigram_t> &bigr
             ffmt(buf, max_tq);
         }
     }
-
-    free(terms);
 
     if (!count_done) {
         count_done = true;

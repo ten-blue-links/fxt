@@ -26,17 +26,10 @@
 #include <unistd.h>
 
 /* Global Max Score in ClueWeb09B */
-#define GLOBAL_MAX 32.895705374152627
-#define NORM 10
 
 #define REALLOC_INCREMENT 4096
 #define MAXLINELEN 4096
 #define MAXTERM 1024
-
-#define INITIAL_SIZE 4096 /* Initial table size, must be a power of 2 */
-#define GROW_RATE (1 << 1) /* Must be a power of 2 */
-#define GOOD_RATIO_N 4 /* Good ratio numerator */
-#define GOOD_RATIO_D 5 /* Good ratio denominator */
 
 typedef struct {
     char *   term;
@@ -116,18 +109,10 @@ typedef struct {
 } term_t;
 
 
-void *      safe_malloc(size_t size);
-void *      safe_realloc(void *old_mem, size_t new_size);
-char *      safe_strdup(const char *str);
-uint32_t    murmur_hash(const char *key, uint32_t buckets);
-
 int64_t     load_file(const char *filename, char **result);
 void        strip_newline(char *str);
 int         is_space(const char *candidate);
 void        to_lcase(char *str);
-char *      safe_str_append(char *str1, const char *str2);
 std::unordered_map<std::string, term_t> load_termmap(const char *fname);
-int         max_score_cmp(const void *a, const void *b);
-int         tf_max_score_cmp(const void *a, const void *b);
-int         lm_max_score_cmp(const void *a, const void *b);
+
 std::string      fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap, int qnum, char **termv, size_t termc);

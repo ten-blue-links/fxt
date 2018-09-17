@@ -1,201 +1,13 @@
 #include <sstream>
 #include <iostream>
 #include <iomanip>
-
+#include <algorithm>
+#include <vector>
 #include <unordered_map>
 
 #include "fgen_term_qry.hpp"
 #include "query_features.h"
 #include "text2feat/stopwords.h"
-
-void *safe_malloc(size_t size) {
-    void *mem_block = NULL;
-
-    if ((mem_block = calloc(1, size)) == NULL) {
-        fprintf(stderr, "ERROR: safe_malloc(%lu) cannot allocate memory.", size);
-        exit(EXIT_FAILURE);
-    }
-    return (mem_block);
-}
-
-void *safe_realloc(void *old_mem, size_t new_size) {
-    if ((old_mem = realloc(old_mem, new_size)) == NULL) {
-        fprintf(stderr,
-                "ERROR: safe_realloc() cannot allocate"
-                "%u blocks of memory.\n",
-                (unsigned int)new_size);
-        exit(EXIT_FAILURE);
-    }
-    return (old_mem);
-}
-
-static size_t bsd_strlcpy(char *dst, const char *src, size_t siz) {
-    register char *      d = dst;
-    register const char *s = src;
-    register size_t      n = siz;
-
-    /* Copy as many bytes as will fit */
-    if (n != 0 && --n != 0) {
-        do {
-            if ((*d++ = *s++) == 0)
-                break;
-        } while (--n != 0);
-    }
-
-    /* Not enough room in dst, add NUL and traverse rest of src */
-    if (n == 0) {
-        if (siz != 0)
-            *d = '\0'; /* NUL-terminate dst */
-        while (*s++)
-            ;
-    }
-
-    return (s - src - 1); /* count does not include NUL */
-}
-
-char *safe_strdup(const char *str) {
-    char * copy = NULL;
-    size_t len  = 0;
-
-    if (str == NULL) {
-        fprintf(stderr, "ERROR safe_strdup(): str == NULL");
-        exit(EXIT_FAILURE);
-    }
-
-    len  = strlen(str) + 1;
-    copy = (char *)safe_malloc(len * sizeof(char));
-
-    /* strlcpy is not implemented everywhere ... */
-    (void)bsd_strlcpy(copy, str, len);
-    /*(void) strncpy (copy, str, len-1);*/
-
-    return (copy);
-}
-
-uint32_t murmur_hash(const char *key, uint32_t buckets) {
-    /*
-     * 'm' and 'r' are mixing constants generated offline.
-     * They're not really 'magic', they just happen to work well.
-     */
-
-    const uint32_t m = 0x5bd1e995;
-    const int32_t  r = 24;
-
-    int32_t  len  = strlen(key);
-    uint32_t seed = (0xdeadbeef * len);
-
-    /* Initialize the hash to a 'random' value */
-
-    uint32_t h = seed ^ len;
-
-    /* Mix 4 bytes at a time into the hash */
-
-    const uint8_t *data = (const uint8_t *)key;
-
-    while (len >= 4) {
-        uint32_t k = *(uint32_t *)data;
-
-        k *= m;
-        k ^= k >> r;
-        k *= m;
-
-        h *= m;
-        h ^= k;
-
-        data += 4;
-        len -= 4;
-    }
-
-    /* Handle the last few bytes of the input array */
-    switch (len) {
-    case 3:
-        h ^= data[2] << 16;
-    case 2:
-        h ^= data[1] << 8;
-    case 1:
-        h ^= data[0];
-        h *= m;
-    };
-
-    /* Do a few final mixes of the hash to ensure the last few
-       bytes are well-incorporated.
-     */
-
-    h ^= h >> 13;
-    h *= m;
-    h ^= h >> 15;
-
-    return (h & (buckets - 1));
-}
-
-int64_t load_file(const char *filename, char **result) {
-    size_t size = 0;
-    FILE * f    = fopen(filename, "rb");
-    if (f == NULL) {
-        *result = NULL;
-        return -1;
-    }
-    fseek(f, 0, SEEK_END);
-    size = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    *result = (char *)malloc(size + 1);
-    if (size != fread(*result, sizeof(char), size, f)) {
-        free(*result);
-        return -2;
-    }
-    fclose(f);
-    (*result)[size] = 0;
-    return ((int64_t)size);
-}
-
-void strip_newline(char *str) {
-    char *nl;
-    nl = strchr(str, '\n');
-    if (nl) {
-        *nl = '\0';
-    }
-    return;
-}
-
-int is_space(const char *candidate) {
-    int i;
-    int rv  = true;
-    int len = strlen(candidate);
-    for (i = 0; i < len; i++) {
-        rv = isspace(candidate[i]);
-        if (!rv) {
-            return (false);
-        }
-    }
-    return (rv);
-}
-
-/** convert string to lowercase inplace **/
-void to_lcase(char *str) {
-    char *ptr;
-    ptr = str;
-    while (*ptr != '\0') {
-        *ptr++ = tolower(*str++);
-    }
-    return;
-}
-
-/* This returns a new string. str1 is consumed */
-char *safe_str_append(char *str1, const char *str2) {
-    char * rv  = NULL;
-    size_t len = 0;
-
-    if (str1 == NULL || str2 == NULL) {
-        fprintf(stderr, "ERROR safe_strcat_new(): str == NULL");
-        exit(EXIT_FAILURE);
-    }
-    len = strlen(str1) + strlen(str2) + 1;
-    rv  = (char *)safe_malloc(len * sizeof(char));
-    (void)strcpy(rv, str1);
-    rv = strcat(rv, str2);
-    free(str1);
-    return (rv);
-}
 
 std::unordered_map<std::string, term_t> load_termmap(const char *fname) {
     std::unordered_map<std::string, term_t> map;
@@ -375,7 +187,7 @@ std::unordered_map<std::string, term_t> load_termmap(const char *fname) {
             exit(EXIT_FAILURE);
         } else {
             term_t curr;
-            curr.term     = safe_strdup(d_str);
+            curr.term     = d_str;
             curr.cf       = cf;
             curr.cdf      = cdf;
             curr.geo_mean = geo_mean;
@@ -459,83 +271,6 @@ std::unordered_map<std::string, term_t> load_termmap(const char *fname) {
     return map;
 }
 
-int max_score_cmp(const void *a, const void *b) {
-    term_t *term_a = (term_t *)a;
-    term_t *term_b = (term_t *)b;
-    if (term_a->bm25_max_score > term_b->bm25_max_score) {
-        return (-1);
-    } else if (term_a->bm25_max_score < term_b->bm25_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int tf_max_score_cmp(const void *a, const void *b) {
-    term_t *term_a = (term_t *)a;
-    term_t *term_b = (term_t *)b;
-    if (term_a->tf_max_score > term_b->tf_max_score) {
-        return (-1);
-    } else if (term_a->tf_max_score < term_b->tf_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int lm_max_score_cmp(const void *a, const void *b) {
-    term_t *term_a = (term_t *)a;
-    term_t *term_b = (term_t *)b;
-    if (term_a->lm_max_score > term_b->lm_max_score) {
-        return (-1);
-    } else if (term_a->lm_max_score < term_b->lm_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int be_max_score_cmp(const void *a, const void *b) {
-    term_t *term_a = (term_t *)a;
-    term_t *term_b = (term_t *)b;
-    if (term_a->be_max_score > term_b->be_max_score) {
-        return (-1);
-    } else if (term_a->be_max_score < term_b->be_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int pr_max_score_cmp(const void *a, const void *b) {
-    term_t *term_a = (term_t *)a;
-    term_t *term_b = (term_t *)b;
-    if (term_a->pr_max_score > term_b->pr_max_score) {
-        return (-1);
-    } else if (term_a->pr_max_score < term_b->pr_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int dph_max_score_cmp(const void *a, const void *b) {
-    term_t *term_a = (term_t *)a;
-    term_t *term_b = (term_t *)b;
-    if (term_a->dph_max_score > term_b->dph_max_score) {
-        return (-1);
-    } else if (term_a->dph_max_score < term_b->dph_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
-int dfr_max_score_cmp(const void *a, const void *b) {
-    term_t *term_a = (term_t *)a;
-    term_t *term_b = (term_t *)b;
-    if (term_a->dfr_max_score > term_b->dfr_max_score) {
-        return (-1);
-    } else if (term_a->dfr_max_score < term_b->dfr_max_score) {
-        return (1);
-    }
-    return (0);
-}
-
 const char **stopwords = fgen_krovetz_stopwords;
 
 std::set<std::string> load_stopmap(void) {
@@ -595,7 +330,7 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
     int            tcnt = 0, i = 0;
     std::stringstream buf;
 
-    term_t *terms = (term_t*)safe_malloc(MAXTERM * sizeof(term_t));
+    std::vector<term_t> terms(MAXTERM);
 
     /* pre-retrieval query features */
     auto stopmap            = load_stopmap();
@@ -719,7 +454,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             uint64_t cdf_max = 0, cdf_min = UINT64_MAX;
             double   gm_min = DBL_MAX, gm_max = 0.0;
 
-            qsort(terms, tcnt, sizeof(term_t), max_score_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].bm25_max_score < min)
                     min = terms[i].bm25_max_score;
@@ -812,7 +546,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(term_t), tf_max_score_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].tf_max_score < min)
                     min = terms[i].tf_max_score;
@@ -889,7 +622,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(term_t), lm_max_score_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].lm_max_score < min)
                     min = terms[i].lm_max_score;
@@ -966,7 +698,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(term_t), pr_max_score_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].pr_max_score < min)
                     min = terms[i].pr_max_score;
@@ -1043,7 +774,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(term_t), be_max_score_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].be_max_score < min)
                     min = terms[i].be_max_score;
@@ -1120,7 +850,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(term_t), dph_max_score_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].dph_max_score < min)
                     min = terms[i].dph_max_score;
@@ -1197,7 +926,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             double min_tq = DBL_MAX, max_tq = 0.0;
             double min_var = DBL_MAX, max_var = 0.0;
 
-            qsort(terms, tcnt, sizeof(term_t), dfr_max_score_cmp);
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].dfr_max_score < min)
                     min = terms[i].dfr_max_score;
@@ -1272,8 +1000,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
         ffmt(buf, query.avictf);
         ffmt(buf, query.avictf_full);
     }
-
-    free(terms);
 
     if (!count_done) {
         count_done = true;
