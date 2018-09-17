@@ -129,7 +129,8 @@ int main(int argc, char *argv[]) {
                     for (int i = 0; i < 2; ++i) {
                         std::string curr_str = (i == 0) ? curr_bigram.first : curr_bigram.second;
 
-                        qry_str += curr_str + " ";
+                        qry_str += curr_str;
+                        qry_str += (i == 0) ? "," : " ";
                         // get inverted list iterator and start with the term has smallest
                         // df
                         size_t tid = lexicon.term(curr_str);

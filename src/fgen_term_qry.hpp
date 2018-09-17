@@ -32,7 +32,7 @@
 #define MAXTERM 1024
 
 typedef struct {
-    char *   term;
+    std::string   term;
     uint64_t cf;
     uint64_t cdf;
     double   geo_mean;

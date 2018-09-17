@@ -344,7 +344,7 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
     avidf(query, termmap, stopmap);
     avictf(query, termmap, stopmap);
 
-    char *term;
+    std::string term;
     for (size_t j = 0; j < termc; ++j) {
         term       = termv[j];
         auto ct = termmap.find(term);

@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 
     // load bigram features
     std::cerr << "loading bigram features...";
-    auto bigrammap               = load_bigrammap(bigram_file.c_str());
+    auto bigrammap               = load_termmap(bigram_file.c_str());
     std::cerr << " done." << std::endl;
 
     for (auto &qry : qtfile.get_queries()) {
