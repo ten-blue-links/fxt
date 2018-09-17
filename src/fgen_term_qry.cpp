@@ -572,28 +572,15 @@ std::unordered_map<std::string, size_t> load_querymap(char **termv, size_t len) 
     return map;
 }
 
-query_t *load_query(char **termv, size_t len) {
-    query_t *q = (query_t*)safe_malloc(sizeof(*q));
-    memset(q, 0x0, sizeof(*q));
-    q->terms = (char**)safe_malloc(sizeof(void *) * MAXTERM);
-
-    q->qry = NULL; // not used
+query_t load_query(char **termv, size_t len) {
+    query_t q;
     for (size_t i = 0; i < len; ++i) {
-        q->terms[i] = safe_strdup(termv[i]);
+        q.terms.push_back(termv[i]);
     }
-    q->len = len;
-
+    q.len = len;
     return q;
 }
 
-void destroy_query(query_t *q) {
-    for (size_t i = 0; i < q->len; ++i) {
-        free(q->terms[i]);
-    }
-
-    free(q->terms);
-    free(q);
-}
 
 static bool count_done    = false;
 static int  feature_count = 0;
@@ -606,7 +593,6 @@ static void ffmt(std::stringstream &buf, long double val) {
 
 std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap, int qnum, char **termv, size_t termc) {
     int            tcnt = 0, i = 0;
-    query_t *      query    = NULL;
     std::stringstream buf;
 
     term_t *terms = (term_t*)safe_malloc(MAXTERM * sizeof(term_t));
@@ -614,12 +600,12 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
     /* pre-retrieval query features */
     auto stopmap            = load_stopmap();
     auto querymap           = load_querymap(termv, termc);
-    query              = load_query(termv, termc);
-    query->len_stopped = q_stopped_len(stopmap, query);
-    query->scs_score   = scs_score(query, querymap, termmap, stopmap);
-    query->scope_score = query_scope(query, termmap, stopmap);
+    auto query              = load_query(termv, termc);
+    query.len_stopped = q_stopped_len(stopmap, query);
+    query.scs_score   = scs_score(query, querymap, termmap, stopmap);
+    query.scope_score = query_scope(query, termmap, stopmap);
     gamma1(query, termmap, stopmap);
-    query->tfidf_gamma2 = gamma2(query, termmap, stopmap);
+    query.tfidf_gamma2 = gamma2(query, termmap, stopmap);
     avidf(query, termmap, stopmap);
     avictf(query, termmap, stopmap);
 
@@ -1273,22 +1259,21 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
         }
 
         /* pre-retrieval query features */
-        ffmt(buf, query->len_stopped);
-        ffmt(buf, query->scs_score);
-        ffmt(buf, query->scope_score);
-        ffmt(buf, query->tfidf_avg);
-        ffmt(buf, query->tfidf_variance);
-        ffmt(buf, query->tfidf_std_dev);
-        ffmt(buf, query->tfidf_confidence);
-        ffmt(buf, query->tfidf_gamma2);
-        ffmt(buf, query->avidf);
-        ffmt(buf, query->avidf_full);
-        ffmt(buf, query->avictf);
-        ffmt(buf, query->avictf_full);
+        ffmt(buf, query.len_stopped);
+        ffmt(buf, query.scs_score);
+        ffmt(buf, query.scope_score);
+        ffmt(buf, query.tfidf_avg);
+        ffmt(buf, query.tfidf_variance);
+        ffmt(buf, query.tfidf_std_dev);
+        ffmt(buf, query.tfidf_confidence);
+        ffmt(buf, query.tfidf_gamma2);
+        ffmt(buf, query.avidf);
+        ffmt(buf, query.avidf_full);
+        ffmt(buf, query.avictf);
+        ffmt(buf, query.avictf_full);
     }
 
     free(terms);
-    destroy_query(query);
 
     if (!count_done) {
         count_done = true;
