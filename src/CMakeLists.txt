@@ -90,3 +90,9 @@ target_link_libraries(generate_static_doc_features
 add_executable(inlink_count inlink.cpp)
 
 add_executable(outlink_count outlink.cpp)
+
+add_executable(kstem kstem.cpp)
+target_link_libraries(kstem
+    indri
+    pthread
+)
