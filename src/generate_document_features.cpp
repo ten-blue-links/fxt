@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     app.add_option("output_file", output_file, "Output file")->required();
     CLI11_PARSE(app, argc, argv);
 
-    std::ofstream outfile(output_file, std::ofstream::app);
+    std::ofstream outfile(output_file, std::ofstream::out);
     outfile << std::fixed << std::setprecision(5);
 
     query_environment         indri_env;
