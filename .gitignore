@@ -1,1 +1,8 @@
 build
+*.qry
+*.lens
+*.fwd
+*.inv
+*.lex
+*.csv
+*.run
