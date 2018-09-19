@@ -10,11 +10,11 @@ mkdir -p model run eval
 
 dat="$SPATH"
 
-trees=5000
-leaves=31
+trees=2000
+leaves=15
 eta=0.05
-estop=50
-name="lgbm.lrank.${trees}.${leaves}.${eta}"
+estop=100
+name="lgbm.goss.${trees}.${leaves}.${eta}"
 for i in {1..5}; do
 suffix="${name}.fold${i}"
 qrels="${dat}/f${i}/test.qrels"
@@ -22,11 +22,11 @@ qrels="${dat}/f${i}/test.qrels"
 $LGBM \
     app=lambdarank \
     save_binary=true \
-    boosting=gbdt \
+    boosting=goss \
     num_trees=$trees \
     num_leaves=$leaves \
     learning_rate=$eta \
-    feature_fraction=0.5 \
+    feature_fraction=1.0 \
     metric=ndcg \
     eval_at=150 \
     early_stopping_round=$estop \
