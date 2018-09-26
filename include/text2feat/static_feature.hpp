@@ -13,10 +13,10 @@
 #include "cereal/types/vector.hpp"
 
 class StaticFeature {
-public:
-  statdoc_entry dentry;
-  StaticFeature() = default;
-  StaticFeature(const uint32_t l,
+   public:
+    statdoc_entry dentry;
+    StaticFeature() = default;
+    StaticFeature(const uint32_t l,
                   const uint32_t tl,
                   const uint32_t vtl,
                   const uint16_t ul,
@@ -29,38 +29,37 @@ public:
                   const double   fvt,
                   const double   ftab,
                   const double   ftd) {
-    // Avoid using a constructor for `statdoc_entry` becuase we have a crude
-    // code genreation process for statdoc_entry_flag.hpp and
-    // doc_entry_flag.hpp. See script/feat2id.sh.
-    dentry.len = l;
-    dentry.title_len = tl;
-    dentry.visterm_len = vtl;
-    dentry.url_len = ul;
-    dentry.url_depth = ud;
-    dentry.avg_term_len = avgtl;
-    dentry.entropy = ent;
-    dentry.stop_cover = sc;
-    dentry.frac_stop = fs;
-    dentry.frac_anchor_text = fat;
-    dentry.frac_vis_text = fvt;
-    dentry.frac_table_text = ftab;
-    dentry.frac_td_text = ftd;
-  }
-  StaticFeature(const statdoc_entry &de) : StaticFeature(
-    de.len,
-    de.title_len,
-    de.visterm_len,
-    de.url_len,
-    de.url_depth,
-    de.avg_term_len,
-    de.entropy,
-    de.stop_cover,
-    de.frac_stop,
-    de.frac_anchor_text,
-    de.frac_vis_text,
-    de.frac_table_text,
-    de.frac_td_text
-      ) {}
+        // Avoid using a constructor for `statdoc_entry` becuase we have a crude
+        // code genreation process for statdoc_entry_flag.hpp and
+        // doc_entry_flag.hpp. See script/feat2struct.sh.
+        dentry.len              = l;
+        dentry.title_len        = tl;
+        dentry.visterm_len      = vtl;
+        dentry.url_len          = ul;
+        dentry.url_depth        = ud;
+        dentry.avg_term_len     = avgtl;
+        dentry.entropy          = ent;
+        dentry.stop_cover       = sc;
+        dentry.frac_stop        = fs;
+        dentry.frac_anchor_text = fat;
+        dentry.frac_vis_text    = fvt;
+        dentry.frac_table_text  = ftab;
+        dentry.frac_td_text     = ftd;
+    }
+    StaticFeature(const statdoc_entry &de)
+        : StaticFeature(de.len,
+                        de.title_len,
+                        de.visterm_len,
+                        de.url_len,
+                        de.url_depth,
+                        de.avg_term_len,
+                        de.entropy,
+                        de.stop_cover,
+                        de.frac_stop,
+                        de.frac_anchor_text,
+                        de.frac_vis_text,
+                        de.frac_table_text,
+                        de.frac_td_text) {}
 
     template <class Archive>
     void serialize(Archive &archive) {

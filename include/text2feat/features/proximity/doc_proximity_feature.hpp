@@ -49,8 +49,8 @@ class doc_proximity_feature {
         ranker.avg_doc_len = (double)num_terms / ranker.num_docs;
     }
 
-    void compute(doc_entry &                                          doc,
-                 query_train &                                        query,
+    void compute(query_train &                                        query,
+                 doc_entry &                                          doc,
                  Document &                                           doc_idx,
                  std::unordered_map<uint32_t, std::vector<uint32_t>> &positions) {
         score = 0.0;

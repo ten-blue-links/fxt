@@ -161,7 +161,7 @@ int main(int argc, char **argv) {
             dfr_feature.compute(qry, doc_entry, doc_idx, field_id_map);
             f_stream.compute(qry, doc_entry, doc_idx, field_id_map);
             features.compute(qry, doc_entry, doc_idx, field_id_map);
-            prox_feature.compute(doc_entry, qry, doc_idx, positions);
+            prox_feature.compute(qry, doc_entry, doc_idx, positions);
             f_tpscore.compute(qry, doc_entry, doc_idx, field_id_map);
 
             outfile << label << "," << qry.id << "," << docno << doc_entry << std::endl;

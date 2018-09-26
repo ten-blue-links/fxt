@@ -1,3 +1,7 @@
+/*
+ * Query-document features.
+ */
+
 #pragma once
 
 #include <algorithm>

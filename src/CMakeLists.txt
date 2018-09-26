@@ -100,5 +100,9 @@ target_link_libraries(kstem
 
 add_executable(extract_features extract_features.cpp)
 target_link_libraries(extract_features
+    FastPFor
+    indri
+    pthread
     CLI11
+    cereal
 )
