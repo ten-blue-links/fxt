@@ -10,26 +10,15 @@
 #include <iostream>
 #include <unordered_map>
 
+#include "CLI/CLI.hpp"
+#include "cereal/archives/binary.hpp"
+
 #include "indri/CompressedCollection.hpp"
 #include "indri/Repository.hpp"
 #include "indri/greedy_vector"
-#include "text2feat/web_1t_stopwords.hpp"
 
-struct score {
-    uint32_t len;
-    uint32_t title_len;
-    double   avg_term_len;
-    double   entropy;
-    double   stop_cover;
-    double   frac_stop;
-    uint32_t visterm_len;
-    double   frac_anchor_text;
-    double   frac_vis_text;
-    double   frac_table_text;
-    double   frac_td_text;
-    size_t   url_len;
-    size_t   url_depth;
-};
+#include "text2feat/static_feature.hpp"
+#include "text2feat/web_1t_stopwords.hpp"
 
 uint32_t field_len(const int                                                       field_id,
                    const indri::utility::greedy_vector<indri::index::FieldExtent> &list) {
@@ -135,7 +124,7 @@ double frac_anchor_text(indri::index::Index *const                              
     return ret;
 }
 
-double frac_vis_text(const score &s, const size_t bytes) {
+double frac_vis_text(const statdoc_entry &s, const size_t bytes) {
     double ret = 0.0;
 
     if (bytes > 0) {
@@ -181,7 +170,7 @@ double frac_table_text(indri::index::Index *const                               
     return ret;
 }
 
-void set_url_lendep(score &s, const std::string &url) {
+void set_url_lendep(statdoc_entry &s, const std::string &url) {
     size_t      depth = 0;
     size_t      idx   = url.find_first_of("://");
     std::string cpy   = "";
@@ -204,16 +193,21 @@ void set_url_lendep(score &s, const std::string &url) {
 }
 
 int main(int argc, char **argv) {
-    if (argc != 3) {
-        std::cerr << "usage: " << argv[0] << " <repo> <title field>" << std::endl;
-        return EXIT_FAILURE;
-    }
+    std::string repo_path;
+    std::string field_name;
+    std::string output_file;
 
-    std::string repository_name = argv[1];
-    std::string field_name      = argv[2];
+    CLI::App app{"Generate static document features."};
+    app.add_option("repo_path", repo_path, "Indri repo path")->required();
+    app.add_option("field_name", field_name, "Name of title field")->required();
+    app.add_option("output_file", output_file, "Name of output file")->required();
+    CLI11_PARSE(app, argc, argv);
+
+    std::ofstream               os(output_file, std::ios::binary);
+    cereal::BinaryOutputArchive archive(os);
 
     indri::collection::Repository repo;
-    repo.openRead(repository_name);
+    repo.openRead(repo_path);
     indri::collection::Repository::index_state state = repo.indexes();
     const auto &                               index = (*state)[0];
 
@@ -237,21 +231,25 @@ int main(int argc, char **argv) {
         stopwords[index->term(str)] = 1;
     }
 
+    StaticDocFeatureList statdoc_feat;
+    statdoc_feat.push_back({});
+
     int          id         = index->documentBase();
     const size_t total_docs = index->documentCount();
     it->startIteration();
     while (!it->finished()) {
-        score                       s;
+        statdoc_entry               s;
         indri::index::TermList *    list     = it->currentEntry();
         std::string                 doc_name = collection->retrieveMetadatum(id, "docno");
         std::string                 doc_url  = collection->retrieveMetadatum(id, "url");
         indri::api::ParsedDocument *doc      = collection->retrieve(id);
-        s.len                                = list->terms().size();
-        s.title_len                          = field_len(index->field(field_name), list->fields());
-        s.avg_term_len                       = avg_term_len(index, list->terms());
-        s.entropy                            = entropy(index, list->terms());
-        s.stop_cover                         = stop_cover(stopwords, list->terms());
-        s.frac_stop                          = frac_stop(stopwords, list->terms());
+
+        s.len          = list->terms().size();
+        s.title_len    = field_len(index->field(field_name), list->fields());
+        s.avg_term_len = avg_term_len(index, list->terms());
+        s.entropy      = entropy(index, list->terms());
+        s.stop_cover   = stop_cover(stopwords, list->terms());
+        s.frac_stop    = frac_stop(stopwords, list->terms());
         // assume body field exists
         s.visterm_len = field_len(index->field("body"), list->fields());
         // assume <a>, <body> fields exist
@@ -261,10 +259,8 @@ int main(int argc, char **argv) {
         s.frac_td_text     = frac_td_text(index, list->fields());
         set_url_lendep(s, doc_url);
 
-        std::cout << doc_name << "," << s.len << "," << s.title_len << "," << s.avg_term_len << ","
-                  << s.entropy << "," << s.stop_cover << "," << s.frac_stop << "," << s.visterm_len
-                  << "," << s.frac_anchor_text << "," << s.frac_vis_text << "," << s.frac_table_text
-                  << "," << s.frac_td_text << "," << s.url_len << "," << s.url_depth << std::endl;
+        /* std::cout << doc_name << s << std::endl; */
+        statdoc_feat.push_back(s);
 
         if (id % 100 == 0 || id == index->documentBase() || size_t(id) == total_docs) {
             static size_t      last_len = 0;
@@ -283,4 +279,7 @@ int main(int argc, char **argv) {
         it->nextEntry();
     }
     std::cerr << std::endl;
+
+    archive(statdoc_feat);
+    return 0;
 }

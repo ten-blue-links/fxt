@@ -85,6 +85,7 @@ target_link_libraries(generate_static_doc_features
     indri
     pthread
     CLI11
+    cereal
 )
 
 add_executable(inlink_count inlink.cpp)
@@ -95,4 +96,9 @@ add_executable(kstem kstem.cpp)
 target_link_libraries(kstem
     indri
     pthread
+)
+
+add_executable(extract_features extract_features.cpp)
+target_link_libraries(extract_features
+    CLI11
 )
