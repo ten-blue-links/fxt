@@ -14,9 +14,6 @@
 #include <vector>
 
 struct doc_entry {
-
-    size_t length = 0;
-
     // Score from training trec run file
     double stage0_score = 0;
     // BM25 Atire

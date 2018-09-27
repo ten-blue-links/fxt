@@ -20,7 +20,7 @@ struct bctp_scorer {
     double score(std::vector<bctp_term> &terms, doc_entry &doc, Document &doc_idx) {
         double score = 0.0;
 
-        if (terms.size() < 3 || doc.length < terms.size()) {
+        if (terms.size() < 3 || doc_idx.length() < terms.size()) {
             return score;
         }
 
@@ -32,7 +32,7 @@ struct bctp_scorer {
 
         for (auto const &term : terms) {
             double weight = std::min(1.0, term.weight);
-            double K      = k1 * ((1 - b) + (b * (doc.length / avg_doc_len)));
+            double K      = k1 * ((1 - b) + (b * (doc_idx.length() / avg_doc_len)));
             double x      = term.accumulator * (1 + k1);
             double y      = term.accumulator + K;
 

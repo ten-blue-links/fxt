@@ -5,7 +5,6 @@
 #pragma once
 
 struct doc_entry_flag {
-    bool f_length                      = false;
     bool f_stage0_score                = false;
     bool f_bm25_atire                  = false;
     bool f_bm25_atire_body             = false;

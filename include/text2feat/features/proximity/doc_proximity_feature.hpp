@@ -98,11 +98,11 @@ class doc_proximity_feature {
 
         // find bigrams of all query term pairs
         score = 0.0;
-        cdf_search(TP_BIGRAM, cdf, query, 8, doc.length);
+        cdf_search(TP_BIGRAM, cdf, query, 8, doc_idx.length());
         doc.bm25_bigram_u8 = score;
 
         // Xiaolu, et al.
-        doc.bm25_tp_dist_w100 = tp_interval_score(acc_positions, acc_terms, 100, doc.length);
+        doc.bm25_tp_dist_w100 = tp_interval_score(acc_positions, acc_terms, 100, doc_idx.length());
 
         // Clear for next doc
         term_data_map.clear();

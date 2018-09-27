@@ -33,8 +33,10 @@ class doc_bm25_feature : public doc_feature {
                 continue;
             }
 
-            _score_doc += ranker.calculate_docscore(
-                q.second, doc_idx.freq(q.first), lexicon[q.first].document_count(), doc.length);
+            _score_doc += ranker.calculate_docscore(q.second,
+                                                    doc_idx.freq(q.first),
+                                                    lexicon[q.first].document_count(),
+                                                    doc_idx.length());
 
             // Score document fields
             for (const std::string &field_str : _fields) {

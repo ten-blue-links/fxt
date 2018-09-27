@@ -56,8 +56,6 @@ int main(int argc, char **argv) {
     /* The following flags for enabling features is automatically generated. */
     struct doc_entry_flag     query_doc_flags;
     struct statdoc_entry_flag static_doc_flags;
-    app.add_flag("--f_length", query_doc_flags.f_length, "Enable feature f_length")
-        ->group("Query-document features");
     app.add_flag(
            "--f_stage0_score", query_doc_flags.f_stage0_score, "Enable feature f_stage0_score")
         ->group("Query-document features");
