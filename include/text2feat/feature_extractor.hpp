@@ -105,14 +105,16 @@ class FeatureExtractor {
         if (has_tag_count()) {
             features.compute(qry, de, doc, fid_map);
         }
-        /* lgr: missing flags */
-        prox_feature.compute(qry, de, doc, positions);
+        /* lgr: fixup #XXX */
+        if (has_proximity()) {
+            prox_feature.compute(qry, de, doc, positions);
+        }
         if (has_tpscore()) {
             f_tpscore.compute(qry, de, doc, fid_map);
         }
     }
 
-    /* lgr: to be removed */
+    /* we always have stage0 score from the run file, no need to extract. */
     inline bool has_stage0_score() { return false; }
 
     inline bool has_bm25_atire() {
@@ -220,12 +222,12 @@ class FeatureExtractor {
 
     inline bool has_tpscore() { return qd_flags.f_tpscore; }
 
-    /* lgr: to be removed */
-    inline bool has_bm25_bigram_used_unknown() {
+    /* lgr: fixup #XXX */
+    inline bool has_proximity() {
         return qd_flags.f_bm25_bigram_u8 || qd_flags.f_bm25_tp_dist_w100;
     }
 
-    /* lgr: to be removed */
+    /* lgr: to be moved see #4 */
     inline bool has_tag_count() {
         return qd_flags.f_tag_title_count || qd_flags.f_tag_heading_count ||
                qd_flags.f_tag_inlink_count || qd_flags.f_tag_applet_count ||
