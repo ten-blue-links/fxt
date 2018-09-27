@@ -49,7 +49,10 @@ class doc_proximity_feature {
         ranker.avg_doc_len = (double)num_terms / ranker.num_docs;
     }
 
-    void compute(doc_entry &doc, query_train &query, Document &doc_idx, std::unordered_map<uint32_t, std::vector<uint32_t>> &positions) {
+    void compute(doc_entry &                                          doc,
+                 query_train &                                        query,
+                 Document &                                           doc_idx,
+                 std::unordered_map<uint32_t, std::vector<uint32_t>> &positions) {
         score = 0.0;
 
         // condensed direct file
@@ -64,7 +67,7 @@ class doc_proximity_feature {
             if (lexicon.is_oov(tid)) {
                 continue;
             }
-            if (doc_idx.freq(tid) !=0) {
+            if (doc_idx.freq(tid) != 0) {
                 ++s;
                 term_data curr_term(tid,
                                     lexicon[tid].document_count(),
@@ -233,7 +236,7 @@ class doc_proximity_feature {
      * Vector insert ordered by f_dt. Xiaolu, et al.
      */
     void _acc_positions_insert(std::vector<indri::utility::greedy_vector<int>> &pos_vec,
-                               const std::vector<uint32_t> &                          pos_el,
+                               const std::vector<uint32_t> &                    pos_el,
                                std::vector<term_data> &                         term_vec,
                                term_data &                                      term_el) {
 
@@ -253,6 +256,4 @@ class doc_proximity_feature {
         pos_vec.insert(pos_itr, pos_el);
         term_vec.insert(term_itr, term_el);
     }
-
-
 };

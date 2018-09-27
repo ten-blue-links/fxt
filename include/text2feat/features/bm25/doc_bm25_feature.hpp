@@ -2,10 +2,10 @@
 
 #include <cmath>
 
+#include "bm25.hpp"
+#include "field_id.hpp"
 #include "forward_index.hpp"
 #include "lexicon.hpp"
-#include "field_id.hpp"
-#include "bm25.hpp"
 
 class doc_bm25_feature : public doc_feature {
    protected:
@@ -18,7 +18,10 @@ class doc_bm25_feature : public doc_feature {
         ranker.avg_doc_len = _avg_doc_len;
     }
 
-    void bm25_compute(query_train &qry, doc_entry &doc, Document &doc_idx, FieldIdMap &field_id_map) {
+    void bm25_compute(query_train &qry,
+                      doc_entry &  doc,
+                      Document &   doc_idx,
+                      FieldIdMap & field_id_map) {
         for (auto &q : qry.q_ft) {
 
             // skip non-existent terms
@@ -30,10 +33,8 @@ class doc_bm25_feature : public doc_feature {
                 continue;
             }
 
-            _score_doc += ranker.calculate_docscore(q.second,
-                                                    doc_idx.freq(q.first),
-                                                    lexicon[q.first].document_count(),
-                                                    doc.length);
+            _score_doc += ranker.calculate_docscore(
+                q.second, doc_idx.freq(q.first), lexicon[q.first].document_count(), doc.length);
 
             // Score document fields
             for (const std::string &field_str : _fields) {
@@ -50,11 +51,11 @@ class doc_bm25_feature : public doc_feature {
                     continue;
                 }
 
-                double field_score = ranker.calculate_docscore(
-                    q.second,
-                    doc_idx.freq(field_id, q.first),
-                    lexicon[q.first].field_document_count(field_id),
-                    doc_idx.field_len(field_id));
+                double field_score =
+                    ranker.calculate_docscore(q.second,
+                                              doc_idx.freq(field_id, q.first),
+                                              lexicon[q.first].field_document_count(field_id),
+                                              doc_idx.field_len(field_id));
                 _accumulate_score(field_str, field_score);
             }
         }

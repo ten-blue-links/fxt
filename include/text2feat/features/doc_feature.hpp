@@ -10,25 +10,24 @@
 
 #include "indri/Index.hpp"
 
-#include "query_train_file.hpp"
 #include "lexicon.hpp"
+#include "query_train_file.hpp"
 
 namespace {
-    static const std::string              _field_title = "title";
-    static const std::vector<std::string> _fields = {"body", _field_title, "heading", "inlink", "a"};
+static const std::string              _field_title = "title";
+static const std::vector<std::string> _fields = {"body", _field_title, "heading", "inlink", "a"};
 } // namespace
-
 
 /**
  * Score segments of a document with a given query.
  */
 class doc_feature {
    public:
-    Lexicon     &lexicon;
+    Lexicon &lexicon;
 
-    uint64_t     _coll_len    = 0;
-    uint64_t     _num_docs    = 0;
-    double       _avg_doc_len = 0.0;
+    uint64_t _coll_len    = 0;
+    uint64_t _num_docs    = 0;
+    double   _avg_doc_len = 0.0;
 
     double _score_doc     = 0.0;
     double _score_body    = 0.0;

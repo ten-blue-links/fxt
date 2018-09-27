@@ -40,10 +40,10 @@ class doc_tfidf_feature : public doc_feature {
                     continue;
                 }
 
-                double field_score =
-                    calculate_tfidf(doc_idx.freq(field_id, q.first),
-                                     field_term_cnt,
-                                     doc_idx.field_len(field_id), _num_docs);
+                double field_score = calculate_tfidf(doc_idx.freq(field_id, q.first),
+                                                     field_term_cnt,
+                                                     doc_idx.field_len(field_id),
+                                                     _num_docs);
                 _accumulate_score(field_str, field_score);
             }
         }

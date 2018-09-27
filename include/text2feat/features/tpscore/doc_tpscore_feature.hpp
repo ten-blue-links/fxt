@@ -42,7 +42,8 @@ struct bctp_scorer {
         return score;
     }
 
-    void score_terms(std::map<int, bctp_term *> &terms, const std::vector<uint32_t> &doc_positions) {
+    void score_terms(std::map<int, bctp_term *> & terms,
+                     const std::vector<uint32_t> &doc_positions) {
         bctp_term *curr_term = nullptr;
         bctp_term *prev_term = nullptr;
         size_t     prev_pos  = 0;
@@ -86,7 +87,7 @@ class doc_tpscore_feature : public doc_bm25_feature {
 
     void compute(query_train &qry, doc_entry &doc, Document &doc_idx, FieldIdMap &field_id_map) {
         auto bm25_atire = doc.bm25_atire;
-        if(bm25_atire == 0) {
+        if (bm25_atire == 0) {
             ranker.set_k1(90);
             ranker.set_b(40);
             bm25_compute(qry, doc, doc_idx, field_id_map);

@@ -1,6 +1,6 @@
 #pragma once
-#include "lexicon.hpp"
 #include "dph.hpp"
+#include "lexicon.hpp"
 
 class doc_dph_feature : public doc_feature {
    public:
@@ -17,8 +17,11 @@ class doc_dph_feature : public doc_feature {
                 continue;
             }
 
-            _score_doc += calculate_dph(
-                doc_idx.freq(q.first), lexicon[q.first].term_count(), _num_docs, _avg_doc_len, doc_idx.length());
+            _score_doc += calculate_dph(doc_idx.freq(q.first),
+                                        lexicon[q.first].term_count(),
+                                        _num_docs,
+                                        _avg_doc_len,
+                                        doc_idx.length());
 
             // Score document fields
             for (const std::string &field_str : _fields) {
@@ -40,10 +43,11 @@ class doc_dph_feature : public doc_feature {
                     continue;
                 }
 
-                double field_score =
-                    calculate_dph(doc_idx.freq(field_id, q.first),
-                                   field_term_cnt, _num_docs, _avg_doc_len,
-                                   doc_idx.field_len(field_id));
+                double field_score = calculate_dph(doc_idx.freq(field_id, q.first),
+                                                   field_term_cnt,
+                                                   _num_docs,
+                                                   _avg_doc_len,
+                                                   doc_idx.field_len(field_id));
                 _accumulate_score(field_str, field_score);
             }
         }

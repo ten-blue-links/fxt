@@ -8,11 +8,11 @@
 
 template <uint32_t t_k1 = 90, uint32_t t_b = 40>
 struct bm25_proximity {
-    static const double   k1;
-    static const double   b;
-    static const double   epsilon_score;
-    size_t                num_docs;
-    double                avg_doc_len;
+    static const double k1;
+    static const double b;
+    static const double epsilon_score;
+    size_t              num_docs;
+    double              avg_doc_len;
 
     double score(const double f_qt, const double f_dt, const double f_t, const double W_d) const {
         double w_qt = std::max(epsilon_score, std::log((num_docs / f_t) * f_qt));

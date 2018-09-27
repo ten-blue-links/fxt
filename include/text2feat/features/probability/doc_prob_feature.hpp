@@ -35,8 +35,8 @@ class doc_prob_feature : public doc_feature {
                     continue;
                 }
 
-                double field_score = calculate_prob(
-                    doc_idx.freq(field_id, q.first), doc_idx.field_len(field_id));
+                double field_score =
+                    calculate_prob(doc_idx.freq(field_id, q.first), doc_idx.field_len(field_id));
                 _accumulate_score(field_str, field_score);
             }
         }
