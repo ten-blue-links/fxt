@@ -209,7 +209,7 @@ class Document {
         m_num_terms = m_terms.size();
 
         {
-            std::vector<uint32_t> buffer(m_num_terms);
+            std::vector<uint32_t> buffer(m_num_terms * 2 + 1024);
             size_t                compressedsize = m_unique_terms.size();
             Delta::deltaSIMD(m_unique_terms.data(), m_unique_terms.size());
             codec.encodeArray(
