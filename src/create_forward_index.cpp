@@ -91,12 +91,12 @@ int main(int argc, char const *argv[]) {
             document.set_tag_count(f.id, document.tag_count(f.id) + 1);
         }
 
-        std::vector<uint16_t> f;
+        std::vector<uint16_t> fv;
         for (const std::string &field_str : _fields) {
             int field_id = index->field(field_str);
-            f.push_back(field_id);
+            fv.push_back(field_id);
         }
-        document.set_fields(f);
+        document.set_fields(fv);
 
         std::unordered_map<size_t, std::unordered_map<uint32_t, uint32_t>> field_freqs;
         for (const std::string &field_str : _fields) {
