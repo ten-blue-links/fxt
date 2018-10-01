@@ -29,6 +29,7 @@ size_t url_slash_count(const std::string &url) {
 }
 
 static const std::vector<std::string> _fields = {"body", "title", "heading", "inlink", "a"};
+static std::unordered_map<std::string, uint16_t> _field_map;
 
 int main(int argc, char const *argv[]) {
     std::string repo_path;
@@ -49,6 +50,14 @@ int main(int argc, char const *argv[]) {
 
     indri::api::QueryEnvironment indri_env;
     indri_env.addIndex(repo_path);
+
+    for (const std::string &str : _fields) {
+        int field_id = index->field(str);
+        // field with id `0` means the field does not exist
+        if (field_id > 0) {
+            _field_map[str] = field_id;
+        }
+    }
 
     ForwardIndex fwd_idx;
     fwd_idx.reserve(index->documentCount());
@@ -86,30 +95,23 @@ int main(int argc, char const *argv[]) {
             }
         }));
 
-        auto fields = list->fields();
-        for (auto &f : fields) {
-            document.set_tag_count(f.id, document.tag_count(f.id) + 1);
+        std::unordered_map<uint16_t, std::vector<indri::index::FieldExtent>> field_list;
+        for (auto &f : list->fields()) {
+            if (_field_map.find(index->field(f.id)) != _field_map.end()) {
+                document.set_tag_count(f.id, document.tag_count(f.id) + 1);
+                field_list[f.id].push_back(f);
+            }
         }
 
         std::vector<uint16_t> fv;
-        for (const std::string &field_str : _fields) {
-            int field_id = index->field(field_str);
-            fv.push_back(field_id);
+        for (auto &f : _field_map) {
+            fv.push_back(f.second);
         }
         document.set_fields(fv);
 
         std::unordered_map<size_t, std::unordered_map<uint32_t, uint32_t>> field_freqs;
-        for (const std::string &field_str : _fields) {
-            int field_id = index->field(field_str);
-            if (field_id < 1) {
-                // field is not indexed
-                continue;
-            }
-
-            for (auto &f : fields) {
-                if (f.id != static_cast<size_t>(field_id)) {
-                    continue;
-                }
+        for (const auto &curr : field_list) {
+            for (const auto &f : curr.second) {
                 auto d_len = f.end - f.begin;
                 document.set_field_len(f.id, document.field_len(f.id) + d_len);
                 auto field_len_sqr = d_len * d_len;
