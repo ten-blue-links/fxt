@@ -59,9 +59,15 @@ int main(int argc, char const *argv[]) {
         }
     }
 
-    ForwardIndex fwd_idx;
-    fwd_idx.reserve(index->documentCount());
-    fwd_idx.emplace_back();
+    {
+        // dump size of vector
+        size_t len = index->documentCount();
+        archive(len);
+        // pad document index zero (unused)
+        Document zero;
+        archive(zero);
+    }
+
     uint64_t                            docid = index->documentBase();
     indri::index::TermListFileIterator *iter  = index->termListFileIterator();
     iter->startIteration();
@@ -142,7 +148,7 @@ int main(int argc, char const *argv[]) {
         }
 
         document.compress();
-        fwd_idx.push_back(std::move(document));
+        archive(document);
 
         iter->nextEntry();
         if (docid % 10000 == 0) {
@@ -151,6 +157,5 @@ int main(int argc, char const *argv[]) {
         ++docid;
     }
     delete iter;
-    archive(fwd_idx);
     return 0;
 }
