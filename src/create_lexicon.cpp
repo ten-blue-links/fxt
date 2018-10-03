@@ -4,7 +4,10 @@
 #include "indri/QueryEnvironment.hpp"
 #include "indri/Repository.hpp"
 
+#include "text2feat/field_map.hpp"
 #include "text2feat/lexicon.hpp"
+
+static const std::vector<std::string> _fields = {"body", "title", "heading", "inlink", "a"};
 
 int main(int argc, char const *argv[]) {
     std::string repo_path;
@@ -23,9 +26,8 @@ int main(int argc, char const *argv[]) {
     indri::collection::Repository::index_state state = repo.indexes();
     const auto &                               index = (*state)[0];
 
-    indri::api::QueryEnvironment env;
-    env.addIndex(repo_path);
-    auto fields = env.fieldList();
+    FieldMap fields;
+    fields.insert(*index, _fields);
 
     indri::index::VocabularyIterator *iter = index->vocabularyIterator();
     iter->startIteration();
@@ -38,8 +40,7 @@ int main(int argc, char const *argv[]) {
         indri::index::TermData *    termData = entry->termData;
 
         FieldCounts field_counts;
-        for (const std::string &field_str : fields) {
-            int    field_id = index->field(field_str);
+        for (const int &field_id : fields.values()) {
             Counts c(termData->fields[field_id - 1].documentCount,
                      termData->fields[field_id - 1].totalCount);
             field_counts.insert(std::make_pair(field_id, c));

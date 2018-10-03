@@ -23,9 +23,14 @@ int main(int argc, char const *argv[]) {
     indri::collection::Repository::index_state state = repo.indexes();
     const auto &                               index = (*state)[0];
 
-    InvertedIndex inv_idx;
+    {
+        // dump size of vector
+        size_t len = index->uniqueTermCount();
+        archive(len);
+    }
 
-    indri::index::DocListFileIterator *iter = index->docListFileIterator();
+    size_t                             count = 0;
+    indri::index::DocListFileIterator *iter  = index->docListFileIterator();
     iter->startIteration();
     while (!iter->finished()) {
         indri::index::DocListFileIterator::DocListData *entry = iter->currentEntry();
@@ -44,14 +49,14 @@ int main(int argc, char const *argv[]) {
             entry->iterator->nextEntry();
         }
         pl.add_list(docs, freqs);
-        inv_idx.push_back(pl);
+        archive(pl);
+        ++count;
         iter->nextEntry();
-        if (inv_idx.size() % 10000 == 0) {
-            std::cout << "Processed " << inv_idx.size() << " terms." << std::endl;
+        if (count % 10000 == 0) {
+            std::cout << "Processed " << count << " terms." << std::endl;
         }
     }
-    std::cout << "Processed " << inv_idx.size() << " terms." << std::endl;
+    std::cout << "Processed " << count << " terms." << std::endl;
     delete iter;
-    archive(inv_idx);
     return 0;
 }

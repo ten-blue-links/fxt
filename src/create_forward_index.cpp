@@ -6,6 +6,7 @@
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
 
+#include "text2feat/field_map.hpp"
 #include "text2feat/forward_index.hpp"
 
 size_t url_slash_count(const std::string &url) {
@@ -29,7 +30,6 @@ size_t url_slash_count(const std::string &url) {
 }
 
 static const std::vector<std::string> _fields = {"body", "title", "heading", "inlink", "a"};
-static std::unordered_map<std::string, uint16_t> _field_map;
 
 int main(int argc, char const *argv[]) {
     std::string repo_path;
@@ -48,16 +48,11 @@ int main(int argc, char const *argv[]) {
     indri::collection::Repository::index_state state = repo.indexes();
     const auto &                               index = (*state)[0];
 
+    FieldMap fields;
+    fields.insert(*index, _fields);
+
     indri::api::QueryEnvironment indri_env;
     indri_env.addIndex(repo_path);
-
-    for (const std::string &str : _fields) {
-        int field_id = index->field(str);
-        // field with id `0` means the field does not exist
-        if (field_id > 0) {
-            _field_map[str] = field_id;
-        }
-    }
 
     {
         // dump size of vector
@@ -104,14 +99,14 @@ int main(int argc, char const *argv[]) {
 
         std::unordered_map<uint16_t, std::vector<indri::index::FieldExtent>> field_list;
         for (auto &f : list->fields()) {
-            if (_field_map.find(index->field(f.id)) != _field_map.end()) {
+            if (fields.get().find(index->field(f.id)) != fields.get().end()) {
                 document.set_tag_count(f.id, document.tag_count(f.id) + 1);
                 field_list[f.id].push_back(f);
             }
         }
 
         std::vector<uint16_t> fv;
-        for (auto &f : _field_map) {
+        for (auto &f : fields.get()) {
             fv.push_back(f.second);
         }
         document.set_fields(fv);
