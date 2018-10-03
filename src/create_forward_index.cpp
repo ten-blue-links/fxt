@@ -68,8 +68,9 @@ int main(int argc, char const *argv[]) {
         archive(zero);
     }
 
-    uint64_t                            docid = index->documentBase();
-    indri::index::TermListFileIterator *iter  = index->termListFileIterator();
+    size_t                              total_docs = index->documentCount();
+    uint64_t                            docid      = index->documentBase();
+    indri::index::TermListFileIterator *iter       = index->termListFileIterator();
     iter->startIteration();
 
     while (!iter->finished()) {
@@ -150,10 +151,19 @@ int main(int argc, char const *argv[]) {
         document.compress();
         archive(document);
 
-        iter->nextEntry();
-        if (docid % 10000 == 0) {
-            std::cout << "Processed " << docid << " documents." << std::endl;
+        if (docid % 10000 == 0 || docid == index->documentBase() || size_t(docid) == total_docs) {
+            static size_t      last_len = 0;
+            std::ostringstream oss;
+            double             progress = double(docid) / double(total_docs);
+            progress *= 100;
+            std::cerr << std::string(last_len, '\b');
+            oss.str("");
+            oss << "documents processed: " << docid << " (" << int(progress) << "%)";
+            last_len = oss.str().size();
+            std::cerr << oss.str();
         }
+
+        iter->nextEntry();
         ++docid;
     }
     delete iter;
