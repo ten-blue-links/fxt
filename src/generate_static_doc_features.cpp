@@ -17,6 +17,7 @@
 #include "indri/Repository.hpp"
 #include "indri/greedy_vector"
 
+#include "text2feat/field_map.hpp"
 #include "text2feat/static_feature.hpp"
 #include "text2feat/web_1t_stopwords.hpp"
 
@@ -193,13 +194,13 @@ void set_url_lendep(statdoc_entry &s, const std::string &url) {
 }
 
 int main(int argc, char **argv) {
+    bool        list_fields = false;
     std::string repo_path;
-    std::string field_name;
     std::string output_file;
 
     CLI::App app{"Generate static document features."};
+    app.add_flag("-l", list_fields, "List available fields and exit");
     app.add_option("repo_path", repo_path, "Indri repo path")->required();
-    app.add_option("field_name", field_name, "Name of title field")->required();
     app.add_option("output_file", output_file, "Name of output file")->required();
     CLI11_PARSE(app, argc, argv);
 
@@ -211,14 +212,19 @@ int main(int argc, char **argv) {
     indri::collection::Repository::index_state state = repo.indexes();
     const auto &                               index = (*state)[0];
 
-    if (!index->field(field_name)) {
-        std::cerr << "the field '" << field_name << "' does not exist." << std::endl;
+    if (list_fields) {
         std::cerr << "available fields are:" << std::endl;
         int id = 1;
         while ("" != index->field(id)) {
             std::cerr << "  " << index->field(id++) << std::endl;
         }
         return EXIT_FAILURE;
+    }
+
+    {
+        // check fields are valid
+        FieldMap fields;
+        fields.insert(*index, {"body", "title", "table", "td", "a"});
     }
 
     std::cerr << "extracting static document features..." << std::endl;
@@ -245,7 +251,7 @@ int main(int argc, char **argv) {
         indri::api::ParsedDocument *doc      = collection->retrieve(id);
 
         s.len          = list->terms().size();
-        s.title_len    = field_len(index->field(field_name), list->fields());
+        s.title_len    = field_len(index->field("title"), list->fields());
         s.avg_term_len = avg_term_len(index, list->terms());
         s.entropy      = entropy(index, list->terms());
         s.stop_cover   = stop_cover(stopwords, list->terms());
