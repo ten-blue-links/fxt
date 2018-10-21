@@ -28,6 +28,15 @@ A large scale feature extraction tool for text-based machine learning.
     make
     ```
 
+## Features
+The toolkit offers a large number of text-based features that can be configured
+for extraction. See the [feature list](doc/features.md) for the feature types
+and descriptions.
+
+## Documentation
+For a quick tour see the [quick start](doc/quick-start.md) guide. Then refer to
+the main [documentation](doc/index.md) for specific topics in more detail.
+
 ## License
 [license]: #license
 
