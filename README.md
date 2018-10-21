@@ -1,23 +1,36 @@
 # text2feat
-A large scale feature extraction tool for text-based machine learning
+A large scale feature extraction tool for text-based machine learning.
 
-[![Build Status](https://travis-ci.org/rmit-ir/text2feat.svg?branch=master)](https://travis-ci.org/rmit-ir/text2feat)
+## Building from Source
+1. Make sure you have installed the dependencies:
 
-## Building the code
-The code is tested on Linux with GCC 7.3.0 and Clang 5.0.
+    * A recent version of `g++` or `clang`
+    * GNU `make`
+    * `cmake` 3.0 or later
+    * `git`
 
-To build the code:
+2. Clone the [source] with `git`:
 
-```
-$ mkdir build
-$ cd build
-$ cmake .. -DCMAKE_BUILD_TYPE=Release
-$ make
-```
+    ```sh
+    $ git clone https://github.com/rmit-ir/text2feat.git
+    $ cd text2feat
+    ```
 
-## Usage
+[source]: https://github.com/rmit-ir/text2feat
 
+3. Build and install:
 
-```
-make all INDRI_INDEX=<indri index path> QUERIES=<queries file> STAGE0=<TREC run>
-```
+    ```sh
+    git submodule update --init --recursive --progress
+    mkdir build
+    cd build
+    cmake ..
+    make
+    ```
+
+## License
+[license]: #license
+
+text2feat is distributed under the terms of the MIT license.
+
+See [LICENSE](LICENSE) for details.
