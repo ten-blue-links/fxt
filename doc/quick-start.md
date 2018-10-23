@@ -81,10 +81,10 @@ component via the `extract_features` program. To do this we need to:
 
     The feature extraction process assumes that you already have a candidate
     set of documents for each query that you wish to extract the features for.
-    This is known as a run file and uses the followin format
+    This is known as a run file and uses the following format
     `<query id> Q0 <docid> 0 <score> <run identifier>`.
 
-6. Add labes to the Stage0 run file:
+6. Add labels to the Stage0 run file:
 
     ```sh
     ./script/label.awk labels.txt myrun.txt > stage0.run
