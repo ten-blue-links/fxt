@@ -1,10 +1,8 @@
 /*
- * Dump number of outlinks for each document.
+ * Copyright 2018 The text2feat authors.
  *
- * Currently this program is structured around dumping outlinks in a format from
- * the ClueWeb collections.
- *
- * See also scipt/mk-nodeid-docno.sh.
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
  */
 
 #include <fstream>
@@ -14,6 +12,14 @@
 #include <unordered_map>
 #include <vector>
 
+/*
+ * Dump number of outlinks for each document.
+ *
+ * Currently this program is structured around dumping outlinks in a format from
+ * the ClueWeb collections.
+ *
+ * See also scipt/mk-nodeid-docno.sh.
+ */
 int main(int argc, char **argv) {
     if (argc != 2) {
         std::cerr << "usage: ./outlink <doc id file>" << std::endl

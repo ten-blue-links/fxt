@@ -1,16 +1,21 @@
 /*
- * Pre-retrieval query features:
+ * Copyright 2018 The text2feat authors.
  *
- *   * Query length of non-stop words in the query
- *   * Simplified clarity score
- *   * Std deviation of the IDF of the terms in query
- *   * Gamma2: IDF max / IDF min
- *   * Query scope
- *   * AvIDF on full query
- *   * AvIDF on non-stopwords in the query
- *   * AvICTF on full query
- *   * AvICTF on non-stopwords in the query
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
  */
+
+// Pre-retrieval query features:
+//
+//   * Query length of non-stop words in the query
+//   * Simplified clarity score
+//   * Std deviation of the IDF of the terms in query
+//   * Gamma2: IDF max / IDF min
+//   * Query scope
+//   * AvIDF on full query
+//   * AvIDF on non-stopwords in the query
+//   * AvICTF on full query
+//   * AvICTF on non-stopwords in the query
 
 #include <cmath>
 #include <limits>

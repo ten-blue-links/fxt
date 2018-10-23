@@ -1,6 +1,8 @@
-/**
- * Extract static document features. Many of which are from Bendersky, et al.
- * WSDM (2011).
+/*
+ * Copyright 2018 The text2feat authors.
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
  */
 
 #include <algorithm>
@@ -193,6 +195,10 @@ void set_url_lendep(statdoc_entry &s, const std::string &url) {
     s.url_depth = depth;
 }
 
+/*
+ * Extract static document features. Many of which are from Bendersky, et al.
+ * WSDM (2011).
+ */
 int main(int argc, char **argv) {
     bool        list_fields = false;
     std::string repo_path;

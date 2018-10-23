@@ -1,3 +1,10 @@
+/*
+ * Copyright 2018 The text2feat authors.
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
+ */
+
 #pragma once
 
 static double calculate_tfidf(double d_f, double t_idf, double dlen, size_t num_docs) {

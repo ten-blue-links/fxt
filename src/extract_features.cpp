@@ -1,5 +1,8 @@
 /*
- * Perform feature extraction.
+ * Copyright 2018 The text2feat authors.
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
  */
 
 #include <iostream>
@@ -25,6 +28,9 @@
 #include "text2feat/static_feature.hpp"
 #include "text2feat/trec_run_file.hpp"
 
+/*
+ * Perform feature extraction.
+ */
 int main(int argc, char **argv) {
     std::string query_file;
     std::string trec_file;

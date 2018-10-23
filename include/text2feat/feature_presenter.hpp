@@ -1,5 +1,8 @@
 /*
- * Display features that are enabled.
+ * Copyright 2018 The text2feat authors.
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
  */
 
 #pragma once
@@ -7,6 +10,9 @@
 #include "doc_entry.hpp"
 #include "statdoc_entry.hpp"
 
+/*
+ * Display features that are enabled.
+ */
 class FeaturePresenter {
     doc_entry          dentry;
     doc_entry_flag     dentry_flag;

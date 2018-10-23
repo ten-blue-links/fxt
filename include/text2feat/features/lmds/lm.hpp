@@ -1,3 +1,10 @@
+/*
+ * Copyright 2018 The text2feat authors.
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
+ */
+
 #pragma once
 
 double calculate_lm(uint32_t d_f, uint64_t c_f, uint32_t dlen, uint64_t clen, double mu) {

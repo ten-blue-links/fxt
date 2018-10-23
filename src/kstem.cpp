@@ -1,5 +1,8 @@
 /*
- * Stem text with the Krovetz stemmer.
+ * Copyright 2018 The text2feat authors.
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
  */
 
 #include <fstream>
@@ -20,6 +23,9 @@ std::istream &get_stream(int argc, char **argv, std::ifstream &file) {
     return std::cin;
 }
 
+/*
+ * Stem text with the Krovetz stemmer.
+ */
 int main(int argc, char **argv) {
     std::ifstream inf;
     std::istream &ins = get_stream(argc, argv, inf);

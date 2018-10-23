@@ -1,10 +1,8 @@
 /*
- * Top 100 alphabetic unigrams from the Web 1T 5-gram Version 1 corpus
- * https://catalog.ldc.upenn.edu/ldc2006t13 reported by Bendersky, et al.
- * WSDM (2011).
+ * Copyright 2018 The text2feat authors.
  *
- * This set has not been stemmed. Applying Krovetz stemming results in the same
- * list. Porter stemming has not been tested.
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
  */
 
 #pragma once
@@ -12,6 +10,14 @@
 #include <string>
 #include <vector>
 
+/*
+ * Top 100 alphabetic unigrams from the Web 1T 5-gram Version 1 corpus
+ * https://catalog.ldc.upenn.edu/ldc2006t13 reported by Bendersky, et al.
+ * WSDM (2011).
+ *
+ * This set has not been stemmed. Applying Krovetz stemming results in the same
+ * list. Porter stemming has not been tested.
+ */
 const std::vector<std::string> web_1t_top_100 = {
     "the",     "of",   "and",         "to",    "a",    "in",   "for",   "is",    "on",     "that",
     "by",      "with", "i",           "or",    "not",  "you",  "be",    "are",   "this",   "at",

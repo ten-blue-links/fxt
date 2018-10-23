@@ -1,5 +1,8 @@
 /*
- * Static document feature list.
+ * Copyright 2018 The text2feat authors.
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
  */
 
 #pragma once
@@ -12,6 +15,9 @@
 
 #include "cereal/types/vector.hpp"
 
+/*
+ * Static document feature list.
+ */
 class StaticFeature {
    public:
     statdoc_entry dentry;

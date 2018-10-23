@@ -1,5 +1,8 @@
 /*
- * Query-document features.
+ * Copyright 2018 The text2feat authors.
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
  */
 
 #pragma once
@@ -13,6 +16,9 @@
 #include <utility>
 #include <vector>
 
+/*
+ * Query-document features.
+ */
 struct doc_entry {
     // Score from training trec run file
     double stage0_score = 0;
