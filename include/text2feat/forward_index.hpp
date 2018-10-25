@@ -214,6 +214,9 @@ class Document {
 
     void compress() {
         m_num_terms = m_terms.size();
+        if (0 == m_num_terms) {
+          return;
+        }
 
         {
             std::vector<uint32_t> buffer(m_num_terms * 2 + 1024);
@@ -250,6 +253,10 @@ class Document {
     }
 
     void decompress() {
+        if (0 == m_num_terms) {
+          return;
+        }
+
         {
             std::vector<uint32_t> terms(m_num_terms);
             size_t                recoveredsize = terms.size();
