@@ -17,7 +17,7 @@
 #include "lexicon.hpp"
 struct query_train {
     // query id
-    int id;
+    std::string id;
     // stemmed query terms
     std::vector<std::string> stems;
     // terms by id
@@ -50,7 +50,7 @@ class query_train_file {
             }
 
             query_train row;
-            row.id = std::stol(parts[0]);
+            row.id = parts[0];
 
             // query terms
             int count = 0;

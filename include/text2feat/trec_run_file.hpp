@@ -18,14 +18,14 @@
 #include <vector>
 
 class trec_run_file {
-    const int          k_init = -1;
+    const std::string  k_init = "-1";
     const unsigned int fields = 6;
     // docno vector mapped by topic id
-    std::map<int, std::vector<std::string>> results;
+    std::map<std::string, std::vector<std::string>> results;
     // document labels, from abuse of Q0 field in TREC run file.
-    std::map<int, std::vector<int>> labels;
+    std::map<std::string, std::vector<int>> labels;
     // document scores
-    std::map<int, std::vector<double>> scores;
+    std::map<std::string, std::vector<double>> scores;
     std::ifstream &                    ifs;
 
    public:
@@ -40,7 +40,8 @@ class trec_run_file {
         std::vector<std::string> list;
         std::vector<int>         label_list;
         std::vector<double>      score_list;
-        auto                     last_id = k_init, id = 0, rel_label = 0;
+        std::string last_id = k_init, id = "";
+        auto                     rel_label = 0;
         double                   score = 0.0;
 
         while (std::getline(ifs, line, '\n')) {
@@ -55,12 +56,7 @@ class trec_run_file {
                 throw std::logic_error(oss.str());
             }
 
-            id = std::stol(parts[0]);
-            if (0 == id) {
-                std::ostringstream oss;
-                oss << "TREC run entry QID is 0";
-                throw std::runtime_error(oss.str());
-            }
+            id = parts[0];
 
             // Only try to read class label if Q is missing
             if (parts[1].c_str()[0] != 'Q') {
@@ -93,7 +89,7 @@ class trec_run_file {
         scores.emplace(last_id, score_list);
     }
 
-    std::vector<std::string> get_result(int id) {
+    std::vector<std::string> get_result(std::string id) {
         auto it = results.find(id);
 
         if (results.end() == it) {
@@ -103,7 +99,7 @@ class trec_run_file {
         return results[id];
     }
 
-    std::vector<int> get_labels(int id) {
+    std::vector<int> get_labels(std::string id) {
         auto it = labels.find(id);
 
         if (labels.end() == it) {
@@ -113,7 +109,7 @@ class trec_run_file {
         return labels[id];
     }
 
-    std::vector<double> get_scores(int id) {
+    std::vector<double> get_scores(std::string id) {
         auto it = scores.find(id);
 
         if (scores.end() == it) {
