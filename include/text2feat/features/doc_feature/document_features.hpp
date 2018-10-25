@@ -55,7 +55,6 @@ class document_features {
             int field_id = field_id_map[field_str];
             if (field_id < 1) {
                 // field does not exist
-                std::cerr << "field '" << field_str << "' does not exist" << std::endl;
                 continue;
             }
 
