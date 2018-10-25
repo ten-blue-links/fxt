@@ -154,7 +154,7 @@ class doc_proximity_feature {
         // `window - 1`.
         const int _window = window - 1;
 
-        for (size_t i = 0; i < cdf.size() - 1; ++i) {
+        for (size_t i = 0; cdf.size() > 0 && i < cdf.size() - 1; ++i) {
             // bigram scan
             for (size_t j = i + 1; j < cdf.size(); i = j++) {
                 auto      lhs  = cdf[i];
