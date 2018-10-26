@@ -70,16 +70,6 @@ target_link_libraries(preret_csv
     cereal
 )
 
-# generate_document_features
-add_executable(generate_document_features generate_document_features.cpp)
-target_link_libraries(generate_document_features
-    FastPFor
-    indri
-    pthread
-    CLI11
-    cereal
-)
-
 add_executable(generate_static_doc_features generate_static_doc_features.cpp)
 target_link_libraries(generate_static_doc_features
     indri
