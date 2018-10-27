@@ -6,6 +6,11 @@ SPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE=$SPATH/..
 CLANGFMT=clang-format-6.0
 
+if [ ! $(which $CLANGFMT) ]; then
+    echo "error: $CLANGFMT not found" 1>&2
+    exit 1
+fi
+
 for f in $BASE/include/text2feat/{doc_entry,statdoc_entry}.hpp; do
 header=$(basename ${f%.hpp})_flag
 awk '/^struct\s+(doc_entry|statdoc_entry)\s+{/ {
