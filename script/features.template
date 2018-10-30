@@ -1,0 +1,159 @@
+# Features
+
+## Document features
+
+| Feature No. | Description                                                                      |
+|-------------|----------------------------------------------------------------------------------|
+|         x  | Stage0 score from TREC input file                                                |
+|         x  | BM25 Atire for the document                                                      |
+|         x  | BM25 Atire for the document body                                                 |
+|         x  | BM25 Atire for the document title                                                |
+|         x  | BM25 Atire for the document headings (h1-h4)                                     |
+|         x  | BM25 Atire for document inlinks                                                  |
+|         x  | BM25 Atire for document a tags                                                   |
+|         x  | BM25 TREC 3 (k = 1.2) for the document                                           |
+|         x  | BM25 TREC 3 (k = 1.2) for the document body                                      |
+|         x  | BM25 TREC 3 (k = 1.2) for the document title                                     |
+|         x  | BM25 TREC 3 (k = 1.2) for the document headings (h1-h4)                          |
+|         x  | BM25 TREC 3 (k = 1.2) for the document inlinks                                   |
+|         x  | BM25 TREC 3 (k = 1.2) for the document a tags                                    |
+|         x  | BM25 TREC 3 (k = 2.0) for the document                                           |
+|         x  | BM25 TREC 3 (k = 2.0) for the document body                                      |
+|         x  | BM25 TREC 3 (k = 2.0) for the document title                                     |
+|         x  | BM25 TREC 3 (k = 2.0) for the document headings (h1-h4)                          |
+|         x  | BM25 TREC 3 (k = 2.0) for the document inlinks                                   |
+|         x  | BM25 TREC 3 (k = 2.0) for the document a tags                                    |
+|         x  | LMDS (mu = 2500) for the document                                                |
+|         x  | LMDS (mu = 2500) for the document body                                           |
+|         x  | LMDS (mu = 2500) for the document title                                          |
+|         x  | LMDS (mu = 2500) for the document headings (h1-h4)                               |
+|         x  | LMDS (mu = 2500) for the document inlinks                                        |
+|         x  | LMDS (mu = 2500) for the document a tags                                         |
+|         x  | LMDS (mu = 1500) for the document                                                |
+|         x  | LMDS (mu = 1500) for the document body                                           |
+|         x  | LMDS (mu = 1500) for the document title                                          |
+|         x  | LMDS (mu = 1500) for the document headings (h1-h4)                               |
+|         x  | LMDS (mu = 1500) for the document inlinks                                        |
+|         x  | LMDS (mu = 1500) for the document a tags                                         |
+|         x  | LMDS (mu = 1000) for the document                                                |
+|         x  | LMDS (mu = 1000) for the document body                                           |
+|         x  | LMDS (mu = 1000) for the document title                                          |
+|         x  | LMDS (mu = 1000) for the document headings (h1-h4)                               |
+|         x  | LMDS (mu = 1000) for the document inlinks                                        |
+|         x  | LMDS (mu = 1000) for the document a tags                                         |
+|         x  | TF.IDF for the document                                                          |
+|         x  | TF.IDF for the document body                                                     |
+|         x  | TF.IDF for the document title                                                    |
+|         x  | TF.IDF for the document headings (h1-h4)                                         |
+|         x  | TF.IDF for the document inlinks                                                  |
+|         x  | TF.IDF for the document a tags                                                   |
+|         x  | Probability score for the document                                               |
+|         x  | Probability score for the document body                                          |
+|         x  | Probability score for the document title                                         |
+|         x  | Probability score for the document headings (h1-h4)                              |
+|         x  | Probability score for the document inlinks                                       |
+|         x  | Probability score for the document a tags                                        |
+|         x  | Bose-Einstein score for the document                                             |
+|         x  | Bose-Einstein score for the document body                                        |
+|         x  | Bose-Einstein score for the document title                                       |
+|         x  | Bose-Einstein score for the document headings (h1-h4)                            |
+|         x  | Bose-Einstein score for the document inlinks                                     |
+|         x  | Bose-Einstein score for the document a tags                                      |
+|         x  | DPH score for the document                                                       |
+|         x  | DPH score for the document body                                                  |
+|         x  | DPH score for the document title                                                 |
+|         x  | DPH score for the document headings (h1-h4)                                      |
+|         x  | DPH score for the document inlinks                                               |
+|         x  | DPH score for the document a tags                                                |
+|         x  | DFR score for the document                                                       |
+|         x  | DFR score for the document body                                                  |
+|         x  | DFR score for the document title                                                 |
+|         x  | DFR score for the document headings (h1-h4)                                      |
+|         x  | DFR score for the document inlinks                                               |
+|         x  | DFR score for the document a tags                                                |
+|         x  | Raw stream length of document                                                    |
+|         x  | Raw stream length of document body                                               |
+|         x  | Raw stream length of document title                                              |
+|         x  | Raw stream length of document headings (h1-h4)                                   |
+|         x  | Raw stream length of document inlinks                                            |
+|         x  | Raw stream length of document a tags                                             |
+|         x  | Term frequency normalized sum of stream length of document                       |
+|         x  | Term frequency normalized sum of stream length of document body                  |
+|         x  | Term frequency normalized sum of stream length of document title                 |
+|         x  | Term frequency normalized sum of stream length of document headings (h1-h4)      |
+|         x  | Term frequency normalized sum of stream length of document inlinks               |
+|         x  | Term frequency normalized sum of stream length of document a tags                |
+|         x  | Term frequency normalized min of stream length of document                       |
+|         x  | Term frequency normalized min of stream length of document body                  |
+|         x  | Term frequency normalized min of stream length of document title                 |
+|         x  | Term frequency normalized min of stream length of document headings (h1-h4)      |
+|         x  | Term frequency normalized min of stream length of document inlinks               |
+|         x  | Term frequency normalized min of stream length of document a tags                |
+|         x  | Term frequency normalized max of stream length of document                       |
+|         x  | Term frequency normalized max of stream length of document body                  |
+|         x  | Term frequency normalized max of stream length of document title                 |
+|         x  | Term frequency normalized max of stream length of document headings (h1-h4)      |
+|         x  | Term frequency normalized max of stream length of document inlinks               |
+|         x  | Term frequency normalized max of stream length of document a tags                |
+|         x  | Term frequency normalized mean of stream length of document                      |
+|         x  | Term frequency normalized mean of stream length of document body                 |
+|         x  | Term frequency normalized mean of stream length of document title                |
+|         x  | Term frequency normalized mean of stream length of document headings (h1-h4)     |
+|         x  | Term frequency normalized mean of stream length of document inlinks              |
+|         x  | Term frequency normalized mean of stream length of document a tags               |
+|         x  | Term frequency normalized variance of stream length of document                  |
+|        x  | Term frequency normalized variance of stream length of document body             |
+|        x  | Term frequency normalized variance of stream length of document title            |
+|        x  | Term frequency normalized variance of stream length of document headings (h1-h4) |
+|        x  | Term frequency normalized variance of stream length of document inlinks          |
+|        x  | Term frequency normalized variance of stream length of document a tags           |
+|        x  | TP-Score of document                                                             |
+|        x  | Sum of BM25 query bigrams within an unordered window of 8 of the doucment        |
+|        x  | BM25 bigram interval score within a window of 100 of the document                |
+|        x  | Frequency of query terms within the document title                               |
+|        x  | Frequency of query terms within the document headings (h1-h4)                    |
+|        x  | Frequency of query terms within the document                                     |
+|        x  | Frequency of query terms within the document inlinks                             |
+|        x  | Document tag count for title                                                     |
+|        x  | Document tag count for headings (h1-h4)                                          |
+|        x  | Document tag count for applet                                                    |
+|        x  | Document tag count for object                                                    |
+|        x  | Document tag count for embed                                                     |
+|        x  | Number of slashes in URL                                                         |
+|        x  | URL length                                                                       |
+
+## Static document features
+
+| Feature No. | Description              |
+|-------------|--------------------------|
+| x           | Document length          |
+| x           | Title length             |
+| x           | Visible term length      |
+| x           | URL length               |
+| x           | URL depth                |
+| x           | Average term length      |
+| x           | Entropy                  |
+| x           | Stop cover               |
+| x           | Stop ratio               |
+| x           | Fraction of anchor text  |
+| x           | Fraction of visible text |
+| x           | Fraction of table text   |
+| x           | Fraction of td text      |
+
+## Query features
+
+| Feature No. | Description                 |
+|-------------|-----------------------------|
+| x           | Query length                |
+| x           | Query length non-stop words |
+| x           | Simplified clarity score    |
+| x           | Query scope score           |
+| x           | TF.IDF average              |
+| x           | TF.IDF variance             |
+| x           | TF.IDF standard deviation   |
+| x           | TF.IDF confidence           |
+| x           | Gamma2: IDF max / IDF min   |
+| x           | Average IDF on full query   |
+| x           | Average IDF non-stop words  |
+| x           | Average ICTF on full query  |
+| x           | Average ICTF non-stop words |
