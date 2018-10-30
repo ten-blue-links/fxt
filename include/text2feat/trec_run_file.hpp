@@ -26,7 +26,7 @@ class trec_run_file {
     std::map<std::string, std::vector<int>> labels;
     // document scores
     std::map<std::string, std::vector<double>> scores;
-    std::ifstream &                    ifs;
+    std::ifstream &                            ifs;
 
    public:
     trec_run_file(std::ifstream &infile) : ifs(infile) {}
@@ -40,9 +40,9 @@ class trec_run_file {
         std::vector<std::string> list;
         std::vector<int>         label_list;
         std::vector<double>      score_list;
-        std::string last_id = k_init, id = "";
+        std::string              last_id = k_init, id = "";
         auto                     rel_label = 0;
-        double                   score = 0.0;
+        double                   score     = 0.0;
 
         while (std::getline(ifs, line, '\n')) {
             std::istringstream iss(line);

@@ -2,9 +2,8 @@
 
 ## Document features
 
-| Feature ID | Description                                                                      |
+| Feature No | Description                                                                      |
 |------------|----------------------------------------------------------------------------------|
-|          1 | PageRank score for the document                                                  |
 |          2 | Stage0 score from TREC input file                                                |
 |          3 | BM25 Atire for the document                                                      |
 |          4 | BM25 Atire for the document body                                                 |
@@ -117,14 +116,33 @@
 |        111 | Frequency of query terms within the document inlinks                             |
 |        112 | Document tag count for title                                                     |
 |        113 | Document tag count for headings (h1-h4)                                          |
-|        114 | Number of inlinks                                                                |
 |        115 | Document tag count for applet                                                    |
 |        116 | Document tag count for object                                                    |
 |        117 | Document tag count for embed                                                     |
 |        118 | Number of slashes in URL                                                         |
 |        119 | URL length                                                                       |
 
+## Static document features
+
+| Feature No. | Description              |
+|-------------|--------------------------|
+| x           | Document length          |
+| x           | Title length             |
+| x           | Visible term length      |
+| x           | URL length               |
+| x           | URL depth                |
+| x           | Average term length      |
+| x           | Entropy                  |
+| x           | Stop cover               |
+| x           | Stop ratio               |
+| x           | Fraction of anchor text  |
+| x           | Fraction of visible text |
+| x           | Fraction of table text   |
+| x           | Fraction of td text      |
+
 ## Query features
 
 | Feature ID | Description                                                                      |
 |------------|----------------------------------------------------------------------------------|
+
+## Term score aggregation features

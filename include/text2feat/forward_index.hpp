@@ -215,7 +215,7 @@ class Document {
     void compress() {
         m_num_terms = m_terms.size();
         if (0 == m_num_terms) {
-          return;
+            return;
         }
 
         {
@@ -254,7 +254,7 @@ class Document {
 
     void decompress() {
         if (0 == m_num_terms) {
-          return;
+            return;
         }
 
         {

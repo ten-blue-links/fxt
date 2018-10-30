@@ -26,7 +26,6 @@ std::set<std::string> load_stopmap(void) {
         num++;
     }
 
-    // fprintf (stderr, "Number of stopwords loaded [%d]\n", num);
     return set;
 }
 
@@ -287,7 +286,6 @@ std::unordered_map<std::string, term_t> load_termmap(const char *fname) {
         num++;
     }
 
-    // fprintf(stderr, "Number of terms loaded [%d]\n", num);
     fclose(input);
     return map;
 }
