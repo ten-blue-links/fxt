@@ -75,9 +75,9 @@ int main(int argc, char **argv) {
         std::string buf_unigram, buf_bigram;
 
         // dump unigram features
-        buf_unigram = fgen_term_qry_main(termmap, qry.id, &stems[0], stems.size());
+        buf_unigram = fgen_term_qry_main(termmap, stoi(qry.id), &stems[0], stems.size());
         // dump bigram features
-        buf_bigram = fgen_bigram_qry_main(bigrammap, qry.id, &stems[0], stems.size());
+        buf_bigram = fgen_bigram_qry_main(bigrammap, stoi(qry.id), &stems[0], stems.size());
         std::string buf_common(buf_unigram);
         buf_common.append(buf_bigram);
 
