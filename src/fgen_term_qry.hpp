@@ -104,6 +104,6 @@ void                                    to_lcase(char *str);
 std::unordered_map<std::string, term_t> load_termmap(const char *fname);
 
 std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
-                               int                                      qnum,
+                               std::string &                            qid,
                                char **                                  termv,
                                size_t                                   termc);

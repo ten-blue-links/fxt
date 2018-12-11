@@ -28,7 +28,7 @@ static void ffmt(std::stringstream &buf, long double val) {
 }
 
 std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigrammap,
-                                 int                                      qnum,
+                                 std::string &                            qid,
                                  char **                                  termv,
                                  size_t                                   termc) {
     int               tcnt = 0, i = 0;
@@ -124,7 +124,7 @@ std::string fgen_bigram_qry_main(std::unordered_map<std::string, term_t> &bigram
     }
 
     if (tcnt == 0) {
-        fprintf(stderr, "WARN: No bigrams for Query %d\n in collection.\n", qnum);
+        fprintf(stderr, "WARN: No bigrams for Query %s\n in collection.\n", qid.c_str());
         if (!count_done) {
             fprintf(stderr, "WARN: Can't fill zeros count not complete.\n");
         }
