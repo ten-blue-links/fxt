@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The text2feat authors.
+ * Copyright 2018 The Tesserae authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -13,8 +13,8 @@
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
 
-#include "text2feat/field_map.hpp"
-#include "text2feat/forward_index.hpp"
+#include "tesserae/field_map.hpp"
+#include "tesserae/forward_index.hpp"
 
 size_t url_slash_count(const std::string &url) {
     size_t            count       = 0;

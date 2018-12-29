@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The text2feat authors.
+ * Copyright 2018 The Tesserae authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -11,7 +11,7 @@
 #include "indri/QueryEnvironment.hpp"
 #include "indri/Repository.hpp"
 
-#include "text2feat/inverted_index.hpp"
+#include "tesserae/inverted_index.hpp"
 
 int main(int argc, char const *argv[]) {
     std::string repo_path;

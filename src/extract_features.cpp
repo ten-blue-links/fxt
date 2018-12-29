@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The text2feat authors.
+ * Copyright 2018 The Tesserae authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -12,21 +12,21 @@
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
 
-#include "text2feat/doc_entry.hpp"
-#include "text2feat/doc_entry_flag.hpp"
-#include "text2feat/statdoc_entry.hpp"
-#include "text2feat/statdoc_entry_flag.hpp"
+#include "tesserae/doc_entry.hpp"
+#include "tesserae/doc_entry_flag.hpp"
+#include "tesserae/statdoc_entry.hpp"
+#include "tesserae/statdoc_entry_flag.hpp"
 
-#include "text2feat/feature_extractor.hpp"
-#include "text2feat/feature_presenter.hpp"
-#include "text2feat/features/features.hpp"
-#include "text2feat/field_id.hpp"
-#include "text2feat/forward_index.hpp"
-#include "text2feat/lexicon.hpp"
-#include "text2feat/query_environment_adapter.hpp"
-#include "text2feat/query_train_file.hpp"
-#include "text2feat/static_feature.hpp"
-#include "text2feat/trec_run_file.hpp"
+#include "tesserae/feature_extractor.hpp"
+#include "tesserae/feature_presenter.hpp"
+#include "tesserae/features/features.hpp"
+#include "tesserae/field_id.hpp"
+#include "tesserae/forward_index.hpp"
+#include "tesserae/lexicon.hpp"
+#include "tesserae/query_environment_adapter.hpp"
+#include "tesserae/query_train_file.hpp"
+#include "tesserae/static_feature.hpp"
+#include "tesserae/trec_run_file.hpp"
 
 /*
  * Perform feature extraction.

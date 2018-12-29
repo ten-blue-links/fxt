@@ -108,7 +108,7 @@
 | 102         | Term frequency normalized variance of stream length of document inlinks          |
 | 103         | Term frequency normalized variance of stream length of document a tags           |
 | 104         | TP-Score of document                                                             |
-| 105         | Sum of BM25 query bigrams within an unordered window of 8 of the doucment        |
+| 105         | Sum of BM25 query bigrams within an unordered window of 8 of the document        |
 | 106         | BM25 bigram interval score within a window of 100 of the document                |
 | 107         | Frequency of query terms within the document title                               |
 | 108         | Frequency of query terms within the document headings (h1-h4)                    |

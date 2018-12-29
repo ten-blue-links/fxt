@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The text2feat authors.
+ * Copyright 2018 The Tesserae authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -11,8 +11,8 @@
 #include "indri/QueryEnvironment.hpp"
 #include "indri/Repository.hpp"
 
-#include "text2feat/field_map.hpp"
-#include "text2feat/lexicon.hpp"
+#include "tesserae/field_map.hpp"
+#include "tesserae/lexicon.hpp"
 
 static const std::vector<std::string> _fields = {"body", "title", "heading", "inlink", "a"};
 

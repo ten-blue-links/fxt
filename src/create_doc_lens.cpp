@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The text2feat authors.
+ * Copyright 2018 The Tesserae authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -12,7 +12,7 @@
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
 
-#include "text2feat/doc_lens.hpp"
+#include "tesserae/doc_lens.hpp"
 int main(int argc, char const *argv[]) {
     std::string repo_path;
     std::string doc_lens_file;

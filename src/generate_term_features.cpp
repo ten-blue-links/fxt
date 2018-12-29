@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The text2feat authors.
+ * Copyright 2018 The Tesserae authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -13,9 +13,9 @@
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
 
-#include "text2feat/doc_lens.hpp"
-#include "text2feat/inverted_index.hpp"
-#include "text2feat/term_feature.hpp"
+#include "tesserae/doc_lens.hpp"
+#include "tesserae/inverted_index.hpp"
+#include "tesserae/term_feature.hpp"
 
 int main(int argc, char **argv) {
     size_t done      = 0;

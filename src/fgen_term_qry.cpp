@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The text2feat authors.
+ * Copyright 2018 The Tesserae authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -18,7 +18,7 @@
 
 #include "fgen_term_qry.hpp"
 #include "query_features.h"
-#include "text2feat/stopwords.h"
+#include "tesserae/stopwords.h"
 
 std::unordered_map<std::string, term_t> load_termmap(const char *fname) {
     std::unordered_map<std::string, term_t> map;

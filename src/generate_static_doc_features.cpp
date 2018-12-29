@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The text2feat authors.
+ * Copyright 2018 The Tesserae authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -19,9 +19,9 @@
 #include "indri/Repository.hpp"
 #include "indri/greedy_vector"
 
-#include "text2feat/field_map.hpp"
-#include "text2feat/static_feature.hpp"
-#include "text2feat/web_1t_stopwords.hpp"
+#include "tesserae/field_map.hpp"
+#include "tesserae/static_feature.hpp"
+#include "tesserae/web_1t_stopwords.hpp"
 
 uint32_t field_len(const int                                                       field_id,
                    const indri::utility::greedy_vector<indri::index::FieldExtent> &list) {

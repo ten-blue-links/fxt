@@ -1,4 +1,4 @@
-# text2feat
+# Tesserae
 A large scale feature extraction tool for text-based machine learning.
 
 ## Building from Source
@@ -12,11 +12,11 @@ A large scale feature extraction tool for text-based machine learning.
 2. Clone the [source] with `git`:
 
     ```sh
-    $ git clone https://github.com/rmit-ir/text2feat.git
-    $ cd text2feat
+    $ git clone https://github.com/rmit-ir/tesserae.git
+    $ cd tesserae
     ```
 
-[source]: https://github.com/rmit-ir/text2feat
+[source]: https://github.com/rmit-ir/tesserae
 
 3. Build and install:
 
@@ -40,6 +40,6 @@ the main [documentation](doc/index.md) for specific topics in more detail.
 ## License
 [license]: #license
 
-text2feat is distributed under the terms of the MIT license.
+Tesserae is distributed under the terms of the MIT license.
 
 See [LICENSE](LICENSE) for details.
