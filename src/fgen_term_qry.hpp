@@ -14,8 +14,6 @@
 
 #include <unistd.h>
 
-/* Global Max Score in ClueWeb09B */
-
 #define REALLOC_INCREMENT 4096
 #define MAXLINELEN 4096
 #define MAXTERM 1024

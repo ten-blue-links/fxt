@@ -446,7 +446,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
         }
     } else {
         /* Do this for each metric - BM25*/
-        ffmt(buf, tcnt);
         {
             long double acdf    = 0.0;
             double      agm     = 0.0;
@@ -1049,7 +1048,8 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             ffmt(buf, max_tq);
         }
 
-        /* pre-retrieval query features */
+        // Pre-retrieval query features
+        ffmt(buf, tcnt); // query length
         ffmt(buf, query.len_stopped);
         ffmt(buf, query.scs_score);
         ffmt(buf, query.scope_score);
