@@ -951,13 +951,13 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
 
             ffmt(buf, min);
             ffmt(buf, max);
-            ffmt(buf, 0); //
+            ffmt(buf, min_mean);
             ffmt(buf, max_mean);
             ffmt(buf, min_median);
             ffmt(buf, max_median);
-            ffmt(buf, 0); //
+            ffmt(buf, min_hmean);
             ffmt(buf, max_hmean);
-            ffmt(buf, 0); //
+            ffmt(buf, min_var);
             ffmt(buf, max_var);
             ffmt(buf, min_fq);
             ffmt(buf, max_fq);
