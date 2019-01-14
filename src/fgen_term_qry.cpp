@@ -445,10 +445,38 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             ffmt(buf, 0);
         }
     } else {
+        // term collection features
+        {
+            long double acdf = 0.0;
+            double agm = 0.0;
+            uint64_t cdf_min = UINT64_MAX;
+            uint64_t cdf_max = 0;
+            double gm_min = std::numeric_limits<double>::max();
+            double gm_max = 0.0;
+
+            for (i = 0; i < tcnt; i++) {
+                if (terms[i].cdf < cdf_min)
+                    cdf_min = terms[i].cdf;
+                if (terms[i].cdf > cdf_max)
+                    cdf_max = terms[i].cdf;
+                if (terms[i].geo_mean < gm_min)
+                    gm_min = terms[i].geo_mean;
+                if (terms[i].geo_mean > gm_max)
+                    gm_max = terms[i].geo_mean;
+
+                acdf += terms[i].cdf;
+                agm += terms[i].geo_mean;
+            }
+
+            ffmt(buf, std::rintl(acdf / tcnt));
+            ffmt(buf, agm / tcnt);
+            ffmt(buf, cdf_min);
+            ffmt(buf, cdf_max);
+            ffmt(buf, gm_min);
+            ffmt(buf, gm_max);
+        }
         /* Do this for each metric - BM25*/
         {
-            long double acdf    = 0.0;
-            double      agm     = 0.0;
             double      aimpact = 0.0;
             double      amean   = 0.0;
             double      amedian = 0.0;
@@ -470,9 +498,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             double   max_tq     = 0.0;
             double   min_var    = std::numeric_limits<double>::max();
             double   max_var    = 0.0;
-            uint64_t cdf_max = 0, cdf_min = UINT64_MAX;
-            double   gm_min = std::numeric_limits<double>::max();
-            double   gm_max = 0.0;
 
             for (i = 0; i < tcnt; i++) {
                 if (terms[i].bm25_max_score < min)
@@ -503,17 +528,7 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
                     min_var = terms[i].bm25_score_variance;
                 if (terms[i].bm25_score_variance > max_var)
                     max_var = terms[i].bm25_score_variance;
-                if (terms[i].cdf < cdf_min)
-                    cdf_min = terms[i].cdf;
-                if (terms[i].cdf > cdf_max)
-                    cdf_max = terms[i].cdf;
-                if (terms[i].geo_mean < gm_min)
-                    gm_min = terms[i].geo_mean;
-                if (terms[i].geo_mean > gm_max)
-                    gm_max = terms[i].geo_mean;
 
-                acdf += terms[i].cdf;
-                agm += terms[i].geo_mean;
                 aimpact += terms[i].bm25_max_score;
                 amean += terms[i].bm25_mean_score;
                 ahmean += terms[i].bm25_score_harmonic_mean;
@@ -521,8 +536,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
                 avar += terms[i].bm25_score_variance;
                 aiqr += (terms[i].bm25_firstq_score - terms[i].bm25_thirdq_score);
             }
-            ffmt(buf, std::rintl(acdf / tcnt));
-            ffmt(buf, agm / tcnt);
             ffmt(buf, aimpact / tcnt);
             ffmt(buf, amean / tcnt);
             ffmt(buf, ahmean / tcnt);
@@ -530,10 +543,6 @@ std::string fgen_term_qry_main(std::unordered_map<std::string, term_t> &termmap,
             ffmt(buf, aiqr / tcnt);
             ffmt(buf, avar / tcnt);
 
-            ffmt(buf, cdf_min);
-            ffmt(buf, cdf_max);
-            ffmt(buf, gm_min);
-            ffmt(buf, gm_max);
             ffmt(buf, min);
             ffmt(buf, max);
             ffmt(buf, min_mean);

@@ -4,123 +4,123 @@
 
 | Feature No. | Description                                                                      |
 |-------------|----------------------------------------------------------------------------------|
-|         x  | Stage0 score from TREC input file                                                |
-|         x  | BM25 Atire for the document                                                      |
-|         x  | BM25 Atire for the document body                                                 |
-|         x  | BM25 Atire for the document title                                                |
-|         x  | BM25 Atire for the document headings (h1-h4)                                     |
-|         x  | BM25 Atire for document inlinks                                                  |
-|         x  | BM25 Atire for document a tags                                                   |
-|         x  | BM25 TREC 3 (k = 1.2) for the document                                           |
-|         x  | BM25 TREC 3 (k = 1.2) for the document body                                      |
-|         x  | BM25 TREC 3 (k = 1.2) for the document title                                     |
-|         x  | BM25 TREC 3 (k = 1.2) for the document headings (h1-h4)                          |
-|         x  | BM25 TREC 3 (k = 1.2) for the document inlinks                                   |
-|         x  | BM25 TREC 3 (k = 1.2) for the document a tags                                    |
-|         x  | BM25 TREC 3 (k = 2.0) for the document                                           |
-|         x  | BM25 TREC 3 (k = 2.0) for the document body                                      |
-|         x  | BM25 TREC 3 (k = 2.0) for the document title                                     |
-|         x  | BM25 TREC 3 (k = 2.0) for the document headings (h1-h4)                          |
-|         x  | BM25 TREC 3 (k = 2.0) for the document inlinks                                   |
-|         x  | BM25 TREC 3 (k = 2.0) for the document a tags                                    |
-|         x  | LMDS (mu = 2500) for the document                                                |
-|         x  | LMDS (mu = 2500) for the document body                                           |
-|         x  | LMDS (mu = 2500) for the document title                                          |
-|         x  | LMDS (mu = 2500) for the document headings (h1-h4)                               |
-|         x  | LMDS (mu = 2500) for the document inlinks                                        |
-|         x  | LMDS (mu = 2500) for the document a tags                                         |
-|         x  | LMDS (mu = 1500) for the document                                                |
-|         x  | LMDS (mu = 1500) for the document body                                           |
-|         x  | LMDS (mu = 1500) for the document title                                          |
-|         x  | LMDS (mu = 1500) for the document headings (h1-h4)                               |
-|         x  | LMDS (mu = 1500) for the document inlinks                                        |
-|         x  | LMDS (mu = 1500) for the document a tags                                         |
-|         x  | LMDS (mu = 1000) for the document                                                |
-|         x  | LMDS (mu = 1000) for the document body                                           |
-|         x  | LMDS (mu = 1000) for the document title                                          |
-|         x  | LMDS (mu = 1000) for the document headings (h1-h4)                               |
-|         x  | LMDS (mu = 1000) for the document inlinks                                        |
-|         x  | LMDS (mu = 1000) for the document a tags                                         |
-|         x  | TF.IDF for the document                                                          |
-|         x  | TF.IDF for the document body                                                     |
-|         x  | TF.IDF for the document title                                                    |
-|         x  | TF.IDF for the document headings (h1-h4)                                         |
-|         x  | TF.IDF for the document inlinks                                                  |
-|         x  | TF.IDF for the document a tags                                                   |
-|         x  | Probability score for the document                                               |
-|         x  | Probability score for the document body                                          |
-|         x  | Probability score for the document title                                         |
-|         x  | Probability score for the document headings (h1-h4)                              |
-|         x  | Probability score for the document inlinks                                       |
-|         x  | Probability score for the document a tags                                        |
-|         x  | Bose-Einstein score for the document                                             |
-|         x  | Bose-Einstein score for the document body                                        |
-|         x  | Bose-Einstein score for the document title                                       |
-|         x  | Bose-Einstein score for the document headings (h1-h4)                            |
-|         x  | Bose-Einstein score for the document inlinks                                     |
-|         x  | Bose-Einstein score for the document a tags                                      |
-|         x  | DPH score for the document                                                       |
-|         x  | DPH score for the document body                                                  |
-|         x  | DPH score for the document title                                                 |
-|         x  | DPH score for the document headings (h1-h4)                                      |
-|         x  | DPH score for the document inlinks                                               |
-|         x  | DPH score for the document a tags                                                |
-|         x  | DFR score for the document                                                       |
-|         x  | DFR score for the document body                                                  |
-|         x  | DFR score for the document title                                                 |
-|         x  | DFR score for the document headings (h1-h4)                                      |
-|         x  | DFR score for the document inlinks                                               |
-|         x  | DFR score for the document a tags                                                |
-|         x  | Raw stream length of document                                                    |
-|         x  | Raw stream length of document body                                               |
-|         x  | Raw stream length of document title                                              |
-|         x  | Raw stream length of document headings (h1-h4)                                   |
-|         x  | Raw stream length of document inlinks                                            |
-|         x  | Raw stream length of document a tags                                             |
-|         x  | Term frequency normalized sum of stream length of document                       |
-|         x  | Term frequency normalized sum of stream length of document body                  |
-|         x  | Term frequency normalized sum of stream length of document title                 |
-|         x  | Term frequency normalized sum of stream length of document headings (h1-h4)      |
-|         x  | Term frequency normalized sum of stream length of document inlinks               |
-|         x  | Term frequency normalized sum of stream length of document a tags                |
-|         x  | Term frequency normalized min of stream length of document                       |
-|         x  | Term frequency normalized min of stream length of document body                  |
-|         x  | Term frequency normalized min of stream length of document title                 |
-|         x  | Term frequency normalized min of stream length of document headings (h1-h4)      |
-|         x  | Term frequency normalized min of stream length of document inlinks               |
-|         x  | Term frequency normalized min of stream length of document a tags                |
-|         x  | Term frequency normalized max of stream length of document                       |
-|         x  | Term frequency normalized max of stream length of document body                  |
-|         x  | Term frequency normalized max of stream length of document title                 |
-|         x  | Term frequency normalized max of stream length of document headings (h1-h4)      |
-|         x  | Term frequency normalized max of stream length of document inlinks               |
-|         x  | Term frequency normalized max of stream length of document a tags                |
-|         x  | Term frequency normalized mean of stream length of document                      |
-|         x  | Term frequency normalized mean of stream length of document body                 |
-|         x  | Term frequency normalized mean of stream length of document title                |
-|         x  | Term frequency normalized mean of stream length of document headings (h1-h4)     |
-|         x  | Term frequency normalized mean of stream length of document inlinks              |
-|         x  | Term frequency normalized mean of stream length of document a tags               |
-|         x  | Term frequency normalized variance of stream length of document                  |
-|        x  | Term frequency normalized variance of stream length of document body             |
-|        x  | Term frequency normalized variance of stream length of document title            |
-|        x  | Term frequency normalized variance of stream length of document headings (h1-h4) |
-|        x  | Term frequency normalized variance of stream length of document inlinks          |
-|        x  | Term frequency normalized variance of stream length of document a tags           |
-|        x  | TP-Score of document                                                             |
-|        x  | Sum of BM25 query bigrams within an unordered window of 8 of the document        |
-|        x  | BM25 bigram interval score within a window of 100 of the document                |
-|        x  | Frequency of query terms within the document title                               |
-|        x  | Frequency of query terms within the document headings (h1-h4)                    |
-|        x  | Frequency of query terms within the document                                     |
-|        x  | Frequency of query terms within the document inlinks                             |
-|        x  | Document tag count for title                                                     |
-|        x  | Document tag count for headings (h1-h4)                                          |
-|        x  | Document tag count for applet                                                    |
-|        x  | Document tag count for object                                                    |
-|        x  | Document tag count for embed                                                     |
-|        x  | Number of slashes in URL                                                         |
-|        x  | URL length                                                                       |
+| x           | Stage0 score from TREC input file                                                |
+| x           | BM25 Atire for the document                                                      |
+| x           | BM25 Atire for the document body                                                 |
+| x           | BM25 Atire for the document title                                                |
+| x           | BM25 Atire for the document headings (h1-h4)                                     |
+| x           | BM25 Atire for document inlinks                                                  |
+| x           | BM25 Atire for document a tags                                                   |
+| x           | BM25 TREC 3 (k = 1.2) for the document                                           |
+| x           | BM25 TREC 3 (k = 1.2) for the document body                                      |
+| x           | BM25 TREC 3 (k = 1.2) for the document title                                     |
+| x           | BM25 TREC 3 (k = 1.2) for the document headings (h1-h4)                          |
+| x           | BM25 TREC 3 (k = 1.2) for the document inlinks                                   |
+| x           | BM25 TREC 3 (k = 1.2) for the document a tags                                    |
+| x           | BM25 TREC 3 (k = 2.0) for the document                                           |
+| x           | BM25 TREC 3 (k = 2.0) for the document body                                      |
+| x           | BM25 TREC 3 (k = 2.0) for the document title                                     |
+| x           | BM25 TREC 3 (k = 2.0) for the document headings (h1-h4)                          |
+| x           | BM25 TREC 3 (k = 2.0) for the document inlinks                                   |
+| x           | BM25 TREC 3 (k = 2.0) for the document a tags                                    |
+| x           | LMDS (mu = 2500) for the document                                                |
+| x           | LMDS (mu = 2500) for the document body                                           |
+| x           | LMDS (mu = 2500) for the document title                                          |
+| x           | LMDS (mu = 2500) for the document headings (h1-h4)                               |
+| x           | LMDS (mu = 2500) for the document inlinks                                        |
+| x           | LMDS (mu = 2500) for the document a tags                                         |
+| x           | LMDS (mu = 1500) for the document                                                |
+| x           | LMDS (mu = 1500) for the document body                                           |
+| x           | LMDS (mu = 1500) for the document title                                          |
+| x           | LMDS (mu = 1500) for the document headings (h1-h4)                               |
+| x           | LMDS (mu = 1500) for the document inlinks                                        |
+| x           | LMDS (mu = 1500) for the document a tags                                         |
+| x           | LMDS (mu = 1000) for the document                                                |
+| x           | LMDS (mu = 1000) for the document body                                           |
+| x           | LMDS (mu = 1000) for the document title                                          |
+| x           | LMDS (mu = 1000) for the document headings (h1-h4)                               |
+| x           | LMDS (mu = 1000) for the document inlinks                                        |
+| x           | LMDS (mu = 1000) for the document a tags                                         |
+| x           | TF.IDF for the document                                                          |
+| x           | TF.IDF for the document body                                                     |
+| x           | TF.IDF for the document title                                                    |
+| x           | TF.IDF for the document headings (h1-h4)                                         |
+| x           | TF.IDF for the document inlinks                                                  |
+| x           | TF.IDF for the document a tags                                                   |
+| x           | Probability score for the document                                               |
+| x           | Probability score for the document body                                          |
+| x           | Probability score for the document title                                         |
+| x           | Probability score for the document headings (h1-h4)                              |
+| x           | Probability score for the document inlinks                                       |
+| x           | Probability score for the document a tags                                        |
+| x           | Bose-Einstein score for the document                                             |
+| x           | Bose-Einstein score for the document body                                        |
+| x           | Bose-Einstein score for the document title                                       |
+| x           | Bose-Einstein score for the document headings (h1-h4)                            |
+| x           | Bose-Einstein score for the document inlinks                                     |
+| x           | Bose-Einstein score for the document a tags                                      |
+| x           | DPH score for the document                                                       |
+| x           | DPH score for the document body                                                  |
+| x           | DPH score for the document title                                                 |
+| x           | DPH score for the document headings (h1-h4)                                      |
+| x           | DPH score for the document inlinks                                               |
+| x           | DPH score for the document a tags                                                |
+| x           | DFR score for the document                                                       |
+| x           | DFR score for the document body                                                  |
+| x           | DFR score for the document title                                                 |
+| x           | DFR score for the document headings (h1-h4)                                      |
+| x           | DFR score for the document inlinks                                               |
+| x           | DFR score for the document a tags                                                |
+| x           | Raw stream length of document                                                    |
+| x           | Raw stream length of document body                                               |
+| x           | Raw stream length of document title                                              |
+| x           | Raw stream length of document headings (h1-h4)                                   |
+| x           | Raw stream length of document inlinks                                            |
+| x           | Raw stream length of document a tags                                             |
+| x           | Term frequency normalized sum of stream length of document                       |
+| x           | Term frequency normalized sum of stream length of document body                  |
+| x           | Term frequency normalized sum of stream length of document title                 |
+| x           | Term frequency normalized sum of stream length of document headings (h1-h4)      |
+| x           | Term frequency normalized sum of stream length of document inlinks               |
+| x           | Term frequency normalized sum of stream length of document a tags                |
+| x           | Term frequency normalized min of stream length of document                       |
+| x           | Term frequency normalized min of stream length of document body                  |
+| x           | Term frequency normalized min of stream length of document title                 |
+| x           | Term frequency normalized min of stream length of document headings (h1-h4)      |
+| x           | Term frequency normalized min of stream length of document inlinks               |
+| x           | Term frequency normalized min of stream length of document a tags                |
+| x           | Term frequency normalized max of stream length of document                       |
+| x           | Term frequency normalized max of stream length of document body                  |
+| x           | Term frequency normalized max of stream length of document title                 |
+| x           | Term frequency normalized max of stream length of document headings (h1-h4)      |
+| x           | Term frequency normalized max of stream length of document inlinks               |
+| x           | Term frequency normalized max of stream length of document a tags                |
+| x           | Term frequency normalized mean of stream length of document                      |
+| x           | Term frequency normalized mean of stream length of document body                 |
+| x           | Term frequency normalized mean of stream length of document title                |
+| x           | Term frequency normalized mean of stream length of document headings (h1-h4)     |
+| x           | Term frequency normalized mean of stream length of document inlinks              |
+| x           | Term frequency normalized mean of stream length of document a tags               |
+| x           | Term frequency normalized variance of stream length of document                  |
+| x           | Term frequency normalized variance of stream length of document body             |
+| x           | Term frequency normalized variance of stream length of document title            |
+| x           | Term frequency normalized variance of stream length of document headings (h1-h4) |
+| x           | Term frequency normalized variance of stream length of document inlinks          |
+| x           | Term frequency normalized variance of stream length of document a tags           |
+| x           | TP-Score of document                                                             |
+| x           | Sum of BM25 query bigrams within an unordered window of 8 of the document        |
+| x           | BM25 bigram interval score within a window of 100 of the document                |
+| x           | Frequency of query terms within the document title                               |
+| x           | Frequency of query terms within the document headings (h1-h4)                    |
+| x           | Frequency of query terms within the document                                     |
+| x           | Frequency of query terms within the document inlinks                             |
+| x           | Document tag count for title                                                     |
+| x           | Document tag count for headings (h1-h4)                                          |
+| x           | Document tag count for applet                                                    |
+| x           | Document tag count for object                                                    |
+| x           | Document tag count for embed                                                     |
+| x           | Number of slashes in URL                                                         |
+| x           | URL length                                                                       |
 
 ## Static document features
 
@@ -139,6 +139,157 @@
 | x           | Fraction of visible text |
 | x           | Fraction of table text   |
 | x           | Fraction of td text      |
+
+## Unigram pre-retrieval features
+
+| Feature No. | Description                                       |
+|-------------|---------------------------------------------------|
+| x           | Mean collection document frequency of query terms |
+| x           | Mean geometric mean of query terms                |
+| x           | Min collection document frequency (query term)    |
+| x           | Max collection document frequency (query term)    |
+| x           | Min geometric mean (query term)                   |
+| x           | Max geometric mean (query term)                   |
+| x           | BM25 mean impact                                  |
+| x           | BM25 mean mean                                    |
+| x           | BM25 mean harmonic mean                           |
+| x           | BM25 mean median                                  |
+| x           | BM25 mean interquartile range                     |
+| x           | BM25 mean variance                                |
+| x           | BM25 min                                          |
+| x           | BM25 max                                          |
+| x           | BM25 min mean                                     |
+| x           | BM25 max mean                                     |
+| x           | BM25 min median                                   |
+| x           | BM25 max median                                   |
+| x           | BM25 min harmonic mean                            |
+| x           | BM25 max harmonic mean                            |
+| x           | BM25 min variance                                 |
+| x           | BM25 max variance                                 |
+| x           | BM25 min first quartile                           |
+| x           | BM25 max first quartile                           |
+| x           | BM25 min third quartile                           |
+| x           | BM25 max third quartile                           |
+| x           | TF.IDF mean impact                                |
+| x           | TF.IDF mean mean                                  |
+| x           | TF.IDF mean harmonic mean                         |
+| x           | TF.IDF mean median                                |
+| x           | TF.IDF mean interquartile range                   |
+| x           | TF.IDF mean variance                              |
+| x           | TF.IDF min                                        |
+| x           | TF.IDF max                                        |
+| x           | TF.IDF min mean                                   |
+| x           | TF.IDF max mean                                   |
+| x           | TF.IDF min median                                 |
+| x           | TF.IDF max median                                 |
+| x           | TF.IDF min harmonic mean                          |
+| x           | TF.IDF max harmonic mean                          |
+| x           | TF.IDF min variance                               |
+| x           | TF.IDF max variance                               |
+| x           | TF.IDF min first quartile                         |
+| x           | TF.IDF max first quartile                         |
+| x           | TF.IDF min third quartile                         |
+| x           | TF.IDF max third quartile                         |
+| x           | LM mean impact                                    |
+| x           | LM mean mean                                      |
+| x           | LM mean harmonic mean                             |
+| x           | LM mean median                                    |
+| x           | LM mean interquartile range                       |
+| x           | LM mean variance                                  |
+| x           | LM min                                            |
+| x           | LM max                                            |
+| x           | LM min mean                                       |
+| x           | LM max mean                                       |
+| x           | LM min median                                     |
+| x           | LM max median                                     |
+| x           | LM min harmonic mean                              |
+| x           | LM max harmonic mean                              |
+| x           | LM min variance                                   |
+| x           | LM max variance                                   |
+| x           | LM min first quartile                             |
+| x           | LM max first quartile                             |
+| x           | LM min third quartile                             |
+| x           | LM max third quartile                             |
+| x           | PR mean impact                                    |
+| x           | PR mean mean                                      |
+| x           | PR mean harmonic mean                             |
+| x           | PR mean median                                    |
+| x           | PR mean interquartile range                       |
+| x           | PR mean variance                                  |
+| x           | PR min                                            |
+| x           | PR max                                            |
+| x           | PR min mean                                       |
+| x           | PR max mean                                       |
+| x           | PR min median                                     |
+| x           | PR max median                                     |
+| x           | PR min harmonic mean                              |
+| x           | PR max harmonic mean                              |
+| x           | PR min variance                                   |
+| x           | PR max variance                                   |
+| x           | PR min first quartile                             |
+| x           | PR max first quartile                             |
+| x           | PR min third quartile                             |
+| x           | PR max third quartile                             |
+| x           | BE mean impact                                    |
+| x           | BE mean mean                                      |
+| x           | BE mean harmonic mean                             |
+| x           | BE mean median                                    |
+| x           | BE mean interquartile range                       |
+| x           | BE mean variance                                  |
+| x           | BE min                                            |
+| x           | BE max                                            |
+| x           | BE min mean                                       |
+| x           | BE max mean                                       |
+| x           | BE min median                                     |
+| x           | BE max median                                     |
+| x           | BE min harmonic mean                              |
+| x           | BE max harmonic mean                              |
+| x           | BE min variance                                   |
+| x           | BE max variance                                   |
+| x           | BE min first quartile                             |
+| x           | BE max first quartile                             |
+| x           | BE min third quartile                             |
+| x           | BE max third quartile                             |
+| x           | DPH mean impact                                   |
+| x           | DPH mean mean                                     |
+| x           | DPH mean harmonic mean                            |
+| x           | DPH mean median                                   |
+| x           | DPH mean interquartile range                      |
+| x           | DPH mean variance                                 |
+| x           | DPH min                                           |
+| x           | DPH max                                           |
+| x           | DPH min mean                                      |
+| x           | DPH max mean                                      |
+| x           | DPH min median                                    |
+| x           | DPH max median                                    |
+| x           | DPH min harmonic mean                             |
+| x           | DPH max harmonic mean                             |
+| x           | DPH min variance                                  |
+| x           | DPH max variance                                  |
+| x           | DPH min first quartile                            |
+| x           | DPH max first quartile                            |
+| x           | DPH min third quartile                            |
+| x           | DPH max third quartile                            |
+| x           | DFR mean impact                                   |
+| x           | DFR mean mean                                     |
+| x           | DFR mean harmonic mean                            |
+| x           | DFR mean median                                   |
+| x           | DFR mean interquartile range                      |
+| x           | DFR mean variance                                 |
+| x           | DFR min                                           |
+| x           | DFR max                                           |
+| x           | DFR min mean                                      |
+| x           | DFR max mean                                      |
+| x           | DFR min median                                    |
+| x           | DFR max median                                    |
+| x           | DFR min harmonic mean                             |
+| x           | DFR max harmonic mean                             |
+| x           | DFR min variance                                  |
+| x           | DFR max variance                                  |
+| x           | DFR min first quartile                            |
+| x           | DFR max first quartile                            |
+| x           | DFR min third quartile                            |
+| x           | DFR max third quartile                            |
 
 ## Query features
 
