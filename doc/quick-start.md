@@ -51,7 +51,7 @@ component via the `extract_features` program. To do this we need to:
     program to apply stemming:
 
     ```sh
-    sed 's/; / /' queryfile | kstem | sed 's/ /;/' > queryfile.kstem
+    sed 's/;/ /' queryfile | kstem | sed 's/ /;/' > queryfile.kstem
     ```
 
 3. Configuration options via INI file:
