@@ -8,11 +8,11 @@ TMPD=querytmp
 mkdir -p $TMPD
 
 # dump query id's and shuflle
-awk -F, '{ print $2 }' docfeat.csv | sort -u | shuf | shuf > qid.txt
+awk -F, '{ print $2 }' $1 | sort -u | shuf | shuf > qid.txt
 # split data by query id
 awk -F, -v path=$TMPD '{
     print $0 > path "/" $2
-}' docfeat.csv
+}' $1
 # split data into 5 folds
 split -d -l 30 qid.txt
 for i in {0..4}; do
