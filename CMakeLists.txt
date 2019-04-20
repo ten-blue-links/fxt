@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.0)
 project(tesserae CXX C)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
+        message(FATAL_ERROR "Tessarae requires GCC version 6.0.0 or greater you have " ${CMAKE_CXX_COMPILER_VERSION})
+    endif()
+endif()
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
