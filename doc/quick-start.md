@@ -19,12 +19,12 @@ Assuming you already have an Indri index at the path `qs-indri` you can build a
 Tesserae index with the following:
 
 ```sh
-mkdir qs-t2f
-create_lexicon qs-indri qs-t2f/lex.t2f
-create_inverted_index qs-indri qs-t2f/inv.t2f
-create_doc_lens qs-indri qs-t2f/doclen.t2f
-create_forward_index qs-indri qs-t2f/fwd.t2f
-generate_static_doc_features qs-indri qs-t2f/static.t2f
+mkdir qs.tesserae
+create_lexicon qs-indri qs.tesserae/lexicon
+create_inverted_index qs-indri qs.tesserae/inverted_index
+create_doc_lens qs-indri qs.tesserae/doclen
+create_forward_index qs-indri qs.tesserae/forward_index
+generate_static_doc_features qs-indri qs.tesserae/static_doc
 ```
 
 ## Feature Extraction
