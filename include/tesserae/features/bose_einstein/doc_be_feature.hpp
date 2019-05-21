@@ -13,6 +13,8 @@ class doc_be_feature : public doc_feature {
     doc_be_feature(Lexicon &lex) : doc_feature(lex) {}
 
     void compute(query_train &qry, doc_entry &doc, Document &doc_idx, FieldIdMap &field_id_map) {
+        reset();
+
         for (auto &q : qry.q_ft) {
             // skip non-existent terms
             if (lexicon.is_oov(q.first)) {

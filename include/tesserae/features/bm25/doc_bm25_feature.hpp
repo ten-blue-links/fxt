@@ -29,6 +29,9 @@ class doc_bm25_feature : public doc_feature {
                       doc_entry &  doc,
                       Document &   doc_idx,
                       FieldIdMap & field_id_map) {
+        // reset socres to 0
+        reset();
+
         for (auto &q : qry.q_ft) {
 
             // skip non-existent terms

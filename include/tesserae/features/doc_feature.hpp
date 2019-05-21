@@ -51,6 +51,16 @@ class doc_feature {
         _avg_doc_len = (double)_coll_len / _num_docs;
     }
 
+    inline void reset() {
+        _score_doc = 0.0;
+        _score_body = 0.0;
+        _score_title = 0.0;
+        _score_heading = 0.0;
+        _score_inlink = 0.0;
+        _score_a = 0.0;
+        _score_url = 0.0;
+    }
+
     void _accumulate_score(std::string key, double val) {
         if (0 == key.compare(_fields[0])) {
             _score_body += val;
