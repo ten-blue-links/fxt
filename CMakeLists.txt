@@ -3,7 +3,7 @@ project(tesserae CXX C)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
-        message(FATAL_ERROR "Tessarae requires GCC version 6.0.0 or greater you have " ${CMAKE_CXX_COMPILER_VERSION})
+        message(FATAL_ERROR "Tesserae requires GCC version 6.0.0 or greater you have " ${CMAKE_CXX_COMPILER_VERSION})
     endif()
 endif()
 
@@ -26,9 +26,9 @@ add_definitions(-Wall -Wextra)
 
 add_subdirectory(external)
 
-include_directories(include external include/text2feat)
-add_library(text2feat INTERFACE)
-target_include_directories(text2feat INTERFACE
+include_directories(include external include/tesserae)
+add_library(tesserae INTERFACE)
+target_include_directories(tesserae INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 
