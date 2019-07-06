@@ -16,26 +16,6 @@
 #include "tesserae/field_map.hpp"
 #include "tesserae/forward_index.hpp"
 
-size_t url_slash_count(const std::string &url) {
-    size_t            count       = 0;
-    const std::string proto       = "://";
-    const std::string param_delim = "?";
-    size_t            pos         = url.find(proto);
-    size_t            pos_q       = url.find(param_delim);
-
-    if (pos_q < pos || std::string::npos == pos) {
-        pos = 0;
-    } else {
-        pos += proto.size();
-    }
-
-    while (std::string::npos != (pos = url.find("/", pos + 1, 1))) {
-        ++count;
-    }
-
-    return count;
-}
-
 static const std::vector<std::string> _fields = {"body", "title", "heading", "inlink", "a"};
 
 int main(int argc, char const *argv[]) {
@@ -81,11 +61,6 @@ int main(int argc, char const *argv[]) {
         indri::index::TermList *list      = iter->currentEntry();
         auto &                  doc_terms = list->terms();
         Document                document;
-
-        futures.push_back(std::async([&]() {
-            auto url = indri_env.documentMetadata(std::vector<lemur::api::DOCID_T>{docid}, "url");
-            document.set_url_stats({url_slash_count(url.at(0)), url.at(0).size()});
-        }));
 
         std::set<uint32_t>    unique_terms_set(doc_terms.begin(), doc_terms.end());
         std::vector<uint32_t> unique_terms(unique_terms_set.begin(), unique_terms_set.end());

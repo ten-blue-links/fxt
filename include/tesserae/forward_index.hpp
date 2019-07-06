@@ -17,24 +17,6 @@
 using namespace FastPForLib;
 IntegerCODEC &codec = *CODECFactory::getFromName("streamvbyte");
 
-class UrlStats {
-    uint16_t m_url_slash_count = 0;
-    uint16_t m_url_length      = 0;
-
-   public:
-    UrlStats() = default;
-    UrlStats(uint16_t url_slash_count, uint16_t url_length)
-        : m_url_slash_count(url_slash_count), m_url_length(url_length) {}
-
-    uint16_t url_slash_count() const { return m_url_slash_count; }
-    uint16_t url_length() const { return m_url_length; }
-
-    template <class Archive>
-    void serialize(Archive &archive) {
-        archive(m_url_slash_count, m_url_length);
-    }
-};
-
 class Field {
     uint16_t m_tag_count          = 0;
     uint16_t m_field_len          = 0;
@@ -77,7 +59,6 @@ class Field {
 
 class Document {
     std::vector<uint16_t>              m_fields;
-    UrlStats                           m_url_stats;
     size_t                             m_num_terms = 0;
     std::vector<uint32_t>              m_terms;
     std::vector<uint32_t>              m_unique_terms;
@@ -87,12 +68,6 @@ class Document {
 
    public:
     Document() = default;
-
-    uint16_t url_slash_count() const { return m_url_stats.url_slash_count(); }
-
-    uint16_t url_length() const { return m_url_stats.url_length(); }
-
-    void set_url_stats(const UrlStats &url_stats) { m_url_stats = url_stats; }
 
     uint32_t length() const { return m_terms.size(); }
 
@@ -297,14 +272,8 @@ class Document {
 
     template <class Archive>
     void serialize(Archive &archive) {
-        archive(m_fields,
-                m_url_stats,
-                m_num_terms,
-                m_terms,
-                m_unique_terms,
-                m_freqs,
-                m_field_freqs,
-                m_field_stats);
+        archive(
+            m_fields, m_num_terms, m_terms, m_unique_terms, m_freqs, m_field_freqs, m_field_stats);
     }
 };
 
