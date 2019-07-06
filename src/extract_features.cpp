@@ -590,7 +590,10 @@ int main(int argc, char **argv) {
             // set original run score as a feature for training
             doc_entry.stage0_score = stage0_scores[i];
 
+            // query-document features
             fe.extract(qry, doc_entry, doc_idx, positions);
+            // static document features
+            statdoc_entry = statdoc_list[docid].dentry;
 
             FeaturePresenter presenter(doc_entry, query_doc_flags, statdoc_entry, static_doc_flags);
             outfile << label << "," << qry.id << "," << docno << presenter << std::endl;
