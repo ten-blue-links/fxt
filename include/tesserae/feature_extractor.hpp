@@ -234,7 +234,6 @@ class FeatureExtractor {
     inline bool has_tag_count() {
         return qd_flags.f_tag_title_count || qd_flags.f_tag_heading_count ||
                qd_flags.f_tag_inlink_count || qd_flags.f_tag_applet_count ||
-               qd_flags.f_tag_object_count || qd_flags.f_tag_embed_count ||
-               qd_flags.f_url_slash_count;
+               qd_flags.f_tag_object_count || qd_flags.f_tag_embed_count;
     }
 };

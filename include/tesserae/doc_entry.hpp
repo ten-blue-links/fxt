@@ -172,11 +172,6 @@ struct doc_entry {
     // The number of times the <embed> tag appears in the document
     int tag_embed_count = 0;
 
-    // Number of slashes in URL
-    int url_slash_count = 0;
-    // URL length
-    size_t url_length = 0;
-
     friend std::ostream &operator<<(std::ostream &os, const doc_entry &de);
 };
 
@@ -300,7 +295,5 @@ std::ostream &operator<<(std::ostream &os, const doc_entry &de) {
     os << "," << static_cast<double>(de.tag_object_count);
     os << "," << static_cast<double>(de.tag_embed_count);
 
-    os << "," << static_cast<double>(de.url_slash_count);
-    os << "," << static_cast<double>(de.url_length);
     return os;
 }

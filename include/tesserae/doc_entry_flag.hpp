@@ -128,6 +128,4 @@ struct doc_entry_flag {
     bool f_tag_applet_count            = false;
     bool f_tag_object_count            = false;
     bool f_tag_embed_count             = false;
-    bool f_url_slash_count             = false;
-    bool f_url_length                  = false;
 };

@@ -356,9 +356,6 @@ f_tag_object_count = 1
 ; Enable/disable feature f_tag_embed_count
 f_tag_embed_count = 1
 
-; Enable/disable feature f_url_slash_count
-f_url_slash_count = 1
-
 ; Enable/disable feature f_len
 f_len = 1
 

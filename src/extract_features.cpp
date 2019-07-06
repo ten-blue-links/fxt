@@ -448,12 +448,6 @@ int main(int argc, char **argv) {
                  query_doc_flags.f_tag_embed_count,
                  "Enable feature f_tag_embed_count")
         ->group("Query-document features");
-    app.add_flag("--f_url_slash_count",
-                 query_doc_flags.f_url_slash_count,
-                 "Enable feature f_url_slash_count")
-        ->group("Query-document features");
-    app.add_flag("--f_url_length", query_doc_flags.f_url_length, "Enable feature f_url_length")
-        ->group("Query-document features");
     app.add_flag("--f_len", static_doc_flags.f_len, "Enable feature f_len")
         ->group("Static document features");
     app.add_flag("--f_title_len", static_doc_flags.f_title_len, "Enable feature f_title_len")
@@ -592,10 +586,6 @@ int main(int argc, char **argv) {
             for (size_t i = 0; i < terms.size(); i++) {
                 positions[terms[i]].push_back(i);
             }
-
-            // set url_slash_count as feature for training
-            doc_entry.url_slash_count = doc_idx.url_slash_count();
-            doc_entry.url_length      = doc_idx.url_length();
 
             // set original run score as a feature for training
             doc_entry.stage0_score = stage0_scores[i];

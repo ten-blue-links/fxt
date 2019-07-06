@@ -381,13 +381,6 @@ std::ostream &operator<<(std::ostream &os, const FeaturePresenter &fp) {
         os << "," << static_cast<double>(fp.dentry.tag_embed_count);
     }
 
-    if (fp.dentry_flag.f_url_slash_count) {
-        os << "," << static_cast<double>(fp.dentry.url_slash_count);
-    }
-    if (fp.dentry_flag.f_url_length) {
-        os << "," << static_cast<double>(fp.dentry.url_length);
-    }
-
     if (fp.sdentry_flag.f_len) {
         os << "," << static_cast<double>(fp.sdentry.len);
     }

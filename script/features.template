@@ -119,8 +119,6 @@
 | x           | Document tag count for applet                                                    |
 | x           | Document tag count for object                                                    |
 | x           | Document tag count for embed                                                     |
-| x           | Number of slashes in URL                                                         |
-| x           | URL length                                                                       |
 
 ## Static document features
 
