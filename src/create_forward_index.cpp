@@ -144,5 +144,7 @@ int main(int argc, char const *argv[]) {
         ++docid;
     }
     delete iter;
+    std::cerr << std::endl;
+
     return 0;
 }
