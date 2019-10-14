@@ -1,1 +1,4 @@
+*.o
+*.d
 build
+test/main
