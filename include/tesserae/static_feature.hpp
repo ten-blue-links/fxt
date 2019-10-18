@@ -34,7 +34,8 @@ class StaticFeature {
                   const double   fat,
                   const double   fvt,
                   const double   ftab,
-                  const double   ftd) {
+                  const double   ftd,
+                  const uint8_t  wiki) {
         // Avoid using a constructor for `statdoc_entry` becuase we have a crude
         // code genreation process for statdoc_entry_flag.hpp and
         // doc_entry_flag.hpp. See script/feat2struct.sh.
@@ -51,6 +52,7 @@ class StaticFeature {
         dentry.frac_vis_text    = fvt;
         dentry.frac_table_text  = ftab;
         dentry.frac_td_text     = ftd;
+        dentry.is_wikipedia     = wiki;
     }
     StaticFeature(const statdoc_entry &de)
         : StaticFeature(de.len,
@@ -65,7 +67,8 @@ class StaticFeature {
                         de.frac_anchor_text,
                         de.frac_vis_text,
                         de.frac_table_text,
-                        de.frac_td_text) {}
+                        de.frac_td_text,
+                        de.is_wikipedia) {}
 
     template <class Archive>
     void serialize(Archive &archive) {
@@ -81,7 +84,8 @@ class StaticFeature {
                 dentry.frac_anchor_text,
                 dentry.frac_vis_text,
                 dentry.frac_table_text,
-                dentry.frac_td_text);
+                dentry.frac_td_text,
+                dentry.is_wikipedia);
     }
 };
 

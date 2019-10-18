@@ -27,6 +27,7 @@ struct statdoc_entry {
     double   frac_vis_text    = 0;
     double   frac_table_text  = 0;
     double   frac_td_text     = 0;
+    uint8_t  is_wikipedia     = 0;
 
     friend std::ostream &operator<<(std::ostream &os, const statdoc_entry &de);
 };
@@ -45,4 +46,5 @@ std::ostream &operator<<(std::ostream &os, const statdoc_entry &de) {
     os << "," << de.frac_vis_text;
     os << "," << de.frac_table_text;
     os << "," << de.frac_td_text;
+    os << "," << de.is_wikipedia;
 }

@@ -195,6 +195,33 @@ void set_url_lendep(statdoc_entry &s, const std::string &url) {
     s.url_depth = depth;
 }
 
+bool is_wikipedia_url(const std::string &url) {
+  const std::string wiki = "wikipedia.org";
+
+  if (!url.size()) {
+    return false;
+  }
+
+  std::string::size_type start = url.find("://");
+  if (std::string::npos == start) {
+    start = 0;
+  } else {
+    start += 3;
+  }
+  std::string::size_type end = url.find_first_of("/?", start);
+  if (std::string::npos == end) {
+    end = url.size();
+  }
+
+  std::string u = std::string(url, start, end);
+  size_t idx = u.rfind(wiki);
+  if (std::string::npos == idx) {
+    return false;
+  }
+
+  return true;
+}
+
 /*
  * Extract static document features. Many of which are from Bendersky, et al.
  * WSDM (2011).
@@ -270,6 +297,7 @@ int main(int argc, char **argv) {
         s.frac_table_text  = frac_table_text(index, list->fields());
         s.frac_td_text     = frac_td_text(index, list->fields());
         set_url_lendep(s, doc_url);
+        s.is_wikipedia = uint8_t(is_wikipedia_url(doc_url));
 
         /* std::cout << doc_name << s << std::endl; */
         statdoc_feat.push_back(s);
