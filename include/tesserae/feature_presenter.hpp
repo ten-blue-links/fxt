@@ -14,15 +14,15 @@
  * Display features that are enabled.
  */
 class FeaturePresenter {
-    doc_entry          dentry;
-    doc_entry_flag     dentry_flag;
-    statdoc_entry      sdentry;
+    doc_entry dentry;
+    doc_entry_flag dentry_flag;
+    statdoc_entry sdentry;
     statdoc_entry_flag sdentry_flag;
 
    public:
-    FeaturePresenter(const doc_entry &         de,
-                     const doc_entry_flag &    def,
-                     const statdoc_entry &     sde,
+    FeaturePresenter(const doc_entry &de,
+                     const doc_entry_flag &def,
+                     const statdoc_entry &sde,
                      const statdoc_entry_flag &sdef)
         : dentry(de), dentry_flag(def), sdentry(sde), sdentry_flag(sdef) {}
 
@@ -419,6 +419,9 @@ std::ostream &operator<<(std::ostream &os, const FeaturePresenter &fp) {
     }
     if (fp.sdentry_flag.f_frac_td_text) {
         os << "," << fp.sdentry.frac_td_text;
+    }
+    if (fp.sdentry_flag.f_is_wikipedia) {
+        os << "," << static_cast<double>(fp.sdentry.is_wikipedia);
     }
 
     return os;

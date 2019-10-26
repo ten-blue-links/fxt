@@ -137,6 +137,7 @@
 | x           | Fraction of visible text |
 | x           | Fraction of table text   |
 | x           | Fraction of td text      |
+| x           | Is wikipedia.org URL     |
 
 ## Unigram pre-retrieval features
 

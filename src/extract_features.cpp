@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
         ->check(CLI::ExistingFile);
 
     /* The following flags for enabling features is automatically generated. */
-    struct doc_entry_flag     query_doc_flags;
+    struct doc_entry_flag query_doc_flags;
     struct statdoc_entry_flag static_doc_flags;
     app.add_flag(
            "--f_stage0_score", query_doc_flags.f_stage0_score, "Enable feature f_stage0_score")
@@ -481,6 +481,9 @@ int main(int argc, char **argv) {
     app.add_flag(
            "--f_frac_td_text", static_doc_flags.f_frac_td_text, "Enable feature f_frac_td_text")
         ->group("Static document features");
+    app.add_flag(
+           "--f_is_wikipedia", static_doc_flags.f_is_wikipedia, "Enable feature f_is_wikipedia")
+        ->group("Static document features");
 
     app.set_config("-c,--config", "", "Read configuration from file", false);
     CLI11_PARSE(app, argc, argv);
@@ -488,7 +491,7 @@ int main(int argc, char **argv) {
     std::ofstream outfile(output_file, std::ofstream::out);
     outfile << std::fixed << std::setprecision(5);
 
-    query_environment         indri_env;
+    query_environment indri_env;
     query_environment_adapter qry_env(&indri_env);
     qry_env.add_index(indri_index);
 
@@ -500,37 +503,37 @@ int main(int argc, char **argv) {
 
     // load fwd_idx
     std::cerr << "Loading " << fwd_index_file << "..." << std::endl;
-    auto                       start = clock::now();
-    std::ifstream              ifs_fwd(fwd_index_file);
+    auto start = clock::now();
+    std::ifstream ifs_fwd(fwd_index_file);
     cereal::BinaryInputArchive iarchive_fwd(ifs_fwd);
-    ForwardIndex               fwd_idx;
+    ForwardIndex fwd_idx;
     iarchive_fwd(fwd_idx);
 
-    auto stop      = clock::now();
+    auto stop = clock::now();
     auto load_time = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     std::cerr << "Loaded " << fwd_index_file << " in " << load_time.count() << " ms" << std::endl;
 
     // load lexicon
     std::cerr << "Loading " << lexicon_file << "..." << std::endl;
     start = clock::now();
-    std::ifstream              lexicon_f(lexicon_file);
+    std::ifstream lexicon_f(lexicon_file);
     cereal::BinaryInputArchive iarchive_lex(lexicon_f);
-    Lexicon                    lexicon;
+    Lexicon lexicon;
     iarchive_lex(lexicon);
 
-    stop      = clock::now();
+    stop = clock::now();
     load_time = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     std::cerr << "Loaded " << lexicon_file << " in " << load_time.count() << " ms" << std::endl;
 
     // load static doc list
     std::cerr << "Loading " << static_doc_file << "..." << std::endl;
     start = clock::now();
-    std::ifstream              static_doc_f(static_doc_file);
+    std::ifstream static_doc_f(static_doc_file);
     cereal::BinaryInputArchive iarchive_statdoc(static_doc_f);
-    StaticDocFeatureList       statdoc_list;
+    StaticDocFeatureList statdoc_list;
     iarchive_statdoc(statdoc_list);
 
-    stop      = clock::now();
+    stop = clock::now();
     load_time = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     std::cerr << "Loaded " << static_doc_file << " in " << load_time.count() << " ms" << std::endl;
 
@@ -551,7 +554,7 @@ int main(int argc, char **argv) {
     ifs.close();
     ifs.clear();
 
-    FieldIdMap                     field_id_map;
+    FieldIdMap field_id_map;
     const std::vector<std::string> idx_fields = {
         "title", "heading", "mainbody", "inlink", "applet", "object", "embed"};
     for (const std::string &field_str : idx_fields) {
@@ -563,10 +566,10 @@ int main(int argc, char **argv) {
 
     auto queries = qtfile.get_queries();
     for (auto &qry : queries) {
-        std::vector<double>      stage0_scores = trec_run.get_scores(qry.id);
-        std::vector<int>         docno_labels  = trec_run.get_labels(qry.id);
-        std::vector<std::string> docnos        = trec_run.get_result(qry.id);
-        std::vector<docid_t>     docids = qry_env.document_ids_from_metadata("docno", docnos);
+        std::vector<double> stage0_scores = trec_run.get_scores(qry.id);
+        std::vector<int> docno_labels = trec_run.get_labels(qry.id);
+        std::vector<std::string> docnos = trec_run.get_result(qry.id);
+        std::vector<docid_t> docids = qry_env.document_ids_from_metadata("docno", docnos);
 
         auto start = clock::now();
 
@@ -578,10 +581,10 @@ int main(int argc, char **argv) {
             auto doc_idx = fwd_idx[docid];
             doc_idx.decompress();
 
-            doc_entry     doc_entry;
+            doc_entry doc_entry;
             statdoc_entry statdoc_entry;
 
-            auto                                                terms = doc_idx.terms();
+            auto terms = doc_idx.terms();
             std::unordered_map<uint32_t, std::vector<uint32_t>> positions;
             for (size_t i = 0; i < terms.size(); i++) {
                 positions[terms[i]].push_back(i);
@@ -598,7 +601,7 @@ int main(int argc, char **argv) {
             FeaturePresenter presenter(doc_entry, query_doc_flags, statdoc_entry, static_doc_flags);
             outfile << label << "," << qry.id << "," << docno << presenter << std::endl;
         }
-        auto stop      = clock::now();
+        auto stop = clock::now();
         auto load_time = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
         std::cerr << "qid: " << qry.id << ", " << docids.size() << " docs in " << load_time.count()
                   << " ms" << std::endl;
