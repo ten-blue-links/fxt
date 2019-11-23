@@ -22,6 +22,7 @@
 #include "tesserae/field_map.hpp"
 #include "tesserae/static_feature.hpp"
 #include "tesserae/web_1t_stopwords.hpp"
+#include "tesserae/features/static/wikipedia.hpp"
 
 uint32_t field_len(const int                                                       field_id,
                    const indri::utility::greedy_vector<indri::index::FieldExtent> &list) {
@@ -193,33 +194,6 @@ void set_url_lendep(statdoc_entry &s, const std::string &url) {
 
     s.url_len   = cpy.size();
     s.url_depth = depth;
-}
-
-bool is_wikipedia_url(const std::string &url) {
-  const std::string wiki = "wikipedia.org";
-
-  if (!url.size()) {
-    return false;
-  }
-
-  std::string::size_type start = url.find("://");
-  if (std::string::npos == start) {
-    start = 0;
-  } else {
-    start += 3;
-  }
-  std::string::size_type end = url.find_first_of("/?", start);
-  if (std::string::npos == end) {
-    end = url.size();
-  }
-
-  std::string u = std::string(url, start, end);
-  size_t idx = u.rfind(wiki);
-  if (std::string::npos == idx) {
-    return false;
-  }
-
-  return true;
 }
 
 /*
