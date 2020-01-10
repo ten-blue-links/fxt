@@ -13,6 +13,20 @@ There are two main components within the pipeline:
 The first step is to build an index. Currently, an existing [Indri] index is
 required.
 
+The Indri index will need to have the following fields indexed:
+
+* mainbody
+* heading
+* inlink
+* body
+* title
+* table
+* td
+* a
+* applet
+* object
+* embed
+
 [indri]: https://lemurproject.org/indri.php
 
 Assuming you already have an Indri index at the path `qs-indri` you can build a
