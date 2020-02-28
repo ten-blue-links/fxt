@@ -47,4 +47,6 @@ std::ostream &operator<<(std::ostream &os, const statdoc_entry &de) {
     os << "," << de.frac_table_text;
     os << "," << de.frac_td_text;
     os << "," << de.is_wikipedia;
+
+    return os;
 }
