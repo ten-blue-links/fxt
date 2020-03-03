@@ -1,10 +1,10 @@
 
 CXX = g++
-CXXFLAGS += -g -std=c++11 -Wall -Wextra -pedantic -I../external -I../include
+CXXFLAGS += -g -std=c++14 -Wall -Wextra -pedantic -I../external -I../include
 LDFAGS +=
 
 TARGET = main
-SRC = main.cpp static_wikipedia.cpp
+SRC = main.cpp static_wikipedia.cpp lmds.cpp
 OBJ = $(SRC:.cpp=.o)
 DEP = $(SRC:.cpp=.d)
 
