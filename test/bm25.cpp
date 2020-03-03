@@ -11,4 +11,3 @@ TEST_CASE("Simple BM25 calculation") {
 
   REQUIRE(Approx(3.9941) == ranker.calculate_docscore(1, 10, 1000, 100));
 }
-
