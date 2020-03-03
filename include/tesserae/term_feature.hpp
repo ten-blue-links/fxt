@@ -414,8 +414,8 @@ void compute_bm25_stats(feature_t &                                             
     std::vector<double> bmtmp;
 
     rank_bm25 ranker;
-    ranker.set_k1(90);
-    ranker.set_b(40);
+    ranker.set_k1(0.9);
+    ranker.set_b(0.4);
     ranker.num_docs    = ndocs;
     ranker.avg_doc_len = avg_dlen;
 

@@ -16,8 +16,8 @@ class doc_bm25_trec3_kmax_feature : public doc_bm25_feature {
     doc_bm25_trec3_kmax_feature(Lexicon &lex) : doc_bm25_feature(lex) {}
 
     void compute(query_train &qry, doc_entry &doc, Document &doc_idx, FieldIdMap &field_id_map) {
-        ranker.set_k1(200);
-        ranker.set_b(75);
+        ranker.set_k1(2.0);
+        ranker.set_b(0.75);
 
         bm25_compute(qry, doc, doc_idx, field_id_map);
 

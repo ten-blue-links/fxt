@@ -4,7 +4,7 @@ CXXFLAGS += -g -std=c++14 -Wall -Wextra -pedantic -I../external -I../include
 LDFAGS +=
 
 TARGET = main
-SRC = main.cpp static_wikipedia.cpp lmds.cpp
+SRC = main.cpp static_wikipedia.cpp lmds.cpp bm25.cpp
 OBJ = $(SRC:.cpp=.o)
 DEP = $(SRC:.cpp=.d)
 

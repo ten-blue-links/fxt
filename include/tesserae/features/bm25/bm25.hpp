@@ -16,8 +16,8 @@ struct rank_bm25 {
     size_t       num_docs;
     double       avg_doc_len;
 
-    void   set_k1(const uint32_t n) { k1 = n / 100.0; }
-    void   set_b(const uint32_t n) { b = n / 100.0; }
+    void   set_k1(const double val) { k1 = val; }
+    void   set_b(const double val) { b = val; }
     double calculate_docscore(const double f_qt,
                               const double f_dt,
                               const double f_t,

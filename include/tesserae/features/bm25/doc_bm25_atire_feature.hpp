@@ -18,8 +18,8 @@ class doc_bm25_atire_feature : public doc_bm25_feature {
     doc_bm25_atire_feature(Lexicon &lex) : doc_bm25_feature(lex) {}
 
     void compute(query_train &qry, doc_entry &doc, Document &doc_idx, FieldIdMap &field_id_map) {
-        ranker.set_k1(90);
-        ranker.set_b(40);
+        ranker.set_k1(0.9);
+        ranker.set_b(0.4);
 
         bm25_compute(qry, doc, doc_idx, field_id_map);
 
