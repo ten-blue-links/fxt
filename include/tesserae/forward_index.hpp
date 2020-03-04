@@ -65,22 +65,35 @@ class Field {
  * document fields as vectors for optimal compression.
  */
 class Document {
-  std::vector<uint16_t> m_fields;
-  size_t m_num_terms = 0;
-  std::vector<uint32_t> m_terms;
+  // A document `id` is a `uint32_t` for compression in postings, but is
+  // instantiated here as a `size_t` because they are often used as indexes in
+  // STL containers.
+  size_t id_;
+  // Used for compression/decompression
+  // FIXME - change to stored_count?
+  size_t m_num_terms;
   std::vector<uint32_t> m_unique_terms;
+  std::vector<uint32_t> m_terms;
   std::vector<uint32_t> m_freqs;
+  std::vector<uint16_t> m_fields;
   std::vector<std::vector<uint32_t>> m_field_freqs;
   std::map<uint16_t, Field> m_field_stats;
 
  public:
-  Document() = default;
+  // This constructor is required for cereal
+  explicit Document() : id_(0), m_num_terms(0) {}
 
+  Document(size_t i) : id_(i), m_num_terms(0) {}
+
+  size_t id() const { return id_; }
   uint32_t length() const { return m_terms.size(); }
 
+  const std::vector<uint16_t> fields() const { return m_fields; }
   const std::vector<uint32_t> terms() const { return m_terms; }
-
   const std::vector<uint32_t> unique_terms() const { return m_unique_terms; }
+  const std::vector<uint32_t> freqs() const { return m_freqs; }
+  const std::vector<std::vector<uint32_t>> field_freqs() const { return m_field_freqs; }
+  const std::map<uint16_t, Field> field_stats() const { return m_field_stats; }
 
   void set_fields(const std::vector<uint16_t> &fields) {
     m_fields = fields;
@@ -135,13 +148,17 @@ class Document {
     m_freqs[idx] = freq;
   }
 
+  void set_freq(const std::vector<uint32_t>& freqs) {
+    m_freqs = freqs;
+  }
+
   uint32_t freq(uint16_t field_id, uint32_t term) const {
     auto it =
         std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
     if (it == m_unique_terms.end()) {
       return 0;
     }
-    auto idx = std::distance(m_unique_terms.begin(), it);
+    size_t idx = std::distance(m_unique_terms.begin(), it);
     auto f_it = std::find(m_fields.begin(), m_fields.end(), field_id);
     if (f_it == m_fields.end()) {
       return 0;
@@ -225,7 +242,14 @@ class Document {
     m_field_stats[field_id].field_len_sum_sqrs(field_len_sum_sqrs);
   }
 
+  /**
+   * Compress document. See `src/compression.cpp`
+   */
   void compress();
+
+  /**
+   * Decompress document. See `src/compression.cpp`
+   */
   void decompress();
 
   /**
@@ -258,7 +282,7 @@ class Document {
 
   template <class Archive>
   void serialize(Archive &archive) {
-    archive(m_fields, m_num_terms, m_terms, m_unique_terms, m_freqs,
+    archive(id_, m_fields, m_num_terms, m_terms, m_unique_terms, m_freqs,
             m_field_freqs, m_field_stats);
   }
 };

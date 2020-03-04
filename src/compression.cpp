@@ -12,7 +12,6 @@
 #include "FastPFor/headers/deltautil.h"
 
 using namespace FastPForLib;
-
 namespace {
 IntegerCODEC &document_codec = *CODECFactory::getFromName("streamvbyte");
 IntegerCODEC &posting_codec = *CODECFactory::getFromName("simdfastpfor256");

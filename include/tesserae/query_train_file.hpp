@@ -9,6 +9,7 @@
 
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <unordered_map>
 #include <vector>
 
@@ -25,6 +26,8 @@ struct query_train {
   std::vector<int> pos;
   // query term frequency
   std::unordered_map<uint64_t, int> q_ft;
+
+  size_t length() const { return stems.size(); }
 };
 
 class query_train_file {

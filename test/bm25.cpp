@@ -2,7 +2,7 @@
 
 #include "tesserae/features/bm25/bm25.hpp"
 
-TEST_CASE("Simple BM25 calculation") {
+TEST_CASE("Simple BM25 score") {
   rank_bm25 ranker;
   ranker.set_k1(1.0);
   ranker.set_b(0.5);

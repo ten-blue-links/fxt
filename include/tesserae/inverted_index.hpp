@@ -50,7 +50,7 @@ class PostingList {
   // and removed from the lexicon?
   uint32_t term_count_ = 0;
   uint32_t length_ = 0;
-  // If compression used for this list
+  // Is compression used for this list
   bool coding_on_ = true;
   // Posting entries
   std::vector<uint32_t> docs_;

@@ -72,3 +72,9 @@ target_link_libraries(indexer
     pthread
     cereal
 )
+
+add_executable(dump_fixture dump_fixture.cpp compression.cpp)
+target_link_libraries(dump_fixture
+    FastPFor
+    cereal
+)

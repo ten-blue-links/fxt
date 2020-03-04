@@ -38,7 +38,11 @@ class Term {
  public:
   Term() = default;
 
-  Term(const Counts &c, const FieldCounts &fc) : counts(c), field_counts(fc){};
+  Term(const Counts &c, const FieldCounts &fc) : counts(c), field_counts(fc) {};
+
+  inline Counts get_counts() const { return counts; }
+
+  inline FieldCounts get_field_counts() const { return field_counts; }
 
   inline uint64_t document_count() const { return counts.document_count; }
 
@@ -75,12 +79,18 @@ class Lexicon {
   inline uint64_t term_count() const { return counts.term_count; }
 
   // Number of unique terms in the collection
-  inline uint64_t length() const { return terms.size(); }
+  inline uint64_t length() const {
+    if (terms.size() > 0) {
+      // Subtract OOV term from length
+      return terms.size() - 1;
+    }
+    return 0;
+  }
 
   inline const Term &operator[](size_t pos) const { return terms[pos]; }
   inline Term &operator[](size_t pos) { return terms[pos]; }
 
-  inline size_t term(const std::string &t) {
+  inline size_t term(const std::string &t) const {
     auto it = term_id.find(t);
     if (it != term_id.end()) {
       return it->second;
@@ -92,20 +102,34 @@ class Lexicon {
 
   inline bool is_oov(size_t tid) { return tid == oov_term(); }
 
+  inline const std::string& term(const size_t id) const { return id_term[id]; }
+
   void push_back(const std::string &t, const Counts &c, const FieldCounts &fc) {
     auto id = terms.size();
     term_id.insert(std::make_pair(t, id));
+    id_term.emplace_back(t);
     Term term(c, fc);
     terms.push_back(term);
   }
 
-  Lexicon() = delete;
+  /**
+   * FIXME #32 - Unify constructor behaviour with respect to OOV term setup.
+   * Deserialization would just overwrite existing class members anyway right?
+   *
+   * The default constructor assumes that the `Lexicon` will be populated from
+   * data on disk, which is why the `oov_str` is not configured, but it is in
+   * the constructor that takes `Counts` as a parameter for
+   * `Lexicon::Lexicon(Counts c)`.
+   */
+  Lexicon() = default;
 
   Lexicon(Counts c) : counts(c) { push_back(oov_str, {}, {}); }
 
   template <class Archive>
   void serialize(Archive &archive) {
-    archive(counts, terms, term_id);
+    // FIXME - only need to store id_term, then term_id can be generated on
+    // load. Needs changes to Cereal loading.
+    archive(counts, terms, id_term, term_id);
   }
 
  private:
@@ -114,5 +138,6 @@ class Lexicon {
 
   Counts counts;
   std::vector<Term> terms;
+  std::vector<std::string> id_term;
   std::map<std::string, size_t> term_id;
 };

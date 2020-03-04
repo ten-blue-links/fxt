@@ -47,6 +47,11 @@ class IndexerInteractor {
   const std::string invidx_file = "inverted_index";
   const IndriIndexAdapter &indri;
   std::string outpath;
+  // Map of `DocListIterator` index to the `Lexicon` so the `InvertedIndex` has
+  // postings in the correct order.
+  // FIXME - Check if this is actually required. (i.e. does the iteration order
+  // of DocListIterator and VocabularyIterator is equal).
+  std::vector<size_t> idx_lexid_;
 
  public:
   IndexerInteractor(const IndriIndexAdapter &index, const std::string path)
@@ -58,6 +63,8 @@ class IndexerInteractor {
         outpath + std::string(sep) + std::string(lexicon_file);
     std::ofstream os(outfile, std::ios::binary);
     cereal::BinaryOutputArchive archive(os);
+    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000,
+                         "terms processed: ");
     FieldMap fields;
     fields.insert(*indri.index, _fields);
 
@@ -66,8 +73,8 @@ class IndexerInteractor {
 
     Lexicon lexicon(
         Counts(indri.index->documentCount(), indri.index->termCount()));
-    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000,
-                         "terms processed: ");
+    // Reserve index 0 for OOV term
+    idx_lexid_.push_back(lexicon.oov_term());
 
     while (!iter->finished()) {
       indri::index::DiskTermData *entry = iter->currentEntry();
@@ -80,6 +87,7 @@ class IndexerInteractor {
         field_counts.insert(std::make_pair(field_id, c));
       }
 
+      idx_lexid_.push_back(indri.index->term(termData->term));
       Counts counts(termData->corpus.documentCount,
                     termData->corpus.totalCount);
       lexicon.push_back(termData->term, counts, field_counts);
@@ -129,13 +137,14 @@ class IndexerInteractor {
     FieldMap fields;
     fields.insert(*indri.index, _fields);
 
+    size_t docid = 0;
     {
       // dump size of vector
       size_t len = indri.index->documentCount();
       // add 1 for the zero padded document
       len += 1;
       // pad document index zero (unused)
-      Document zero;
+      Document zero(docid++);
 
       archive(len);
       archive(zero);
@@ -152,7 +161,7 @@ class IndexerInteractor {
       indri::index::TermList *list = iter->currentEntry();
       auto &doc_terms = list->terms();
       auto &doc_fields = list->fields();
-      Document document;
+      Document document(docid++);
 
       std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
       document.set_terms(terms);
@@ -206,16 +215,23 @@ class IndexerInteractor {
   void inverted_index() {
     std::string outfile = outpath + std::string(sep) + std::string(invidx_file);
     std::ofstream os(outfile, std::ios::binary);
-    cereal::BinaryOutputArchive archive(os);
+    cereal::BinaryOutputArchive writer(os);
+    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000, "terms processed: ");
 
-    {
-      // dump size of vector
-      size_t len = indri.index->uniqueTermCount();
-      archive(len);
-    }
+    // Build the inverted index in memory, so it can be organized into the same
+    // order as the lexicon (the lexicon was indexed first)
+    InvertedIndex inverted_index;
+    // Add 1 for the OOV term
+    inverted_index.resize(indri.index->uniqueTermCount() + 1);
 
-    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000,
-                         "terms processed: ");
+    // OOV entry
+    // FIXME - Possibly handle this in `InvertedIndex` constructor (which
+    // requires changing `InvertedIndex` into a class).
+    PostingList pl_oov("", 0);
+    pl_oov.coding_off();
+    inverted_index[0] = pl_oov;
+
+    size_t c = 1; // Skip OOV term
     indri::index::DocListFileIterator *iter =
         indri.index->docListFileIterator();
     iter->startIteration();
@@ -224,6 +240,7 @@ class IndexerInteractor {
           iter->currentEntry();
       entry->iterator->startIteration();
       indri::index::TermData *termData = entry->termData;
+
       PostingList pl(termData->term, termData->corpus.totalCount);
       std::vector<uint32_t> docs;
       std::vector<uint32_t> freqs;
@@ -236,18 +253,19 @@ class IndexerInteractor {
         entry->iterator->nextEntry();
       }
       pl.set(docs, freqs);
-      archive(pl);
+      inverted_index[idx_lexid_[c++]] = pl;
       pp.progress();
       iter->nextEntry();
     }
-
     delete iter;
+
+    writer(inverted_index);
   }
 };
 
 int main(int argc, char **argv) {
   if (argc != 3) {
-    std::cerr << "usage: " << argv[0] << "<indri_index> <index>" << std::endl;
+    std::cerr << "usage: " << argv[0] << " <indri_index> <index>" << std::endl;
     return 1;
   }
 
