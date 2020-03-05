@@ -99,8 +99,8 @@ class doc_tpscore_feature : public doc_bm25_feature {
                FieldIdMap &field_id_map) {
     auto bm25_atire = doc.bm25_atire;
     if (bm25_atire == 0) {
-      ranker.set_k1(90);
-      ranker.set_b(40);
+      ranker.set_k1(0.9);
+      ranker.set_b(0.4);
       bm25_compute(qry, doc, doc_idx, field_id_map);
       bm25_atire = _score_doc;
     }
