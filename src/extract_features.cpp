@@ -11,6 +11,7 @@
 
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
+#include "indri/QueryEnvironment.hpp"
 
 #include "tesserae/doc_entry.hpp"
 #include "tesserae/doc_entry_flag.hpp"
