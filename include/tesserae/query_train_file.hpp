@@ -12,9 +12,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "indri/QueryEnvironment.hpp"
-
 #include "lexicon.hpp"
+
 struct query_train {
   // query id
   std::string id;
