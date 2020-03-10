@@ -46,9 +46,12 @@ int main(int argc, char const *argv[]) {
   {
     // dump size of vector
     size_t len = index->documentCount();
-    archive(len);
+    // add 1 for the zero padded document
+    len += 1;
     // pad document index zero (unused)
     Document zero;
+
+    archive(len);
     archive(zero);
   }
 
