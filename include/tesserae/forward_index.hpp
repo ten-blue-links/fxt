@@ -86,7 +86,7 @@ class Document {
       auto it =
           std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), t);
       auto idx = std::distance(m_unique_terms.begin(), it);
-      tmp.push_back(idx);
+      tmp.push_back(m_unique_terms[idx]);
     }
     m_terms = tmp;
   }

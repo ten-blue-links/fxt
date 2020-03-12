@@ -1,10 +1,13 @@
 
 CXX = g++
-CXXFLAGS += -g -std=c++14 -Wall -Wextra -pedantic -I../external -I../include
-LDFAGS +=
+CXXFLAGS += -g -std=c++14 -Wall -Wextra -pedantic \
+			-I../external \
+			-I../include \
+			-I../external/cereal/include
+LDFAGS += -lFastPFor -L../build/external/FastPFor
 
 TARGET = main
-SRC = main.cpp static_wikipedia.cpp lmds.cpp bm25.cpp
+SRC = main.cpp static_wikipedia.cpp lmds.cpp bm25.cpp forward_index.cpp
 OBJ = $(SRC:.cpp=.o)
 DEP = $(SRC:.cpp=.d)
 
