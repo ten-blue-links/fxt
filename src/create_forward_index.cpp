@@ -67,11 +67,6 @@ int main(int argc, char const *argv[]) {
     auto &doc_terms = list->terms();
     Document document;
 
-    std::set<uint32_t> unique_terms_set(doc_terms.begin(), doc_terms.end());
-    std::vector<uint32_t> unique_terms(unique_terms_set.begin(),
-                                       unique_terms_set.end());
-    document.set_unique_terms(unique_terms);
-
     futures.push_back(std::async([&]() {
       std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
       document.set_terms(terms);

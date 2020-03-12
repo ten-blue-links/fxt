@@ -7,10 +7,10 @@ TEST_CASE("set terms on index of one document") {
   std::vector<uint32_t> uniq_terms = {1, 2, 3, 4, 5, 6, 7};
   Document doc;
 
-  doc.set_unique_terms(uniq_terms);
   doc.set_terms(terms);
 
   REQUIRE(terms == doc.terms());
+  REQUIRE(uniq_terms == doc.unique_terms());
 }
 
 TEST_CASE("set terms on index of multiple documents") {
@@ -18,8 +18,8 @@ TEST_CASE("set terms on index of multiple documents") {
   std::vector<uint32_t> uniq_terms = {2, 3, 5, 6, 9};
   Document doc;
 
-  doc.set_unique_terms(uniq_terms);
   doc.set_terms(terms);
 
   REQUIRE(terms == doc.terms());
+  REQUIRE(uniq_terms == doc.unique_terms());
 }
