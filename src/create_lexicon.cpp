@@ -41,7 +41,6 @@ int main(int argc, char const *argv[]) {
   iter->startIteration();
 
   Lexicon lexicon(Counts(index->documentCount(), index->termCount()));
-  lexicon.push_back({});
 
   while (!iter->finished()) {
     indri::index::DiskTermData *entry = iter->currentEntry();

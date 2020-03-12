@@ -66,9 +66,14 @@ class Term {
 
 class Lexicon {
  public:
+  // Number of documents in the collection
   inline uint64_t document_count() const { return counts.document_count; }
 
+  // Number of terms in the collection
   inline uint64_t term_count() const { return counts.term_count; }
+
+  // Number of unique terms in the collection
+  inline uint64_t length() const { return terms.size(); }
 
   inline const Term &operator[](size_t pos) const { return terms[pos]; }
   inline Term &operator[](size_t pos) { return terms[pos]; }
@@ -81,7 +86,7 @@ class Lexicon {
     return oov_term();
   }
 
-  inline size_t oov_term() { return std::numeric_limits<std::size_t>::max(); }
+  inline size_t oov_term() const { return oov_id; }
 
   inline bool is_oov(size_t tid) { return tid == oov_term(); }
 
@@ -92,10 +97,9 @@ class Lexicon {
     terms.push_back(term);
   }
 
-  void push_back(Term &&t) { terms.push_back(t); }
+  Lexicon() = delete;
 
-  Lexicon() = default;
-  Lexicon(Counts c) : counts(c) {}
+  Lexicon(Counts c) : counts(c) { push_back(oov_str, {}, {}); }
 
   template <class Archive>
   void serialize(Archive &archive) {
@@ -103,6 +107,9 @@ class Lexicon {
   }
 
  private:
+  const size_t oov_id = 0;
+  const std::string oov_str = "xxoov";
+
   Counts counts;
   std::vector<Term> terms;
   std::map<std::string, size_t> term_id;
