@@ -11,8 +11,10 @@
 #include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
 
-#include <limits>
 #include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 struct Counts {
   uint64_t document_count = 0;
