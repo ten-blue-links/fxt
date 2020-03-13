@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
   // load lexicon
   std::ifstream lexicon_f(lexicon_file);
   cereal::BinaryInputArchive iarchive_lex(lexicon_f);
-  Lexicon lexicon;
+  Lexicon lexicon(Counts(0, 0));
   iarchive_lex(lexicon);
 
   // load query file
