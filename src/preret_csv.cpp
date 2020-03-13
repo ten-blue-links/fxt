@@ -6,10 +6,10 @@
  */
 
 #include <algorithm>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <cstring>
 
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
