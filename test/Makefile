@@ -8,7 +8,7 @@ LDFAGS += -lFastPFor -L../build/external/FastPFor
 
 TARGET = main
 SRC = main.cpp static_wikipedia.cpp lmds.cpp bm25.cpp forward_index.cpp \
-	  lexicon.cpp
+	  ../src/forward_index.cpp
 OBJ = $(SRC:.cpp=.o)
 DEP = $(SRC:.cpp=.d)
 

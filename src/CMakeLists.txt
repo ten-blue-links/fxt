@@ -2,7 +2,10 @@
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DP_NEEDS_GNU_CXX_NAMESPACE=1")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DP_NEEDS_GNU_CXX_NAMESPACE=1")
 
-add_executable(create_forward_index create_forward_index.cpp)
+add_executable(create_forward_index
+    create_forward_index.cpp
+    forward_index.cpp
+)
 target_link_libraries(create_forward_index
     FastPFor
     indri
@@ -32,7 +35,10 @@ target_link_libraries(create_lexicon
 )
 
 # inverted_index
-add_executable(create_inverted_index create_inverted_index.cpp)
+add_executable(create_inverted_index
+    create_inverted_index.cpp
+    inverted_index.cpp
+)
 target_link_libraries(create_inverted_index
     FastPFor
     indri
@@ -42,7 +48,10 @@ target_link_libraries(create_inverted_index
 )
 
 # create_bigram_inverted_index
-add_executable(create_bigram_inverted_index create_bigram_inverted_index.cpp)
+add_executable(create_bigram_inverted_index
+    create_bigram_inverted_index.cpp
+    inverted_index.cpp
+)
 target_link_libraries(create_bigram_inverted_index
     FastPFor
     indri
@@ -52,7 +61,10 @@ target_link_libraries(create_bigram_inverted_index
 )
 
 # generate_term_features
-add_executable(generate_term_features generate_term_features.cpp)
+add_executable(generate_term_features
+    generate_term_features.cpp
+    inverted_index.cpp
+)
 target_link_libraries(generate_term_features
     FastPFor
     CLI11
@@ -88,7 +100,7 @@ target_link_libraries(kstem
     pthread
 )
 
-add_executable(extract_features extract_features.cpp)
+add_executable(extract_features extract_features.cpp forward_index.cpp)
 target_link_libraries(extract_features
     FastPFor
     indri
