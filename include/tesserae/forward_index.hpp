@@ -104,6 +104,9 @@ class Document {
   void set_freq(uint32_t term, uint32_t freq) {
     auto it =
         std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
+    if (it == m_unique_terms.end()) {
+      return;
+    }
     auto idx = std::distance(m_unique_terms.begin(), it);
     m_freqs[idx] = freq;
   }
