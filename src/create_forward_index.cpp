@@ -15,6 +15,7 @@
 
 #include "tesserae/field_map.hpp"
 #include "tesserae/forward_index.hpp"
+#include "tesserae/forward_index_interactor.hpp"
 
 static const std::vector<std::string> _fields = {"body", "title", "heading",
                                                  "inlink", "a"};
@@ -37,6 +38,7 @@ int main(int argc, char const *argv[]) {
   indri::collection::Repository::index_state state = repo.indexes();
   const auto &index = (*state)[0];
 
+  ForwardIndexInteractor interactor;
   FieldMap fields;
   fields.insert(*index, _fields);
 
@@ -109,9 +111,7 @@ int main(int argc, char const *argv[]) {
           document.set_field_max_len(f.id, document.field_len(f.id));
         }
 
-        if (document.field_min_len(f.id) < document.field_len(f.id)) {
-          document.set_field_min_len(f.id, document.field_len(f.id));
-        }
+        interactor.process_field_min_len(document, f.id, d_len);
 
         for (size_t i = f.begin; i < f.end; ++i) {
           field_freqs[f.id][doc_terms[i]] += 1;
