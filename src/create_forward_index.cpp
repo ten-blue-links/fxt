@@ -107,10 +107,7 @@ int main(int argc, char const *argv[]) {
         document.set_field_len_sum_sqrs(
             f.id, document.field_len_sum_sqrs(f.id) + field_len_sqr);
 
-        if (document.field_max_len(f.id) < document.field_len(f.id)) {
-          document.set_field_max_len(f.id, document.field_len(f.id));
-        }
-
+        interactor.process_field_max_len(document, f.id, d_len);
         interactor.process_field_min_len(document, f.id, d_len);
 
         for (size_t i = f.begin; i < f.end; ++i) {

@@ -22,4 +22,11 @@ class ForwardIndexInteractor {
       doc.set_field_min_len(field_id, field_len);
     }
   }
+
+  void process_field_max_len(Document &doc, uint16_t field_id,
+                             uint16_t field_len) {
+    if (doc.field_max_len(field_id) < field_len) {
+      doc.set_field_max_len(field_id, field_len);
+    }
+  }
 };
