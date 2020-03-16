@@ -84,3 +84,14 @@ TEST_CASE("document set unkown field term frequency") {
   REQUIRE(1 == doc.freq(field_id, 2));
   REQUIRE(1 == doc.freq(field_id, 3));
 }
+
+TEST_CASE("document field minimum length initialization") {
+  Document doc;
+  doc.set_fields({0, 1});
+
+  doc.set_field_min_len(0, 100);
+  // field `1` not set
+
+  REQUIRE(100 == doc.field_min_len(0));
+  REQUIRE(0 == doc.field_min_len(1));
+}
