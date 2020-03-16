@@ -47,3 +47,40 @@ TEST_CASE("document set unkown term frequency") {
   REQUIRE(0 == doc.freq(2));
   REQUIRE(0 == doc.freq(3));
 }
+
+TEST_CASE("document set field term frequency") {
+  auto field_id = 0;
+  Document doc;
+  doc.set_terms({1, 5, 7, 7, 1, 1, 1});
+  doc.set_fields({0});
+
+  doc.set_freq(field_id, 1, 4);
+  doc.set_freq(field_id, 7, 2);
+
+  REQUIRE(0 == doc.freq(field_id, 42));
+  REQUIRE(4 == doc.freq(field_id, 1));
+  REQUIRE(2 == doc.freq(field_id, 7));
+}
+
+TEST_CASE("document set unkown field term frequency") {
+  auto field_id = 0;
+  Document doc;
+  doc.set_terms({1, 2, 3});
+  doc.set_fields({0});
+
+  // unkown term
+  doc.set_freq(field_id, 64, 1);
+  // unkown field
+  doc.set_freq(1, 64, 1);
+  doc.set_freq(field_id, 1, 1);
+  doc.set_freq(field_id, 2, 1);
+  doc.set_freq(field_id, 3, 1);
+
+  // unkown term
+  REQUIRE(0 == doc.freq(field_id, 64));
+  // unkown field
+  REQUIRE(0 == doc.freq(1, 64));
+  REQUIRE(1 == doc.freq(field_id, 1));
+  REQUIRE(1 == doc.freq(field_id, 2));
+  REQUIRE(1 == doc.freq(field_id, 3));
+}
