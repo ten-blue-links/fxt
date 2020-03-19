@@ -103,10 +103,8 @@ int main(int argc, char const *argv[]) {
       for (const auto &f : curr.second) {
         auto d_len = f.end - f.begin;
         document.set_field_len(f.id, document.field_len(f.id) + d_len);
-        auto field_len_sqr = d_len * d_len;
-        document.set_field_len_sum_sqrs(
-            f.id, document.field_len_sum_sqrs(f.id) + field_len_sqr);
 
+        interactor.process_field_len_sum_sqrs(document, f.id, d_len);
         interactor.process_field_max_len(document, f.id, d_len);
         interactor.process_field_min_len(document, f.id, d_len);
 

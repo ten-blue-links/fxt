@@ -29,4 +29,11 @@ class ForwardIndexInteractor {
       doc.set_field_max_len(field_id, field_len);
     }
   }
+
+  void process_field_len_sum_sqrs(Document &doc, uint16_t field_id,
+                                  uint16_t field_len) {
+    uint32_t sqrs = field_len * field_len;
+    doc.set_field_len_sum_sqrs(field_id,
+                               doc.field_len_sum_sqrs(field_id) + sqrs);
+  }
 };
