@@ -78,3 +78,30 @@ TEST_CASE("multiple sum of squares of document field") {
 
   REQUIRE(149 == doc.field_len_sum_sqrs(field_id));
 }
+
+TEST_CASE("length of a document field") {
+  uint16_t field_id = 0;
+  uint16_t field_len = 10;
+  Document doc;
+  ForwardIndexInteractor intereactor;
+  doc.set_fields({field_id});
+
+  intereactor.process_field_len(doc, field_id, field_len);
+
+  REQUIRE(10 == doc.field_len(field_id));
+}
+
+TEST_CASE("cumulative length of a document field") {
+  uint16_t field_id = 0;
+  uint16_t field_len;
+  Document doc;
+  ForwardIndexInteractor intereactor;
+  doc.set_fields({field_id});
+
+  field_len = 10;
+  intereactor.process_field_len(doc, field_id, field_len);
+  field_len = 5;
+  intereactor.process_field_len(doc, field_id, field_len);
+
+  REQUIRE(15 == doc.field_len(field_id));
+}
