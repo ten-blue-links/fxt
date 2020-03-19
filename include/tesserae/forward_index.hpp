@@ -161,7 +161,7 @@ class Document {
     return m_field_stats.at(field_id).field_len();
   }
 
-  void set_field_len(uint16_t field_id, uint32_t field_len) {
+  void set_field_len(uint16_t field_id, uint16_t field_len) {
     m_field_stats[field_id].field_len(field_len);
   }
 
@@ -172,7 +172,7 @@ class Document {
     return m_field_stats.at(field_id).field_min_len();
   }
 
-  void set_field_min_len(uint16_t field_id, uint32_t field_min_len) {
+  void set_field_min_len(uint16_t field_id, uint16_t field_min_len) {
     m_field_stats[field_id].field_min_len(field_min_len);
   }
 
@@ -183,11 +183,11 @@ class Document {
     return m_field_stats.at(field_id).field_max_len();
   }
 
-  void set_field_max_len(uint16_t field_id, uint32_t field_max_len) {
+  void set_field_max_len(uint16_t field_id, uint16_t field_max_len) {
     m_field_stats[field_id].field_max_len(field_max_len);
   }
 
-  uint16_t field_len_sum_sqrs(uint16_t field_id) const {
+  uint32_t field_len_sum_sqrs(uint16_t field_id) const {
     if (m_field_stats.find(field_id) == m_field_stats.end()) {
       return 0;
     }
