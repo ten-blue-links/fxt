@@ -121,6 +121,9 @@ class Document {
     return m_freqs.at(idx);
   }
 
+  /**
+   * Set frequency of a document term.
+   */
   void set_freq(uint32_t term, uint32_t freq) {
     auto it =
         std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);
@@ -147,6 +150,9 @@ class Document {
     return m_field_freqs.at(idx2).at(idx);
   }
 
+  /**
+   * Set term frequency within a document field.
+   */
   void set_freq(uint16_t field_id, uint32_t term, uint32_t freq) {
     auto it =
         std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), term);

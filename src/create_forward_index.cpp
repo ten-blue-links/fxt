@@ -67,6 +67,7 @@ int main(int argc, char const *argv[]) {
 
     indri::index::TermList *list = iter->currentEntry();
     auto &doc_terms = list->terms();
+    auto &doc_fields = list->fields();
     Document document;
 
     futures.push_back(std::async([&]() {
@@ -75,11 +76,10 @@ int main(int argc, char const *argv[]) {
     }));
 
     std::unordered_map<uint16_t, std::vector<indri::index::FieldExtent>>
-        field_list;
-    for (auto &f : list->fields()) {
+        fid_extentlist;
+    for (auto &f : doc_fields) {
       if (fields.get().find(index->field(f.id)) != fields.get().end()) {
-        document.set_tag_count(f.id, document.tag_count(f.id) + 1);
-        field_list[f.id].push_back(f);
+        fid_extentlist[f.id].push_back(f);
       }
     }
 
@@ -91,13 +91,14 @@ int main(int argc, char const *argv[]) {
 
     std::unordered_map<size_t, std::unordered_map<uint32_t, uint32_t>>
         field_freqs;
-    for (const auto &curr : field_list) {
+    for (const auto &curr : fid_extentlist) {
       for (const auto &f : curr.second) {
         auto d_len = f.end - f.begin;
         interactor.process_field_len(document, f.id, d_len);
         interactor.process_field_len_sum_sqrs(document, f.id, d_len);
         interactor.process_field_max_len(document, f.id, d_len);
         interactor.process_field_min_len(document, f.id, d_len);
+        document.set_tag_count(f.id, document.tag_count(f.id) + 1);
 
         for (size_t i = f.begin; i < f.end; ++i) {
           field_freqs[f.id][doc_terms[i]] += 1;
