@@ -43,9 +43,19 @@ TEST_CASE("document set unkown term frequency") {
   doc.set_freq(64, 1);
 
   REQUIRE(0 == doc.freq(64));
-  REQUIRE(0 == doc.freq(1));
-  REQUIRE(0 == doc.freq(2));
-  REQUIRE(0 == doc.freq(3));
+  REQUIRE(1 == doc.freq(1));
+  REQUIRE(1 == doc.freq(2));
+  REQUIRE(1 == doc.freq(3));
+}
+
+TEST_CASE("document set_terms updates frequency statistics") {
+  Document doc;
+
+  doc.set_terms({1, 1, 1, 4, 4, 9});
+
+  REQUIRE(3 == doc.freq(1));
+  REQUIRE(2 == doc.freq(4));
+  REQUIRE(1 == doc.freq(9));
 }
 
 TEST_CASE("document set field term frequency") {

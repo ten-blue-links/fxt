@@ -72,14 +72,6 @@ int main(int argc, char const *argv[]) {
     futures.push_back(std::async([&]() {
       std::vector<uint32_t> terms(doc_terms.begin(), doc_terms.end());
       document.set_terms(terms);
-      std::unordered_map<uint32_t, uint32_t> freqs;
-      for (size_t i = 0; i < terms.size(); i++) {
-        freqs[terms[i]] += 1;
-      }
-
-      for (auto &f : freqs) {
-        document.set_freq(f.first, f.second);
-      }
     }));
 
     std::unordered_map<uint16_t, std::vector<indri::index::FieldExtent>>

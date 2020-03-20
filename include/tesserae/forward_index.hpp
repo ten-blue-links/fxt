@@ -11,6 +11,7 @@
 #include <iterator>
 #include <map>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 #include "cereal/types/map.hpp"
@@ -59,6 +60,10 @@ class Field {
   }
 };
 
+/**
+ * Represents a document in the forward index. It is preferred to store
+ * document fields as vectors for optimal compression.
+ */
 class Document {
   std::vector<uint16_t> m_fields;
   size_t m_num_terms = 0;
@@ -82,13 +87,28 @@ class Document {
     m_field_freqs.resize(fields.size());
   }
 
+  /**
+   * Set document terms.
+   *
+   * Also computes a vector of unique terms and updates the term frequency
+   * statistics for the document.
+   */
   void set_terms(const std::vector<uint32_t> &terms) {
     m_terms = terms;
 
     std::set<uint32_t> terms_set(terms.begin(), terms.end());
     std::vector<uint32_t> unique_terms(terms_set.begin(), terms_set.end());
     m_unique_terms = unique_terms;
+
+    // update frequency statistics
     m_freqs.resize(m_unique_terms.size());
+    std::unordered_map<uint32_t, uint32_t> freqs;
+    for (size_t i = 0; i < terms.size(); i++) {
+      freqs[terms[i]] += 1;
+    }
+    for (auto &f : freqs) {
+      set_freq(f.first, f.second);
+    }
   }
 
   uint32_t freq(uint32_t term) const {
