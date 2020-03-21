@@ -13,6 +13,7 @@
 
 #include "tesserae/field_map.hpp"
 #include "tesserae/lexicon.hpp"
+#include "tesserae/util.hpp"
 
 static const std::vector<std::string> _fields = {"body", "title", "heading",
                                                  "inlink", "a"};
@@ -41,6 +42,7 @@ int main(int argc, char const *argv[]) {
   iter->startIteration();
 
   Lexicon lexicon(Counts(index->documentCount(), index->termCount()));
+  ProgressPresenter pp(index->uniqueTermCount(), 1, 10000, "terms processed: ");
 
   while (!iter->finished()) {
     indri::index::DiskTermData *entry = iter->currentEntry();
@@ -52,12 +54,15 @@ int main(int argc, char const *argv[]) {
                termData->fields[field_id - 1].totalCount);
       field_counts.insert(std::make_pair(field_id, c));
     }
+
     Counts counts(termData->corpus.documentCount, termData->corpus.totalCount);
     lexicon.push_back(termData->term, counts, field_counts);
+    pp.progress();
     iter->nextEntry();
   }
-  delete iter;
 
+  delete iter;
   archive(lexicon);
+
   return 0;
 }

@@ -13,6 +13,7 @@
 #include "cereal/archives/binary.hpp"
 
 #include "tesserae/doc_lens.hpp"
+#include "tesserae/util.hpp"
 
 int main(int argc, char const *argv[]) {
   std::string repo_path;
@@ -39,21 +40,20 @@ int main(int argc, char const *argv[]) {
   doc_lens.reserve(index->documentCount() + 1);
   doc_lens.push_back(0);
 
-  uint64_t docid = index->documentBase();
+  ProgressPresenter pp(index->documentCount(), index->documentBase(), 10000,
+                       "documents processed: ");
   indri::index::TermListFileIterator *iter = index->termListFileIterator();
   iter->startIteration();
-
   while (!iter->finished()) {
     indri::index::TermList *list = iter->currentEntry();
     auto &doc_terms = list->terms();
     doc_lens.push_back(doc_terms.size());
+    pp.progress();
     iter->nextEntry();
-    if (docid % 10000 == 0) {
-      std::cout << "Processed " << docid << " documents." << std::endl;
-    }
-    ++docid;
   }
+
   delete iter;
   archive(doc_lens);
+
   return 0;
 }

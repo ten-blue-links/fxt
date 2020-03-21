@@ -12,6 +12,7 @@
 #include "indri/Repository.hpp"
 
 #include "tesserae/inverted_index.hpp"
+#include "tesserae/util.hpp"
 
 int main(int argc, char const *argv[]) {
   std::string repo_path;
@@ -38,7 +39,7 @@ int main(int argc, char const *argv[]) {
     archive(len);
   }
 
-  size_t count = 0;
+  ProgressPresenter pp(index->uniqueTermCount(), 1, 10000, "terms processed: ");
   indri::index::DocListFileIterator *iter = index->docListFileIterator();
   iter->startIteration();
   while (!iter->finished()) {
@@ -61,13 +62,11 @@ int main(int argc, char const *argv[]) {
     }
     pl.add_list(docs, freqs);
     archive(pl);
-    ++count;
+    pp.progress();
     iter->nextEntry();
-    if (count % 10000 == 0) {
-      std::cout << "Processed " << count << " terms." << std::endl;
-    }
   }
-  std::cout << "Processed " << count << " terms." << std::endl;
+
   delete iter;
+
   return 0;
 }

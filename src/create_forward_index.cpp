@@ -16,6 +16,7 @@
 #include "tesserae/field_map.hpp"
 #include "tesserae/forward_index.hpp"
 #include "tesserae/forward_index_interactor.hpp"
+#include "tesserae/util.hpp"
 
 static const std::vector<std::string> _fields = {"body", "title", "heading",
                                                  "inlink", "a"};
@@ -57,8 +58,8 @@ int main(int argc, char const *argv[]) {
     archive(zero);
   }
 
-  size_t total_docs = index->documentCount();
-  uint64_t docid = index->documentBase();
+  ProgressPresenter pp(index->documentCount(), index->documentBase(), 10000,
+                       "documents processed: ");
   indri::index::TermListFileIterator *iter = index->termListFileIterator();
   iter->startIteration();
 
@@ -117,25 +118,11 @@ int main(int argc, char const *argv[]) {
 
     document.compress();
     archive(document);
-
-    if (docid % 10000 == 0 || docid == index->documentBase() ||
-        size_t(docid) == total_docs) {
-      static size_t last_len = 0;
-      std::ostringstream oss;
-      double progress = double(docid) / double(total_docs);
-      progress *= 100;
-      std::cerr << std::string(last_len, '\b');
-      oss.str("");
-      oss << "documents processed: " << docid << " (" << int(progress) << "%)";
-      last_len = oss.str().size();
-      std::cerr << oss.str();
-    }
-
+    pp.progress();
     iter->nextEntry();
-    ++docid;
   }
+
   delete iter;
-  std::cerr << std::endl;
 
   return 0;
 }
