@@ -11,6 +11,7 @@ add_subdirectory(CLI11 EXCLUDE_FROM_ALL)
 # Add cereal
 add_subdirectory(cereal EXCLUDE_FROM_ALL)
 
+set(CMAKE_CXX_STANDARD 14)
 remove_definitions(-Wall -Wextra)
 add_definitions(-fPIC -Wno-deprecated -Wno-write-strings -Wno-deprecated-declarations)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DP_NEEDS_GNU_CXX_NAMESPACE=1")
