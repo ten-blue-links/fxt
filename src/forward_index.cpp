@@ -32,7 +32,7 @@ void Document::compress() {
     m_unique_terms = buffer;
   }
   {
-    std::vector<uint32_t> buffer(m_num_terms);
+    std::vector<uint32_t> buffer(m_num_terms * 2 + 1024);
     size_t compressedsize = m_terms.size();
     codec.encodeArray(m_terms.data(), m_terms.size(), buffer.data(),
                       compressedsize);
