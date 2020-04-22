@@ -94,8 +94,7 @@ class Document {
    * statistics for the document.
    */
   void set_terms(const std::vector<uint32_t> &terms) {
-    m_terms = terms;
-
+    // collect unique terms
     std::set<uint32_t> terms_set(terms.begin(), terms.end());
     std::vector<uint32_t> unique_terms(terms_set.begin(), terms_set.end());
     m_unique_terms = unique_terms;
@@ -109,6 +108,8 @@ class Document {
     for (auto &f : freqs) {
       set_freq(f.first, f.second);
     }
+
+    m_terms = terms;
   }
 
   uint32_t freq(uint32_t term) const {
@@ -226,6 +227,34 @@ class Document {
 
   void compress();
   void decompress();
+
+  /**
+   * Map the term ids in `m_terms` into a local document space based on
+   * `m_unique_terms`. This called before encoding `m_terms` with `streamvbyte`
+   * in `Document::compress`.
+   */
+  void remap_local() {
+    std::vector<uint32_t> remap;
+    for (auto &&t : m_terms) {
+      auto it = std::lower_bound(m_unique_terms.begin(), m_unique_terms.end(), t);
+      uint32_t idx = std::distance(m_unique_terms.begin(), it);
+      remap.push_back(idx);
+    }
+    m_terms = remap;
+  }
+
+  /**
+   * Map the term ids in `m_terms` into the global corpus space based on
+   * `m_unique_terms`. This called after decoding `m_terms` with `streamvbyte`
+   * in `Document::decompress`.
+   */
+  void remap_global() {
+    std::vector<uint32_t> remap;
+    for (auto &&i : m_terms) {
+      remap.push_back(m_unique_terms[i]);
+    }
+    m_terms = remap;
+  }
 
   template <class Archive>
   void serialize(Archive &archive) {

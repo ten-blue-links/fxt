@@ -105,3 +105,49 @@ TEST_CASE("document field minimum length initialization") {
   REQUIRE(100 == doc.field_min_len(0));
   REQUIRE(0 == doc.field_min_len(1));
 }
+
+TEST_CASE("document remap terms to local space") {
+  Document doc;
+  doc.set_terms({1, 5, 7, 7, 1, 1, 1});
+
+  doc.remap_local();
+
+  REQUIRE(7 == doc.terms().size());
+  REQUIRE(0 == doc.terms()[0]);
+  REQUIRE(1 == doc.terms()[1]);
+  REQUIRE(2 == doc.terms()[2]);
+  REQUIRE(2 == doc.terms()[3]);
+  REQUIRE(0 == doc.terms()[4]);
+  REQUIRE(0 == doc.terms()[5]);
+  REQUIRE(0 == doc.terms()[5]);
+}
+
+TEST_CASE("document remap terms to global space") {
+  Document doc;
+  // setup `m_unique_terms`
+  doc.set_terms({1, 5, 7, 7, 1, 1, 1});
+  doc.remap_local();
+
+  doc.remap_global();
+
+  REQUIRE(7 == doc.terms().size());
+  REQUIRE(1 == doc.terms()[0]);
+  REQUIRE(5 == doc.terms()[1]);
+  REQUIRE(7 == doc.terms()[2]);
+  REQUIRE(7 == doc.terms()[3]);
+  REQUIRE(1 == doc.terms()[4]);
+  REQUIRE(1 == doc.terms()[5]);
+  REQUIRE(1 == doc.terms()[5]);
+}
+
+TEST_CASE("compress and decompress document") {
+  Document doc;
+  doc.set_terms({10, 10});
+
+  doc.compress();
+  doc.decompress();
+
+  REQUIRE(2 == doc.terms().size());
+  REQUIRE(10 == doc.terms()[0]);
+  REQUIRE(10 == doc.terms()[1]);
+}

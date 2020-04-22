@@ -27,6 +27,8 @@ void Document::compress() {
     return;
   }
 
+  remap_local();
+
   {
     std::vector<uint32_t> buffer(m_num_terms * 2 + 1024);
     size_t compressedsize = m_unique_terms.size();
@@ -37,7 +39,7 @@ void Document::compress() {
     m_unique_terms = buffer;
   }
   {
-    std::vector<uint32_t> buffer(m_num_terms * 2 + 1024);
+    std::vector<uint32_t> buffer(m_num_terms);
     size_t compressedsize = m_terms.size();
     document_codec.encodeArray(m_terms.data(), m_terms.size(), buffer.data(),
                       compressedsize);
@@ -86,11 +88,7 @@ void Document::decompress() {
     document_codec.decodeArray(m_terms.data(), m_terms.size(), terms.data(),
                       recoveredsize);
     terms.resize(recoveredsize);
-    std::vector<uint32_t> tmp;
-    for (auto &&i : terms) {
-      tmp.push_back(m_unique_terms[i]);
-    }
-    m_terms = tmp;
+    m_terms = terms;
   }
   {
     std::vector<uint32_t> freqs(m_num_terms);
@@ -109,6 +107,8 @@ void Document::decompress() {
       ff = freqs;
     }
   }
+
+  remap_global();
 }
 
 /**
