@@ -216,7 +216,8 @@ class IndexerInteractor {
 
     ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000,
                          "terms processed: ");
-    indri::index::DocListFileIterator *iter = indri.index->docListFileIterator();
+    indri::index::DocListFileIterator *iter =
+        indri.index->docListFileIterator();
     iter->startIteration();
     while (!iter->finished()) {
       indri::index::DocListFileIterator::DocListData *entry =
@@ -234,7 +235,7 @@ class IndexerInteractor {
         freqs.push_back(doc->positions.size());
         entry->iterator->nextEntry();
       }
-      pl.add_list(docs, freqs);
+      pl.set(docs, freqs);
       archive(pl);
       pp.progress();
       iter->nextEntry();

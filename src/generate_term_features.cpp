@@ -82,21 +82,21 @@ int main(int argc, char **argv) {
 
     for (auto &&pl : inv_idx) {
         feature_t feature;
-        feature.term = pl.term;
-        feature.cf   = pl.totalCount;
-        feature.cdf  = pl.size();
-        auto list    = pl.list();
+        feature.term = pl.term();
+        feature.cf   = pl.term_count();
+        feature.cdf  = pl.length();
+        auto list    = pl.get();
 
         /* Min count is set to 4 or IQR computation goes boom. */
-        if (pl.size() >= 4) {
-            feature.geo_mean = compute_geo_mean(list.second);
+        if (pl.length() >= 4) {
+            feature.geo_mean = compute_geo_mean(list.frequency);
             compute_tfidf_stats(feature, doc_lens, list, ndocs, tfidf_max);
             compute_bm25_stats(feature, doc_lens, list, ndocs, avg_dlen, bm25_max);
-            compute_lm_stats(feature, doc_lens, list, clen, pl.totalCount, lm_max);
+            compute_lm_stats(feature, doc_lens, list, clen, pl.term_count(), lm_max);
             compute_prob_stats(feature, doc_lens, list, pr_max);
-            compute_be_stats(feature, doc_lens, list, ndocs, avg_dlen, pl.totalCount, be_max);
-            compute_dph_stats(feature, doc_lens, list, ndocs, avg_dlen, pl.totalCount, dph_max);
-            compute_dfr_stats(feature, doc_lens, list, ndocs, avg_dlen, pl.totalCount, dfr_max);
+            compute_be_stats(feature, doc_lens, list, ndocs, avg_dlen, pl.term_count(), be_max);
+            compute_dph_stats(feature, doc_lens, list, ndocs, avg_dlen, pl.term_count(), dph_max);
+            compute_dfr_stats(feature, doc_lens, list, ndocs, avg_dlen, pl.term_count(), dfr_max);
             outfile << feature;
             freq++;
         }

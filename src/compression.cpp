@@ -16,7 +16,7 @@ using namespace FastPForLib;
 namespace {
 IntegerCODEC &document_codec = *CODECFactory::getFromName("streamvbyte");
 IntegerCODEC &posting_codec = *CODECFactory::getFromName("simdfastpfor256");
-};
+};  // namespace
 
 /**
  * Compress document representation.
@@ -34,7 +34,7 @@ void Document::compress() {
     size_t compressedsize = m_unique_terms.size();
     Delta::deltaSIMD(m_unique_terms.data(), m_unique_terms.size());
     document_codec.encodeArray(m_unique_terms.data(), m_unique_terms.size(),
-                      buffer.data(), compressedsize);
+                               buffer.data(), compressedsize);
     buffer.resize(compressedsize);
     m_unique_terms = buffer;
   }
@@ -42,7 +42,7 @@ void Document::compress() {
     std::vector<uint32_t> buffer(m_num_terms);
     size_t compressedsize = m_terms.size();
     document_codec.encodeArray(m_terms.data(), m_terms.size(), buffer.data(),
-                      compressedsize);
+                               compressedsize);
     buffer.resize(compressedsize);
     m_terms = buffer;
   }
@@ -50,7 +50,7 @@ void Document::compress() {
     std::vector<uint32_t> buffer(m_num_terms);
     size_t compressedsize = m_unique_terms.size();
     document_codec.encodeArray(m_freqs.data(), m_freqs.size(), buffer.data(),
-                      compressedsize);
+                               compressedsize);
     buffer.resize(compressedsize);
     m_freqs = buffer;
   }
@@ -58,7 +58,8 @@ void Document::compress() {
     for (auto &&ff : m_field_freqs) {
       std::vector<uint32_t> buffer(m_num_terms);
       size_t compressedsize = ff.size();
-      document_codec.encodeArray(ff.data(), ff.size(), buffer.data(), compressedsize);
+      document_codec.encodeArray(ff.data(), ff.size(), buffer.data(),
+                                 compressedsize);
       buffer.resize(compressedsize);
       ff = buffer;
     }
@@ -77,7 +78,7 @@ void Document::decompress() {
     std::vector<uint32_t> terms(m_num_terms);
     size_t recoveredsize = terms.size();
     document_codec.decodeArray(m_unique_terms.data(), m_unique_terms.size(),
-                      terms.data(), recoveredsize);
+                               terms.data(), recoveredsize);
     terms.resize(recoveredsize);
     Delta::inverseDeltaSIMD(terms.data(), terms.size());
     m_unique_terms = terms;
@@ -86,7 +87,7 @@ void Document::decompress() {
     std::vector<uint32_t> terms(m_num_terms);
     size_t recoveredsize = terms.size();
     document_codec.decodeArray(m_terms.data(), m_terms.size(), terms.data(),
-                      recoveredsize);
+                               recoveredsize);
     terms.resize(recoveredsize);
     m_terms = terms;
   }
@@ -94,7 +95,7 @@ void Document::decompress() {
     std::vector<uint32_t> freqs(m_num_terms);
     size_t recoveredsize = freqs.size();
     document_codec.decodeArray(m_freqs.data(), m_freqs.size(), freqs.data(),
-                      recoveredsize);
+                               recoveredsize);
     freqs.resize(recoveredsize);
     m_freqs = freqs;
   }
@@ -102,7 +103,8 @@ void Document::decompress() {
     for (auto &&ff : m_field_freqs) {
       std::vector<uint32_t> freqs(m_num_terms);
       size_t recoveredsize = freqs.size();
-      document_codec.decodeArray(ff.data(), ff.size(), freqs.data(), recoveredsize);
+      document_codec.decodeArray(ff.data(), ff.size(), freqs.data(),
+                                 recoveredsize);
       freqs.resize(recoveredsize);
       ff = freqs;
     }
@@ -114,41 +116,45 @@ void Document::decompress() {
 /**
  * Compress posting list representation.
  */
-void PostingList::add_list(std::vector<uint32_t> &docs,
-                           std::vector<uint32_t> &freqs) {
-  assert(docs.size() == freqs.size());
+void PostingList::encode(std::vector<uint32_t> &doc,
+                         std::vector<uint32_t> &frequency) {
+  size_t encoded_size = doc.size();
 
-  m_size = docs.size();
-  m_docs.resize(m_size * 2);
-  m_freqs.resize(m_size * 2);
+  assert(doc.size() == frequency.size());
 
-  size_t compressedsize = m_docs.size();
-  Delta::deltaSIMD(docs.data(), docs.size());
-  posting_codec.encodeArray(docs.data(), docs.size(), m_docs.data(), compressedsize);
-  m_docs.resize(compressedsize);
-  m_docs.shrink_to_fit();
+  length_ = doc.size();
+  docs_.clear();
+  freqs_.clear();
+  docs_.resize(length_ * 2);
+  freqs_.resize(length_ * 2);
 
-  compressedsize = m_freqs.size();
-  posting_codec.encodeArray(freqs.data(), freqs.size(), m_freqs.data(), compressedsize);
-  m_freqs.resize(compressedsize);
-  m_freqs.shrink_to_fit();
+  Delta::deltaSIMD(doc.data(), doc.size());
+  posting_codec.encodeArray(doc.data(), doc.size(), docs_.data(), encoded_size);
+  docs_.resize(encoded_size);
+  docs_.shrink_to_fit();
+
+  posting_codec.encodeArray(frequency.data(), frequency.size(), freqs_.data(),
+                            encoded_size);
+  freqs_.resize(encoded_size);
+  freqs_.shrink_to_fit();
 }
 
 /**
  * Decompress posting list representation.
  */
-std::pair<std::vector<uint32_t>, std::vector<uint32_t>> PostingList::list() {
-  std::vector<uint32_t> docs(m_size);
-  std::vector<uint32_t> freqs(m_size);
+PostingEntry PostingList::decode() {
+  std::vector<uint32_t> doc(length_);
+  std::vector<uint32_t> frequency(length_);
+  size_t decode_size = length_;
 
-  size_t recoveredsize = docs.size();
-  posting_codec.decodeArray(m_docs.data(), m_docs.size(), docs.data(), recoveredsize);
-  docs.resize(recoveredsize);
-  Delta::inverseDeltaSIMD(docs.data(), docs.size());
+  posting_codec.decodeArray(docs_.data(), docs_.size(), doc.data(),
+                            decode_size);
+  doc.resize(decode_size);
+  Delta::inverseDeltaSIMD(doc.data(), doc.size());
 
-  recoveredsize = freqs.size();
-  posting_codec.decodeArray(m_freqs.data(), m_freqs.size(), freqs.data(),
-                    recoveredsize);
-  freqs.resize(recoveredsize);
-  return std::make_pair(docs, freqs);
+  posting_codec.decodeArray(freqs_.data(), freqs_.size(), frequency.data(),
+                            decode_size);
+  frequency.resize(decode_size);
+
+  return PostingEntry(doc, frequency);
 }

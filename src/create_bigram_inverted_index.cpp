@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
           if (docs.size() == 0) {
             continue;
           }
-          pl.add_list(docs, freqs);
+          pl.set(docs, freqs);
           inv_idx.push_back(pl);
 
           bigram_seen.emplace(

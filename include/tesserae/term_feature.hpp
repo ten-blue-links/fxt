@@ -19,6 +19,7 @@
 #include "features/lmds/lm.hpp"
 #include "features/probability/prob.hpp"
 #include "features/tfidf/tfidf.hpp"
+#include "inverted_index.hpp"
 
 namespace {
 constexpr double zeta = 1.960;
@@ -192,16 +193,16 @@ double compute_geo_mean(const std::vector<uint32_t> &freqs) {
 
 void compute_prob_stats(
     feature_t &f, const std::vector<size_t> &doclen,
-    const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
+    const PostingEntry &list,
     double &max) {
-  uint32_t size = list.first.size();
+  uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
   uint32_t uq = 3 * size / 4;
 
   std::vector<double> bmtmp;
   for (size_t i = 0; i < size; ++i) {
-    double score = calculate_prob(list.second[i], doclen[list.first[i]]);
+    double score = calculate_prob(list.frequency[i], doclen[list.doc[i]]);
     bmtmp.push_back(score);
     if (score > max) max = score;
   }
@@ -233,17 +234,17 @@ void compute_prob_stats(
 
 void compute_be_stats(
     feature_t &f, const std::vector<size_t> &doclen,
-    const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
+    const PostingEntry &list,
     uint64_t ndocs, double avg_dlen, uint64_t c_f, double &max) {
-  uint32_t size = list.first.size();
+  uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
   uint32_t uq = 3 * size / 4;
   std::vector<double> bmtmp;
 
   for (size_t i = 0; i < size; ++i) {
-    double score = calculate_be(list.second[i], c_f, ndocs, avg_dlen,
-                                doclen[list.first[i]]);
+    double score = calculate_be(list.frequency[i], c_f, ndocs, avg_dlen,
+                                doclen[list.doc[i]]);
     bmtmp.push_back(score);
     if (score > max) max = score;
   }
@@ -275,17 +276,17 @@ void compute_be_stats(
 
 void compute_dph_stats(
     feature_t &f, const std::vector<size_t> &doclen,
-    const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
+    const PostingEntry &list,
     uint64_t ndocs, double avg_dlen, uint64_t c_f, double &max) {
-  uint32_t size = list.first.size();
+  uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
   uint32_t uq = 3 * size / 4;
   std::vector<double> bmtmp;
 
   for (size_t i = 0; i < size; ++i) {
-    double score = calculate_dph(list.second[i], c_f, ndocs, avg_dlen,
-                                 doclen[list.first[i]]);
+    double score = calculate_dph(list.frequency[i], c_f, ndocs, avg_dlen,
+                                 doclen[list.doc[i]]);
     bmtmp.push_back(score);
     if (score > max) max = score;
   }
@@ -317,17 +318,17 @@ void compute_dph_stats(
 
 void compute_dfr_stats(
     feature_t &f, const std::vector<size_t> &doclen,
-    const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
+    const PostingEntry &list,
     uint64_t ndocs, double avg_dlen, uint64_t c_f, double &max) {
-  uint32_t size = list.first.size();
+  uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
   uint32_t uq = 3 * size / 4;
   std::vector<double> bmtmp;
 
   for (size_t i = 0; i < size; ++i) {
-    double score = calculate_dfr(list.second[i], c_f, size, ndocs, avg_dlen,
-                                 doclen[list.first[i]]);
+    double score = calculate_dfr(list.frequency[i], c_f, size, ndocs, avg_dlen,
+                                 doclen[list.doc[i]]);
     bmtmp.push_back(score);
     if (score > max) max = score;
   }
@@ -359,9 +360,9 @@ void compute_dfr_stats(
 
 void compute_tfidf_stats(
     feature_t &f, const std::vector<size_t> &doclen,
-    const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
+    const PostingEntry &list,
     uint64_t ndocs, double &max) {
-  size_t size = list.first.size();
+  size_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
   uint32_t uq = 3 * size / 4;
@@ -369,7 +370,7 @@ void compute_tfidf_stats(
 
   for (size_t i = 0; i < size; ++i) {
     double score =
-        calculate_tfidf(list.second[i], size, doclen[list.first[i]], ndocs);
+        calculate_tfidf(list.frequency[i], size, doclen[list.doc[i]], ndocs);
     bmtmp.push_back(score);
     if (score > max) max = score;
   }
@@ -402,9 +403,9 @@ void compute_tfidf_stats(
 
 void compute_bm25_stats(
     feature_t &f, const std::vector<size_t> &doclen,
-    const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
+    const PostingEntry &list,
     uint64_t ndocs, double avg_dlen, double &max) {
-  uint32_t size = list.first.size();
+  uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
   uint32_t uq = 3 * size / 4;
@@ -417,8 +418,8 @@ void compute_bm25_stats(
   ranker.avg_doc_len = avg_dlen;
 
   for (size_t i = 0; i < size; ++i) {
-    double score = ranker.calculate_docscore(1, list.second[i], size,
-                                             doclen[list.first[i]]);
+    double score = ranker.calculate_docscore(1, list.frequency[i], size,
+                                             doclen[list.doc[i]]);
     bmtmp.push_back(score);
     if (score > max) max = score;
   }
@@ -451,9 +452,9 @@ void compute_bm25_stats(
 
 void compute_lm_stats(
     feature_t &f, const std::vector<size_t> &doclen,
-    const std::pair<std::vector<uint32_t>, std::vector<uint32_t>> &list,
+    const PostingEntry &list,
     uint64_t clen, uint64_t cf, double &max) {
-  uint32_t size = list.first.size();
+  uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
   uint32_t uq = 3 * size / 4;
@@ -462,7 +463,7 @@ void compute_lm_stats(
 
   for (size_t i = 0; i < size; ++i) {
     double score =
-        calculate_lm(list.second[i], cf, doclen[list.first[i]], clen, mu);
+        calculate_lm(list.frequency[i], cf, doclen[list.doc[i]], clen, mu);
     bmtmp.push_back(score);
     if (score > max) max = score;
   }
