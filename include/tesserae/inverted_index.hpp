@@ -9,7 +9,6 @@
 
 #include <cstdint>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "cereal/types/string.hpp"
