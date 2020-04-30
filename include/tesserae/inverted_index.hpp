@@ -9,20 +9,39 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
 
-struct PostingEntry {
+/**
+ * A decoded posting list that is returned from `PostingList`.
+ */
+class Posting {
+  std::unordered_map<uint32_t, uint32_t> postings_;
+
+ public:
+  Posting() = default;
+  Posting(const std::vector<uint32_t> &d, const std::vector<uint32_t> &f)
+      : doc(d), frequency(f) {
+    // Assume lists are the same size
+    for (size_t i = 0; i < doc.size(); ++i) {
+      postings_[doc[i]] = frequency[i];
+    }
+  }
+
+  inline uint32_t &operator[](const size_t &key) { return postings_[key]; }
+  inline uint32_t &operator[](size_t &&key) { return postings_[key]; }
+
+  // Aggregate scoring functions need access to these lists.
   std::vector<uint32_t> doc;
   std::vector<uint32_t> frequency;
-
-  PostingEntry() = default;
-  PostingEntry(const std::vector<uint32_t> &d, const std::vector<uint32_t> &f)
-      : doc(d), frequency(f) {}
 };
 
+/**
+ * A posting list in the inverted index.
+ */
 class PostingList {
   // FIXME - Is it necessary to store this here? It is already in the Lexicon.
   std::string term_;
@@ -59,17 +78,23 @@ class PostingList {
   /**
    * Decompress posting list. See `src/compression.cpp`.
    */
-  PostingEntry decode();
+  void decode(std::vector<uint32_t> &doc, std::vector<uint32_t> &frequency);
 
   /**
-   * Fetch the posting entry.
+   * Fetch the posting.
    */
-  PostingEntry get() {
+  Posting get() {
+    std::vector<uint32_t> doc;
+    std::vector<uint32_t> frequency;
+
     if (coding_on_) {
-      return decode();
+      decode(doc, frequency);
+    } else {
+      doc = docs_;
+      frequency = freqs_;
     }
 
-    return PostingEntry(docs_, freqs_);
+    return Posting(doc, frequency);
   }
 
   /**

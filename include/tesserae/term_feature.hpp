@@ -191,10 +191,8 @@ double compute_geo_mean(const std::vector<uint32_t> &freqs) {
   return pow(sum, (1.0 / freqs.size()));
 }
 
-void compute_prob_stats(
-    feature_t &f, const std::vector<size_t> &doclen,
-    const PostingEntry &list,
-    double &max) {
+void compute_prob_stats(feature_t &f, const std::vector<size_t> &doclen,
+                        const Posting &list, double &max) {
   uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
@@ -232,10 +230,9 @@ void compute_prob_stats(
   f.pr_hmean = (double)size / hmsum;
 }
 
-void compute_be_stats(
-    feature_t &f, const std::vector<size_t> &doclen,
-    const PostingEntry &list,
-    uint64_t ndocs, double avg_dlen, uint64_t c_f, double &max) {
+void compute_be_stats(feature_t &f, const std::vector<size_t> &doclen,
+                      const Posting &list, uint64_t ndocs, double avg_dlen,
+                      uint64_t c_f, double &max) {
   uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
@@ -274,10 +271,9 @@ void compute_be_stats(
   f.be_hmean = (double)size / hmsum;
 }
 
-void compute_dph_stats(
-    feature_t &f, const std::vector<size_t> &doclen,
-    const PostingEntry &list,
-    uint64_t ndocs, double avg_dlen, uint64_t c_f, double &max) {
+void compute_dph_stats(feature_t &f, const std::vector<size_t> &doclen,
+                       const Posting &list, uint64_t ndocs, double avg_dlen,
+                       uint64_t c_f, double &max) {
   uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
@@ -316,10 +312,9 @@ void compute_dph_stats(
   f.dph_hmean = (double)size / hmsum;
 }
 
-void compute_dfr_stats(
-    feature_t &f, const std::vector<size_t> &doclen,
-    const PostingEntry &list,
-    uint64_t ndocs, double avg_dlen, uint64_t c_f, double &max) {
+void compute_dfr_stats(feature_t &f, const std::vector<size_t> &doclen,
+                       const Posting &list, uint64_t ndocs, double avg_dlen,
+                       uint64_t c_f, double &max) {
   uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
@@ -358,10 +353,8 @@ void compute_dfr_stats(
   f.dfr_hmean = (double)size / hmsum;
 }
 
-void compute_tfidf_stats(
-    feature_t &f, const std::vector<size_t> &doclen,
-    const PostingEntry &list,
-    uint64_t ndocs, double &max) {
+void compute_tfidf_stats(feature_t &f, const std::vector<size_t> &doclen,
+                         const Posting &list, uint64_t ndocs, double &max) {
   size_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
@@ -401,10 +394,9 @@ void compute_tfidf_stats(
   f.tfidf_hmean = (double)size / hmsum;
 }
 
-void compute_bm25_stats(
-    feature_t &f, const std::vector<size_t> &doclen,
-    const PostingEntry &list,
-    uint64_t ndocs, double avg_dlen, double &max) {
+void compute_bm25_stats(feature_t &f, const std::vector<size_t> &doclen,
+                        const Posting &list, uint64_t ndocs, double avg_dlen,
+                        double &max) {
   uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;
@@ -450,10 +442,9 @@ void compute_bm25_stats(
   f.bm25_hmean = (double)size / hmsum;
 }
 
-void compute_lm_stats(
-    feature_t &f, const std::vector<size_t> &doclen,
-    const PostingEntry &list,
-    uint64_t clen, uint64_t cf, double &max) {
+void compute_lm_stats(feature_t &f, const std::vector<size_t> &doclen,
+                      const Posting &list, uint64_t clen, uint64_t cf,
+                      double &max) {
   uint32_t size = list.doc.size();
   uint32_t mid = size / 2;
   uint32_t lq = size / 4;

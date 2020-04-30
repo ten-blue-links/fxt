@@ -142,11 +142,12 @@ void PostingList::encode(std::vector<uint32_t> &doc,
 /**
  * Decompress posting list representation.
  */
-PostingEntry PostingList::decode() {
-  std::vector<uint32_t> doc(length_);
-  std::vector<uint32_t> frequency(length_);
+void PostingList::decode(std::vector<uint32_t> &doc,
+                         std::vector<uint32_t> &frequency) {
   size_t decode_size = length_;
 
+  doc.resize(decode_size);
+  frequency.resize(decode_size);
   posting_codec.decodeArray(docs_.data(), docs_.size(), doc.data(),
                             decode_size);
   doc.resize(decode_size);
@@ -155,6 +156,4 @@ PostingEntry PostingList::decode() {
   posting_codec.decodeArray(freqs_.data(), freqs_.size(), frequency.data(),
                             decode_size);
   frequency.resize(decode_size);
-
-  return PostingEntry(doc, frequency);
 }
