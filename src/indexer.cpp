@@ -64,7 +64,7 @@ class IndexerInteractor {
     std::ofstream os(outfile, std::ios::binary);
     cereal::BinaryOutputArchive archive(os);
     ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000,
-                         "terms processed: ");
+                         "lexicon: ");
     FieldMap fields;
     fields.insert(*indri.index, _fields);
 
@@ -111,7 +111,7 @@ class IndexerInteractor {
 
     ProgressPresenter pp(indri.index->documentCount(),
                          indri.index->documentBase(), 10000,
-                         "documents processed: ");
+                         "document lengths: ");
     indri::index::TermListFileIterator *iter =
         indri.index->termListFileIterator();
     iter->startIteration();
@@ -152,7 +152,7 @@ class IndexerInteractor {
 
     ProgressPresenter pp(indri.index->documentCount(),
                          indri.index->documentBase(), 10000,
-                         "documents processed: ");
+                         "document forward index: ");
     indri::index::TermListFileIterator *iter =
         indri.index->termListFileIterator();
     iter->startIteration();
@@ -216,7 +216,7 @@ class IndexerInteractor {
     std::string outfile = outpath + std::string(sep) + std::string(invidx_file);
     std::ofstream os(outfile, std::ios::binary);
     cereal::BinaryOutputArchive writer(os);
-    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000, "terms processed: ");
+    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000, "inverted index: ");
 
     // Build the inverted index in memory, so it can be organized into the same
     // order as the lexicon (the lexicon was indexed first)
