@@ -91,6 +91,7 @@ class Sdm {
   double ordered_weight_;
   double unordered_weight_;
   DirichletTermScore term_score_fn_;
+  DirichletTermScore phrase_score_fn_;
 
  public:
   Sdm(double mu = 2500, double mu_phrase = 2500, double term_weight = 0.8,
@@ -100,16 +101,26 @@ class Sdm {
         term_weight_(term_weight),
         ordered_weight_(ordered_weight),
         unordered_weight_(unordered_weight),
-        term_score_fn_(mu) {}
+        term_score_fn_(mu),
+        phrase_score_fn_(mu_phrase) {}
 
   /**
-   * Score term features. Phrases are also considered a term once the
-   * statistics have been computed.
+   * Score term features. This reduces to the QL retrieval function.
    */
   inline double score_term(uint32_t document_count, uint32_t document_length,
                            uint32_t term_count, uint32_t collection_length) {
     return term_score_fn_(document_count, document_length, term_count,
                           collection_length);
+  }
+
+  /**
+   * Score phrase features. It is the QL over phrase statistics and the scoring
+   * function has a different smoothing parameter `mu_phrase_`.
+   */
+  inline double score_phrase(uint32_t document_count, uint32_t document_length,
+                             uint32_t term_count, uint32_t collection_length) {
+    return phrase_score_fn_(document_count, document_length, term_count,
+                            collection_length);
   }
 
   /**
@@ -300,7 +311,8 @@ class Sdm {
         //
         // `DEFAULT_LAST` is a placeholder for `-1` so the value is explicitly
         // checked here because it is `size_t`. This also avoids type
-        // conversion warnings which may result in counting errors.
+        // conversion warnings which may result in counting errors, as the
+        // original implementation in Indri used an `int` type.
         if (
             // UnorderedWindowNode.cpp:141 -- to count the phrase the second
             // term `b` must not have appeared within the current window `i`.
@@ -381,8 +393,8 @@ class Sdm {
     // multiple documents
     std::vector<SdmBigram> od_phrases = search_ordered_phrase(qry, doc, fwdidx);
     for (auto &od : od_phrases) {
-      feature_scores.push_back(score_term(od.document_count, doc.length(),
-                                          od.term_count, lex.term_count()));
+      feature_scores.push_back(score_phrase(od.document_count, doc.length(),
+                                            od.term_count, lex.term_count()));
       feature_weights.push_back(ordered_weight_ / double(od_phrases.size()));
     }
 
@@ -393,8 +405,8 @@ class Sdm {
     std::vector<SdmBigram> uw_phrases =
         search_unordered_phrase(qry, doc, fwdidx);
     for (auto &uw : uw_phrases) {
-      feature_scores.push_back(score_term(uw.document_count, doc.length(),
-                                          uw.term_count, lex.term_count()));
+      feature_scores.push_back(score_phrase(uw.document_count, doc.length(),
+                                            uw.term_count, lex.term_count()));
       feature_weights.push_back(unordered_weight_ / double(uw_phrases.size()));
     }
 
