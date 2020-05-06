@@ -117,8 +117,6 @@ void Document::decompress() {
  */
 void PostingList::encode(std::vector<uint32_t> &doc,
                          std::vector<uint32_t> &frequency) {
-  size_t encoded_size = doc.size();
-
   assert(doc.size() == frequency.size());
 
   length_ = doc.size();
@@ -127,14 +125,16 @@ void PostingList::encode(std::vector<uint32_t> &doc,
   docs_.resize(length_ * 2);
   freqs_.resize(length_ * 2);
 
+  size_t docs_size = docs_.size();
   Delta::deltaSIMD(doc.data(), doc.size());
-  posting_codec.encodeArray(doc.data(), doc.size(), docs_.data(), encoded_size);
-  docs_.resize(encoded_size);
+  posting_codec.encodeArray(doc.data(), doc.size(), docs_.data(), docs_size);
+  docs_.resize(docs_size);
   docs_.shrink_to_fit();
 
+  size_t freqs_size = freqs_.size();
   posting_codec.encodeArray(frequency.data(), frequency.size(), freqs_.data(),
-                            encoded_size);
-  freqs_.resize(encoded_size);
+                            freqs_size);
+  freqs_.resize(freqs_size);
   freqs_.shrink_to_fit();
 }
 
@@ -143,16 +143,16 @@ void PostingList::encode(std::vector<uint32_t> &doc,
  */
 void PostingList::decode(std::vector<uint32_t> &doc,
                          std::vector<uint32_t> &frequency) {
-  size_t decode_size = length_;
-
   doc.resize(decode_size);
   frequency.resize(decode_size);
-  posting_codec.decodeArray(docs_.data(), docs_.size(), doc.data(),
-                            decode_size);
-  doc.resize(decode_size);
+
+  size_t doc_size = length_;
+  posting_codec.decodeArray(docs_.data(), docs_.size(), doc.data(), doc_size);
+  doc.resize(doc_size);
   Delta::inverseDeltaSIMD(doc.data(), doc.size());
 
+  size_t frequency_size = length_;
   posting_codec.decodeArray(freqs_.data(), freqs_.size(), frequency.data(),
-                            decode_size);
-  frequency.resize(decode_size);
+                            frequency_size);
+  frequency.resize(frequency_size);
 }
