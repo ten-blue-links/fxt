@@ -143,15 +143,14 @@ void PostingList::encode(std::vector<uint32_t> &doc,
  */
 void PostingList::decode(std::vector<uint32_t> &doc,
                          std::vector<uint32_t> &frequency) {
-  doc.resize(decode_size);
-  frequency.resize(decode_size);
-
   size_t doc_size = length_;
+  doc.resize(doc_size);
   posting_codec.decodeArray(docs_.data(), docs_.size(), doc.data(), doc_size);
   doc.resize(doc_size);
   Delta::inverseDeltaSIMD(doc.data(), doc.size());
 
   size_t frequency_size = length_;
+  frequency.resize(frequency_size);
   posting_codec.decodeArray(freqs_.data(), freqs_.size(), frequency.data(),
                             frequency_size);
   frequency.resize(frequency_size);
