@@ -4,7 +4,7 @@ set -e
 
 SPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE=$SPATH/..
-CLANGFMT=clang-format-6.0
+CLANGFMT=clang-format
 
 if [ ! $(which $CLANGFMT) ]; then
     echo "error: $CLANGFMT not found" 1>&2
@@ -27,7 +27,7 @@ awk '/^struct\s+(doc_entry|statdoc_entry)\s+{/ {
 }' $f \
     | awk -v type=$header 'BEGIN {
 print "/*"
-print " * Copyright 2018 The Tesserae authors."
+print " * Copyright " strftime("%Y") " The Tesserae authors."
 print " *"
 print " * For the full copyright and license information, please view the LICENSE file"
 print " * that was distributed with this source code."
