@@ -91,6 +91,9 @@ std::ostream &operator<<(std::ostream &os, const FeaturePresenter &fp) {
   if (fp.dentry_flag.f_bm25_tp_dist_w100) {
     os << "," << fp.dentry.bm25_tp_dist_w100;
   }
+  if (fp.dentry_flag.f_sdm) {
+    os << "," << fp.dentry.sdm;
+  }
   if (fp.dentry_flag.f_tpscore) {
     os << "," << fp.dentry.tpscore;
   }
@@ -346,7 +349,6 @@ std::ostream &operator<<(std::ostream &os, const FeaturePresenter &fp) {
   if (fp.dentry_flag.f_variance_stream_len_a) {
     os << "," << fp.dentry.variance_stream_len_a;
   }
-
   if (fp.dentry_flag.f_tag_title_qry_count) {
     os << "," << static_cast<double>(fp.dentry.tag_title_qry_count);
   }

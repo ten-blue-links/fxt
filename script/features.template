@@ -110,6 +110,7 @@
 | x           | TP-Score of document                                                             |
 | x           | Sum of BM25 query bigrams within an unordered window of 8 of the document        |
 | x           | BM25 bigram interval score within a window of 100 of the document                |
+| x           | SDM of document using default parameters                                         |
 | x           | Frequency of query terms within the document title                               |
 | x           | Frequency of query terms within the document headings (h1-h4)                    |
 | x           | Frequency of query terms within the document                                     |

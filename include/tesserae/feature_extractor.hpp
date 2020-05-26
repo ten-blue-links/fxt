@@ -51,7 +51,6 @@ class FeatureExtractor {
         fid_map(fid),
         qd_flags(qdf),
         sd_flags(sdf),
-
         f_bm25_atire(lexicon),
         f_bm25_trec3(lexicon),
         f_bm25_trec3_kmax(lexicon),

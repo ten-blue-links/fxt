@@ -150,6 +150,9 @@ struct doc_entry {
   // BM25 score of bigram intervals in window (Lu, et al.)
   double bm25_tp_dist_w100 = 0;
 
+  // SDM with default parameters
+  double sdm = 0;
+
   // The frequency of query terms within the <title> tag
   size_t tag_title_qry_count = 0;
   // The frequency of query terms within the <heading> tag

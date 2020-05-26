@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Tesserae authors.
+ * Copyright 2020 The Tesserae authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -118,6 +118,7 @@ struct doc_entry_flag {
   bool f_tpscore = false;
   bool f_bm25_bigram_u8 = false;
   bool f_bm25_tp_dist_w100 = false;
+  bool f_sdm = false;
   bool f_tag_title_qry_count = false;
   bool f_tag_heading_qry_count = false;
   bool f_tag_mainbody_qry_count = false;

@@ -359,6 +359,9 @@ class Sdm {
 
   /**
    * Extract SDM score and weight the various features.
+   *
+   * FIXME: Should this be renamed to `score` or `evalute`? The clasess with
+   *        `compute` functions are doing "extraction" from an API viewpoint.
    */
   double extract(const query_train &qry, const Document &doc,
                  const Lexicon &lex, const ForwardIndex &fwdidx,

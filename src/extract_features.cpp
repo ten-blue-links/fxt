@@ -6,7 +6,11 @@
  */
 
 #include <iostream>
+#include <chrono>
+#include <fstream>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "CLI/CLI.hpp"
@@ -23,6 +27,7 @@
 #include "tesserae/features/features.hpp"
 #include "tesserae/field_id.hpp"
 #include "tesserae/forward_index.hpp"
+#include "tesserae/inverted_index.hpp"
 #include "tesserae/lexicon.hpp"
 #include "tesserae/query_environment_adapter.hpp"
 #include "tesserae/query_train_file.hpp"
@@ -39,6 +44,7 @@ int main(int argc, char **argv) {
 
   std::string indri_index;
   std::string fwd_index_file;
+  std::string inv_index_file;
   std::string lexicon_file;
   std::string static_doc_file;
 
@@ -56,6 +62,10 @@ int main(int argc, char **argv) {
       ->check(CLI::ExistingDirectory);
   app.add_option("--forward_index", fwd_index_file,
                  "Path to a forward index file")
+      ->required()
+      ->check(CLI::ExistingFile);
+  app.add_option("--inverted_index", inv_index_file,
+                 "Path to a inverted index file")
       ->required()
       ->check(CLI::ExistingFile);
   app.add_option("--lexicon", lexicon_file, "Path to a lexicon file")
@@ -401,6 +411,8 @@ int main(int argc, char **argv) {
   app.add_flag("--f_bm25_tp_dist_w100", query_doc_flags.f_bm25_tp_dist_w100,
                "Enable feature f_bm25_tp_dist_w100")
       ->group("Query-document features");
+  app.add_flag("--f_sdm", query_doc_flags.f_sdm, "Enable feature f_sdm")
+      ->group("Query-document features");
   app.add_flag("--f_tag_title_qry_count", query_doc_flags.f_tag_title_qry_count,
                "Enable feature f_tag_title_qry_count")
       ->group("Query-document features");
@@ -506,6 +518,20 @@ int main(int argc, char **argv) {
   std::cerr << "Loaded " << fwd_index_file << " in " << load_time.count()
             << " ms" << std::endl;
 
+  // load inv_idx
+  std::cerr << "Loading " << inv_index_file << "..." << std::endl;
+  start = clock::now();
+  std::ifstream ifs_inv(inv_index_file);
+  cereal::BinaryInputArchive iarchive_inv(ifs_inv);
+  InvertedIndex inv_idx;
+  iarchive_inv(inv_idx);
+
+  stop = clock::now();
+  load_time =
+      std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+  std::cerr << "Loaded " << inv_index_file << " in " << load_time.count()
+            << " ms" << std::endl;
+
   // load lexicon
   std::cerr << "Loading " << lexicon_file << "..." << std::endl;
   start = clock::now();
@@ -561,6 +587,13 @@ int main(int argc, char **argv) {
 
   FeatureExtractor fe(lexicon, field_id_map, query_doc_flags, static_doc_flags);
 
+  // SDM requires different data structures than the other features, therefore
+  // it is currently setup here.
+  //
+  // FIXME: Move this to a logical place.
+  Sdm sdm;
+  DocSdmFeature f_sdm(sdm);
+
   auto queries = qtfile.get_queries();
   for (auto &qry : queries) {
     std::vector<double> stage0_scores = trec_run.get_scores(qry.id);
@@ -593,6 +626,13 @@ int main(int argc, char **argv) {
 
       // query-document features
       fe.extract(qry, doc_entry, doc_idx, positions);
+
+      // SDM
+      // FIXME: Move this to a logical place.
+      if (query_doc_flags.f_sdm) {
+        f_sdm.compute(qry, doc_entry, doc_idx, lexicon, fwd_idx, inv_idx);
+      }
+
       // static document features
       statdoc_entry = statdoc_list[docid].dentry;
 

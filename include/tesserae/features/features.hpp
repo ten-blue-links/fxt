@@ -30,6 +30,7 @@
 #include "stream/doc_stream_feature.hpp"
 
 #include "proximity/doc_proximity_feature.hpp"
+#include "proximity/doc_sdm_feature.hpp"
 
 #include "tpscore/doc_tpscore_feature.hpp"
 

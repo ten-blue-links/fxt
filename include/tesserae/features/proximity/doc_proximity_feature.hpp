@@ -43,7 +43,7 @@ class doc_proximity_feature {
     const int        cdf_empty = -1;
     Lexicon &        lexicon;
     bm25_proximity<> ranker;
-    size_t           feature_id = 0;
+    size_t           feature_id = 0; // FIXME: Can remove it is unused
     double           score      = 0.0;
 
     // term stats cache
@@ -56,6 +56,9 @@ class doc_proximity_feature {
         ranker.avg_doc_len = (double)num_terms / ranker.num_docs;
     }
 
+    /**
+     * Two features are computed here, `bm25_bigram_u8` and `bm25_tp_dist_w100`.
+     */
     void compute(query_train &                                        query,
                  doc_entry &                                          doc,
                  Document &                                           doc_idx,
