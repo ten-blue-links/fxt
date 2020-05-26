@@ -116,9 +116,6 @@ class FeatureExtractor {
     }
   }
 
-  /* we always have stage0 score from the run file, no need to extract. */
-  inline bool has_stage0_score() { return false; }
-
   inline bool has_bm25_atire() {
     return qd_flags.f_bm25_atire || qd_flags.f_bm25_atire_body ||
            qd_flags.f_bm25_atire_title || qd_flags.f_bm25_atire_heading ||
