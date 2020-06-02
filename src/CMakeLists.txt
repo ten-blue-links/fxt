@@ -55,8 +55,8 @@ target_link_libraries(kstem
     pthread
 )
 
-add_executable(extract_features extract_features.cpp compression.cpp)
-target_link_libraries(extract_features
+add_executable(extractor extractor.cpp compression.cpp)
+target_link_libraries(extractor
     FastPFor
     indri
     pthread

@@ -39,7 +39,7 @@ generate_static_doc_features qs-indri myindex/static_doc
 
 ## Feature Extraction
 With an index created, it is now possible to run the feature extraction
-component via the `extract_features` program. To do this we need to:
+component via the `extractor` program. To do this we need to:
 
 1. Create a query file in the right format:
 
@@ -103,5 +103,5 @@ component via the `extract_features` program. To do this we need to:
 7. Perform feature extraction:
 
     ```sh
-    ./extract_features -c config.ini queryfile.kstem stage0.run output.csv
+    ./extractor -c config.ini queryfile.kstem stage0.run output.csv
     ```
