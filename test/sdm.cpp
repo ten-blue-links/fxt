@@ -83,8 +83,9 @@ TEST_CASE("score single ordered phrase within a document") {
   Document doc = fwdidx[16];
   query_train qry = fixture::stub_query({"model", "agnostic"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
 
-  std::vector<SdmBigram> phrases = sdm.search_ordered_phrase(qry, doc, fwdidx);
+  std::vector<SdmBigram> phrases = sdm.search_ordered_phrase(doc, fwdidx);
   SdmBigram od = phrases[0];
   double score = sdm.score_term(od.document_count, doc.length(), od.term_count,
                                 lexicon.term_count());
@@ -99,9 +100,9 @@ TEST_CASE("score single unordered phrase within a document") {
   Document doc = fwdidx[16];
   query_train qry = fixture::stub_query({"model", "agnostic"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
 
-  std::vector<SdmBigram> phrases =
-      sdm.search_unordered_phrase(qry, doc, fwdidx);
+  std::vector<SdmBigram> phrases = sdm.search_unordered_phrase(doc, fwdidx);
   SdmBigram uw = phrases[0];
   double score = sdm.score_term(uw.document_count, doc.length(), uw.term_count,
                                 lexicon.term_count());
@@ -211,8 +212,9 @@ TEST_CASE("score non-existent ordered phrase within a document") {
   Document doc = fwdidx[16];
   query_train qry = fixture::stub_query({"agnostic", "learn"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
 
-  std::vector<SdmBigram> phrases = sdm.search_ordered_phrase(qry, doc, fwdidx);
+  std::vector<SdmBigram> phrases = sdm.search_ordered_phrase(doc, fwdidx);
   SdmBigram od = phrases[0];
   double score = sdm.score_term(od.document_count, doc.length(), od.term_count,
                                 lexicon.term_count());
@@ -227,9 +229,9 @@ TEST_CASE("score non-existent unordered phrase within a document") {
   Document doc = fwdidx[16];
   query_train qry = fixture::stub_query({"agnostic", "learn"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
 
-  std::vector<SdmBigram> phrases =
-      sdm.search_unordered_phrase(qry, doc, fwdidx);
+  std::vector<SdmBigram> phrases = sdm.search_unordered_phrase(doc, fwdidx);
   SdmBigram uw = phrases[0];
   double score = sdm.score_term(uw.document_count, doc.length(), uw.term_count,
                                 lexicon.term_count());
@@ -303,8 +305,9 @@ TEST_CASE("score ordered phrases 'image segway example'") {
   Sdm sdm;
   double score;
   SdmBigram od;
+  sdm.set_context(qry, invidx);
 
-  std::vector<SdmBigram> phrases = sdm.search_ordered_phrase(qry, doc, fwdidx);
+  std::vector<SdmBigram> phrases = sdm.search_ordered_phrase(doc, fwdidx);
 
   od = phrases[0];
   score = sdm.score_term(od.document_count, doc.length(), od.term_count,
@@ -327,9 +330,9 @@ TEST_CASE("score unordered phrases 'image segway example'") {
   Sdm sdm;
   double score;
   SdmBigram uw;
+  sdm.set_context(qry, invidx);
 
-  std::vector<SdmBigram> phrases =
-      sdm.search_unordered_phrase(qry, doc, fwdidx);
+  std::vector<SdmBigram> phrases = sdm.search_unordered_phrase(doc, fwdidx);
 
   uw = phrases[0];
   score = sdm.score_term(uw.document_count, doc.length(), uw.term_count,
@@ -364,14 +367,15 @@ TEST_CASE("search ordered phrases in documents with length < 2") {
   Document doc1 = fwdidx[1];
   query_train qry = fixture::stub_query({"one", "two"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
 
-  std::vector<SdmBigram> od0 = sdm.search_ordered_phrase(qry, doc0, fwdidx);
+  std::vector<SdmBigram> od0 = sdm.search_ordered_phrase(doc0, fwdidx);
   REQUIRE(0 == doc0.length());
   REQUIRE(1 == od0.size());
   REQUIRE(0 == od0[0].document_count);
   REQUIRE(0 == od0[0].term_count);
 
-  std::vector<SdmBigram> od1 = sdm.search_ordered_phrase(qry, doc1, fwdidx);
+  std::vector<SdmBigram> od1 = sdm.search_ordered_phrase(doc1, fwdidx);
   REQUIRE(1 == doc1.length());
   REQUIRE(1 == od1.size());
   REQUIRE(0 == od1[0].document_count);
@@ -389,13 +393,15 @@ TEST_CASE("search ordered phrases in documents with length >= 2") {
   Sdm sdm;
   std::vector<SdmBigram> od;
 
-  od = sdm.search_ordered_phrase(qry2, doc2, fwdidx);
+  sdm.set_context(qry2, invidx);
+  od = sdm.search_ordered_phrase(doc2, fwdidx);
   REQUIRE(2 == doc2.length());
   REQUIRE(1 == od.size());
   REQUIRE(1 == od[0].document_count);
   REQUIRE(1 == od[0].term_count);
 
-  od = sdm.search_ordered_phrase(qry3, doc3, fwdidx);
+  sdm.set_context(qry3, invidx);
+  od = sdm.search_ordered_phrase(doc3, fwdidx);
   REQUIRE(3 == doc3.length());
   REQUIRE(1 == od.size());
   REQUIRE(1 == od[0].document_count);
@@ -405,26 +411,28 @@ TEST_CASE("search ordered phrases in documents with length >= 2") {
 TEST_CASE("search unordered phrases in documents with length < 8") {
   const ForwardIndex fwdidx = fixture::stub_forward_index();
   const Lexicon lexicon = fixture::stub_lexicon();
+  const InvertedIndex invidx = fixture::stub_inverted_index();
   Document doc0 = fwdidx[0];
   Document doc1 = fwdidx[1];
   Document doc7 = fwdidx[7];
   query_train qry = fixture::stub_query({"seven", "seven"}, lexicon);
   Sdm sdm;
   std::vector<SdmBigram> uw;
+  sdm.set_context(qry, invidx);
 
-  uw = sdm.search_unordered_phrase(qry, doc0, fwdidx);
+  uw = sdm.search_unordered_phrase(doc0, fwdidx);
   REQUIRE(0 == doc0.length());
   REQUIRE(1 == uw.size());
   REQUIRE(0 == uw[0].document_count);
   REQUIRE(0 == uw[0].term_count);
 
-  uw = sdm.search_unordered_phrase(qry, doc1, fwdidx);
+  uw = sdm.search_unordered_phrase(doc1, fwdidx);
   REQUIRE(1 == doc1.length());
   REQUIRE(1 == uw.size());
   REQUIRE(0 == uw[0].document_count);
   REQUIRE(0 == uw[0].term_count);
 
-  uw = sdm.search_unordered_phrase(qry, doc7, fwdidx);
+  uw = sdm.search_unordered_phrase(doc7, fwdidx);
   REQUIRE(7 == doc7.length());
   REQUIRE(1 == uw.size());
   REQUIRE(7 == uw[0].document_count);
@@ -440,8 +448,9 @@ TEST_CASE("search ordered different phrases can overlap") {
       fixture::stub_query({"one", "two", "three", "four"}, lexicon);
   Sdm sdm;
   std::vector<SdmBigram> od;
+  sdm.set_context(qry, invidx);
 
-  od = sdm.search_ordered_phrase(qry, doc, fwdidx);
+  od = sdm.search_ordered_phrase(doc, fwdidx);
   REQUIRE(67 == doc.length());
   REQUIRE(3 == od.size());
   // one two
@@ -464,8 +473,9 @@ TEST_CASE("search unordered different phrases can overlap") {
       fixture::stub_query({"one", "two", "three", "four"}, lexicon);
   Sdm sdm;
   std::vector<SdmBigram> uw;
+  sdm.set_context(qry, invidx);
 
-  uw = sdm.search_unordered_phrase(qry, doc, fwdidx);
+  uw = sdm.search_unordered_phrase(doc, fwdidx);
   REQUIRE(67 == doc.length());
   REQUIRE(3 == uw.size());
   // one two
@@ -492,4 +502,103 @@ TEST_CASE("SDM score for query 'one two three four' for doc 12") {
   score = sdm.extract(qry, doc, lexicon, fwdidx, invidx);
 
   REQUIRE(Approx(-5.32726) == score);
+}
+
+TEST_CASE("SDM convert empty query to vector of bigrams") {
+  const Lexicon lexicon = fixture::stub_lexicon();
+  query_train qry = fixture::stub_query({}, lexicon);
+  Sdm sdm;
+
+  std::vector<SdmBigram> result = sdm.bigrams(qry);
+
+  CHECK(0 == result.size());
+}
+
+TEST_CASE("SDM convert single term query to vector of bigrams") {
+  const Lexicon lexicon = fixture::stub_lexicon();
+  query_train qry = fixture::stub_query({"one"}, lexicon);
+  Sdm sdm;
+
+  std::vector<SdmBigram> result = sdm.bigrams(qry);
+
+  CHECK(0 == result.size());
+}
+
+TEST_CASE("SDM convert query to vector of bigrams") {
+  const Lexicon lexicon = fixture::stub_lexicon();
+  query_train qry =
+      fixture::stub_query({"one", "two", "three", "four"}, lexicon);
+  Sdm sdm;
+  std::vector<SdmBigram> expected = {
+      {341, 518},
+      {518, 505},
+      {505, 185},
+  };
+
+  std::vector<SdmBigram> result = sdm.bigrams(qry);
+
+  CHECK(expected.size() == result.size());
+  for (size_t i = 0; i < result.size(); ++i) {
+    CHECK(expected[i].first == result[i].first);
+    CHECK(expected[i].second == result[i].second);
+  }
+}
+
+TEST_CASE("SDM get postings for empty query") {
+  const Lexicon lexicon = fixture::stub_lexicon();
+  const InvertedIndex invidx = fixture::stub_inverted_index();
+  query_train qry = fixture::stub_query({}, lexicon);
+  Sdm sdm;
+  std::map<size_t, Posting> result;
+
+  result = sdm.unigram_postings(qry, invidx);
+
+  CHECK(0 == result.size());
+}
+
+TEST_CASE("SDM get postings for query") {
+  const Lexicon lexicon = fixture::stub_lexicon();
+  const InvertedIndex invidx = fixture::stub_inverted_index();
+  query_train qry = fixture::stub_query({"one", "two"}, lexicon);
+  Sdm sdm;
+  std::map<size_t, Posting> result;
+
+  result = sdm.unigram_postings(qry, invidx);
+
+  CHECK(2 == result.size());
+}
+
+TEST_CASE("SDM intersect bigrams for empty query") {
+  const Lexicon lexicon = fixture::stub_lexicon();
+  const InvertedIndex invidx = fixture::stub_inverted_index();
+  query_train qry = fixture::stub_query({}, lexicon);
+  Sdm sdm;
+  std::vector<std::vector<uint32_t>> result;
+  // FIXME - stub these out
+  std::vector<SdmBigram> bigrams = sdm.bigrams(qry);
+  std::map<size_t, Posting> unigram_postings =
+      sdm.unigram_postings(qry, invidx);
+
+  result = sdm.bigram_postings(bigrams, unigram_postings);
+
+  CHECK(0 == result.size());
+}
+
+TEST_CASE("SDM intersect bigrams for query") {
+  const Lexicon lexicon = fixture::stub_lexicon();
+  const InvertedIndex invidx = fixture::stub_inverted_index();
+  query_train qry = fixture::stub_query({"one", "two"}, lexicon);
+  Sdm sdm;
+  std::vector<std::vector<uint32_t>> result;
+  std::vector<uint32_t> expected = {11, 12, 13};
+  // FIXME - stub these out
+  std::vector<SdmBigram> bigrams = sdm.bigrams(qry);
+  std::map<size_t, Posting> unigram_postings =
+      sdm.unigram_postings(qry, invidx);
+
+  result = sdm.bigram_postings(bigrams, unigram_postings);
+
+  CHECK(1 == result.size());
+  CHECK(std::equal(expected.begin(), expected.end(), result[0].begin(),
+                   result[0].end()));
 }

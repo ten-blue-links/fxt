@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <map>
 #include <vector>
 
 #include "tesserae/features/lmds/lm.hpp"
@@ -30,6 +31,10 @@ struct SdmBigram {
   uint64_t term_count = 0;
 
   SdmBigram() = default;
+
+  bool operator==(const SdmBigram &other) const {
+    return first == other.first && second == other.second;
+  }
 };
 
 // Identify each term in the phrase when counting statistics. These types are
@@ -93,6 +98,11 @@ class Sdm {
   DirichletTermScore term_score_fn_;
   DirichletTermScore phrase_score_fn_;
 
+  // Data structures for the current scoring context.
+  std::vector<SdmBigram> ctx_bigrams_;
+  std::map<size_t, Posting> ctx_tid_postings_;
+  std::vector<std::vector<uint32_t>> ctx_docid_;
+
  public:
   Sdm(double mu = 2500, double mu_phrase = 2500, double term_weight = 0.8,
       double ordered_weight = 0.15, double unordered_weight = 0.05)
@@ -124,22 +134,16 @@ class Sdm {
   }
 
   /**
-   * Build ordered phrases from the given qry and calculate their statistics in
-   * the given document and forward index.
+   * Calculate ordered bigram statistics for the current scoring context. The
+   * given `Document` is the current one to be scored.
    */
-  std::vector<SdmBigram> search_ordered_phrase(const query_train &qry,
-                                               const Document &doc,
+  std::vector<SdmBigram> search_ordered_phrase(const Document &doc,
                                                const ForwardIndex &fwdidx) {
     std::vector<SdmBigram> od;
 
-    // FIXME - Use the postings as a preliminary check that both
-    // terms appear "somewhere" in the document?
-    // Maybe then, it is worth building the bigrams seperately and adding a
-    // vector/map of doc id's that match?
-
-    for (size_t i = 0, j = 1; i < qry.length() - 1; ++i, ++j) {
-      SdmBigram bigram = {qry.tids[i], qry.tids[j]};
-      bigram.document_count += count_ordered_phrase(bigram, doc);
+    for (size_t i = 0; i < ctx_bigrams_.size(); ++i) {
+      SdmBigram bigram = ctx_bigrams_[i];
+      bigram.document_count = count_ordered_phrase(bigram, doc);
 
       if (0 == bigram.document_count) {
         // Phrases that don't exist in the document are
@@ -151,7 +155,8 @@ class Sdm {
 
       // Scan the forward index to find the collection frequency for the given
       // bigram
-      for (const auto &d : fwdidx) {
+      for (auto j : ctx_docid_[i]) {
+        const auto &d = fwdidx[j];
         bigram.term_count += count_ordered_phrase(bigram, d);
       }
       od.push_back(bigram);
@@ -196,22 +201,16 @@ class Sdm {
   }
 
   /**
-   * Build unordered phrases from the given qry and calculate their statistics
-   * in the given document and forward index.
+   * Calculate unordered bigram statistics for the current scoring context. The
+   * given `Document` is the current one to be scored.
    */
-  std::vector<SdmBigram> search_unordered_phrase(const query_train &qry,
-                                                 const Document &doc,
+  std::vector<SdmBigram> search_unordered_phrase(const Document &doc,
                                                  const ForwardIndex &fwdidx) {
     std::vector<SdmBigram> uw;
 
-    // FIXME - Use the postings as a preliminary check that both
-    // terms appear "somewhere" in the document?
-    // Maybe then, it is worth building the bigrams seperately and adding a
-    // vector/map of doc id's that match?
-
-    for (size_t i = 0, j = 1; i < qry.length() - 1; ++i, ++j) {
-      SdmBigram bigram = {qry.tids[i], qry.tids[j]};
-      bigram.document_count += count_unordered_phrase(bigram, doc);
+    for (size_t i = 0; i < ctx_bigrams_.size(); ++i) {
+      SdmBigram bigram = ctx_bigrams_[i];
+      bigram.document_count = count_unordered_phrase(bigram, doc);
 
       if (0 == bigram.document_count) {
         // Phrases that don't exist in the document are
@@ -223,10 +222,8 @@ class Sdm {
 
       // Scan the forward index to find the collection frequency for the given
       // bigram
-      for (const auto &d : fwdidx) {
-        if (d.length() < min_qry_len_) {
-          continue;
-        }
+      for (auto j : ctx_docid_[i]) {
+        const auto &d = fwdidx[j];
         bigram.term_count += count_unordered_phrase(bigram, d);
       }
       uw.push_back(bigram);
@@ -345,7 +342,8 @@ class Sdm {
 
     // FIXME - Add `sumWeight` when testing for three term queries. See
     // src/WeightedAndNode.cpp:253. `sumWeight` should be computed within each
-    // for loop within `extract`.
+    // for loop within `extract`. Need to confirm if `sumWeight` is only used
+    // when scoring fields.
     //
     // FIXME - Add `childResults.size()` from src/WeightedAndNode.cpp:253. I
     // think this would be the case when multiple matches are found within a
@@ -355,6 +353,80 @@ class Sdm {
     }
 
     return weight_score;
+  }
+
+  /**
+   * Convert unigram query into a vector of SDM bigrams.
+   */
+  std::vector<SdmBigram> bigrams(const query_train &qry) {
+    std::vector<SdmBigram> res;
+
+    if (!qry.length()) {
+      return res;
+    }
+
+    for (size_t i = 0, j = 1; i < qry.length() - 1; ++i, ++j) {
+      SdmBigram bigram = {qry.tids[i], qry.tids[j]};
+      res.push_back(bigram);
+    }
+    return res;
+  }
+
+  /**
+   * Get a `map` of query term to postings.
+   *
+   * FIXME - Could this be generalized and moved elsewhere (`PostingList`,
+   * `InvertedIndex`)?
+   */
+  std::map<size_t, Posting> unigram_postings(const query_train &qry,
+                                             const InvertedIndex &invidx) {
+    std::map<size_t, Posting> res;
+
+    if (!qry.length()) {
+      return res;
+    }
+
+    for (auto term_id : qry.tids) {
+      PostingList plist = invidx[term_id];
+      res[term_id] = plist.get();
+    }
+
+    return res;
+  }
+
+  /**
+   * Intersect the docid of unigram postings for each bigram.
+   */
+  std::vector<std::vector<uint32_t>> bigram_postings(
+      const std::vector<SdmBigram> bigrams,
+      std::map<size_t, Posting> unigram_postings) {
+    std::vector<std::vector<uint32_t>> res;
+
+    for (const SdmBigram &b : bigrams) {
+      const Posting posting_a = unigram_postings[b.first];
+      const Posting posting_b = unigram_postings[b.second];
+      std::vector<uint32_t> docid;  // result of intersection
+
+      std::set_intersection(posting_a.doc.begin(), posting_a.doc.end(),
+                            posting_b.doc.begin(), posting_b.doc.end(),
+                            std::back_inserter(docid));
+
+      res.push_back(docid);
+    }
+
+    return res;
+  }
+
+  /**
+   * Setup the current scoring context.
+   */
+  void set_context(const query_train &qry, const InvertedIndex invidx) {
+    // Bigrams from the query
+    ctx_bigrams_ = bigrams(qry);
+    // Term id to posting list map
+    ctx_tid_postings_ = unigram_postings(qry, invidx);
+    // Intersection of docid's from bigram terms
+    ctx_docid_ = bigram_postings(ctx_bigrams_, ctx_tid_postings_);
   }
 
   /**
@@ -376,14 +448,17 @@ class Sdm {
     std::vector<double> feature_scores;
     std::vector<double> feature_weights;
 
+    // Setup data structures required for scoring.
+    set_context(qry, invidx);
+
     // Score the independent terms and compute the weights within
     // Indri's `#combine()` operator. For example `#weight(0.8 #combine(foo
     // bar))` assigns a weight of 0.4 to each of "foo" and "bar".
-    for (auto term_id : qry.tids) {
-      // FIXME - Possibly remove dependency on Lexicon by just passing in term
-      // id.
-      PostingList plist = invidx[term_id];
-      Posting postings = plist.get();
+    for (auto &pentry : ctx_tid_postings_) {
+      // Unpack `pentry` for readability
+      auto term_id = pentry.first;
+      Posting postings = pentry.second;
+
       Term t = lex[term_id];
       feature_scores.push_back(score_term(postings[doc.id()], doc.length(),
                                           t.term_count(), lex.term_count()));
@@ -394,7 +469,7 @@ class Sdm {
     // then score and compute weights.
     // FIXME - some form of statistics caching should be used when scoring
     // multiple documents
-    std::vector<SdmBigram> od_phrases = search_ordered_phrase(qry, doc, fwdidx);
+    std::vector<SdmBigram> od_phrases = search_ordered_phrase(doc, fwdidx);
     for (auto &od : od_phrases) {
       feature_scores.push_back(score_phrase(od.document_count, doc.length(),
                                             od.term_count, lex.term_count()));
@@ -405,8 +480,7 @@ class Sdm {
     // then score and compute weights.
     // FIXME - some form of statistics caching should be used when scoring
     // multiple documents
-    std::vector<SdmBigram> uw_phrases =
-        search_unordered_phrase(qry, doc, fwdidx);
+    std::vector<SdmBigram> uw_phrases = search_unordered_phrase(doc, fwdidx);
     for (auto &uw : uw_phrases) {
       feature_scores.push_back(score_phrase(uw.document_count, doc.length(),
                                             uw.term_count, lex.term_count()));
