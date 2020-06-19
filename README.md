@@ -1,4 +1,4 @@
-# Tesserae
+# Fxt
 A large scale feature extraction tool for text-based machine learning.
 
 ## Building from Source
@@ -12,11 +12,11 @@ A large scale feature extraction tool for text-based machine learning.
 2. Clone the [source] with `git`:
 
     ```sh
-    $ git clone https://github.com/rmit-ir/tesserae.git
-    $ cd tesserae
+    $ git clone https://github.com/rmit-ir/fxt.git
+    $ cd fxt
     ```
 
-[source]: https://github.com/rmit-ir/tesserae
+[source]: https://github.com/rmit-ir/fxt
 
 3. Build and install:
 
