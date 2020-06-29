@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Tesserae authors.
+ * Copyright 2018 The Fxt authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -21,72 +21,75 @@
  * See also scipt/mk-nodeid-docno.sh.
  */
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        std::cerr << "usage: ./inlink <doc id file>" << std::endl
-                  << std::endl
-                  << "For CW09B run:" << std::endl
-                  << "  zcat ClueWeb09_WG_50m.graph-txt.gz | ./inlink ClueB-ID-DOCNO.txt > "
-                     "cw09inlinks.txt"
-                  << std::endl
-                  << std::endl
-                  << "For CW12B run:" << std::endl
-                  << "  ./mk-nodeid-docno.sh" << std::endl
-                  << "  bzcat ClueWeb12_WebGraph_v2_0.txt.bz2 | ./inlink ClueWeb12B-ID-DOCNO.txt > "
-                     "cw12inlinks.txt"
-                  << std::endl
-                  << std::endl;
-        return 1;
+  if (argc != 2) {
+    std::cerr << "usage: ./inlink <doc id file>" << std::endl
+              << std::endl
+              << "For CW09B run:" << std::endl
+              << "  zcat ClueWeb09_WG_50m.graph-txt.gz | ./inlink "
+                 "ClueB-ID-DOCNO.txt > "
+                 "cw09inlinks.txt"
+              << std::endl
+              << std::endl
+              << "For CW12B run:" << std::endl
+              << "  ./mk-nodeid-docno.sh" << std::endl
+              << "  bzcat ClueWeb12_WebGraph_v2_0.txt.bz2 | ./inlink "
+                 "ClueWeb12B-ID-DOCNO.txt > "
+                 "cw12inlinks.txt"
+              << std::endl
+              << std::endl;
+    return 1;
+  }
+  const size_t fields = 2;
+  std::string infile = argv[1];
+  std::unordered_map<uint64_t, std::string> node_map;
+  std::unordered_map<uint64_t, uint64_t> node_inlink;
+
+  std::cerr << "loading ID-DOCNO file...";
+  std::ifstream ifs(infile);
+
+  std::vector<std::string> parts;
+  std::string line;
+  while (std::getline(ifs, line, '\n')) {
+    std::istringstream iss(line);
+    std::string str;
+    while (iss >> str) {
+      parts.push_back(str);
     }
-    const size_t                              fields = 2;
-    std::string                               infile = argv[1];
-    std::unordered_map<uint64_t, std::string> node_map;
-    std::unordered_map<uint64_t, uint64_t>    node_inlink;
-
-    std::cerr << "loading ID-DOCNO file...";
-    std::ifstream ifs(infile);
-
-    std::vector<std::string> parts;
-    std::string              line;
-    while (std::getline(ifs, line, '\n')) {
-        std::istringstream iss(line);
-        std::string        str;
-        while (iss >> str) {
-            parts.push_back(str);
-        }
-        if (fields != parts.size()) {
-            std::cerr << "Required fields is " << fields << ", but got " << parts.size();
-            return 1;
-        }
-
-        node_map.insert({std::stoll(parts[0]), parts[1]});
-        parts.clear();
-    }
-    ifs.close();
-    ifs.clear();
-    std::cerr << "done." << std::endl;
-    std::cerr << "map size: " << node_map.size() << std::endl;
-
-    // read data from stdin
-    bool     once    = false;
-    uint64_t node_id = 0;
-    while (std::getline(std::cin, line, '\n')) {
-        if (!once) {
-            once = true;
-            continue;
-        }
-        std::istringstream iss(line);
-        std::string        str;
-        while (iss >> str) {
-            node_id = std::stoull(str);
-            ++node_inlink[node_id];
-        }
+    if (fields != parts.size()) {
+      std::cerr << "Required fields is " << fields << ", but got "
+                << parts.size();
+      return 1;
     }
 
-    for (auto &node : node_inlink) {
-        if (node_map.find(node.first) != node_map.end()) {
-            std::cout << node_map[node.first] << " " << node.second << std::endl;
-        }
-    }
+    node_map.insert({std::stoll(parts[0]), parts[1]});
+    parts.clear();
+  }
+  ifs.close();
+  ifs.clear();
+  std::cerr << "done." << std::endl;
+  std::cerr << "map size: " << node_map.size() << std::endl;
 
-    return 0;
+  // read data from stdin
+  bool once = false;
+  uint64_t node_id = 0;
+  while (std::getline(std::cin, line, '\n')) {
+    if (!once) {
+      once = true;
+      continue;
+    }
+    std::istringstream iss(line);
+    std::string str;
+    while (iss >> str) {
+      node_id = std::stoull(str);
+      ++node_inlink[node_id];
+    }
+  }
+
+  for (auto &node : node_inlink) {
+    if (node_map.find(node.first) != node_map.end()) {
+      std::cout << node_map[node.first] << " " << node.second << std::endl;
+    }
+  }
+
+  return 0;
 }

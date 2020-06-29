@@ -23,5 +23,5 @@ $1 ~ /bool/ {
 }
 END {
     print ""
-}' $BASE/include/tesserae/doc_entry_flag.hpp \
-   $BASE/include/tesserae/statdoc_entry_flag.hpp
+}' $BASE/include/fxt/doc_entry_flag.hpp \
+   $BASE/include/fxt/statdoc_entry_flag.hpp

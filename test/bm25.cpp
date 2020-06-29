@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "tesserae/features/bm25/bm25.hpp"
+#include "fxt/features/bm25/bm25.hpp"
 
 TEST_CASE("Simple BM25 score") {
   rank_bm25 ranker;

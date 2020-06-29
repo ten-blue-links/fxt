@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 
-#include "tesserae/forward_index.hpp"
-#include "tesserae/forward_index_interactor.hpp"
+#include "fxt/forward_index.hpp"
+#include "fxt/forward_index_interactor.hpp"
 
 static std::vector<std::vector<uint16_t>> get_dummy_lengths() {
   return {

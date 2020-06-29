@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 The Tesserae authors.
+ * Copyright 2020 The Fxt authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -13,13 +13,13 @@
 #include "indri/QueryEnvironment.hpp"
 #include "indri/Repository.hpp"
 
-#include "tesserae/doc_lens.hpp"
-#include "tesserae/field_map.hpp"
-#include "tesserae/forward_index.hpp"
-#include "tesserae/forward_index_interactor.hpp"
-#include "tesserae/inverted_index.hpp"
-#include "tesserae/lexicon.hpp"
-#include "tesserae/util.hpp"
+#include "fxt/doc_lens.hpp"
+#include "fxt/field_map.hpp"
+#include "fxt/forward_index.hpp"
+#include "fxt/forward_index_interactor.hpp"
+#include "fxt/inverted_index.hpp"
+#include "fxt/lexicon.hpp"
+#include "fxt/util.hpp"
 
 namespace fs = std::filesystem;
 
@@ -63,8 +63,7 @@ class IndexerInteractor {
         outpath + std::string(sep) + std::string(lexicon_file);
     std::ofstream os(outfile, std::ios::binary);
     cereal::BinaryOutputArchive archive(os);
-    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000,
-                         "lexicon: ");
+    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000, "lexicon: ");
     FieldMap fields;
     fields.insert(*indri.index, _fields);
 
@@ -216,7 +215,8 @@ class IndexerInteractor {
     std::string outfile = outpath + std::string(sep) + std::string(invidx_file);
     std::ofstream os(outfile, std::ios::binary);
     cereal::BinaryOutputArchive writer(os);
-    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000, "inverted index: ");
+    ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000,
+                         "inverted index: ");
 
     // Build the inverted index in memory, so it can be organized into the same
     // order as the lexicon (the lexicon was indexed first)
@@ -231,7 +231,7 @@ class IndexerInteractor {
     pl_oov.coding_off();
     inverted_index[0] = pl_oov;
 
-    size_t c = 1; // Skip OOV term
+    size_t c = 1;  // Skip OOV term
     indri::index::DocListFileIterator *iter =
         indri.index->docListFileIterator();
     iter->startIteration();

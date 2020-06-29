@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Tesserae authors.
+ * Copyright 2018 The Fxt authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -16,8 +16,8 @@
 
 #include "fgen_bigram_qry.hpp"
 #include "fgen_term_qry.hpp"
+#include "fxt/query_train_file.hpp"
 #include "query_features.h"
-#include "tesserae/query_train_file.hpp"
 
 char *stdstr_to_cstr(const std::string &s) {
   char *cstr = new char[s.size() + 1];

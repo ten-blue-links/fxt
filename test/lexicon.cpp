@@ -1,6 +1,6 @@
 #include "catch2/catch.hpp"
 
-#include "tesserae/lexicon.hpp"
+#include "fxt/lexicon.hpp"
 
 TEST_CASE("oov term does not contribute to collection length") {
   Lexicon lexicon({0, 0});

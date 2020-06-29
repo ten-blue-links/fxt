@@ -1,5 +1,5 @@
-#include "tesserae/lexicon.hpp"
-#include "tesserae/query_train_file.hpp"
+#include "fxt/lexicon.hpp"
+#include "fxt/query_train_file.hpp"
 
 namespace fixture {
 
@@ -20,4 +20,4 @@ query_train stub_query(const std::vector<std::string> terms,
   return qry;
 }
 
-} // namespace fixture
+}  // namespace fixture

@@ -1,6 +1,6 @@
-#include "tesserae/forward_index.hpp"
-#include "tesserae/inverted_index.hpp"
-#include "tesserae/lexicon.hpp"
+#include "fxt/forward_index.hpp"
+#include "fxt/inverted_index.hpp"
+#include "fxt/lexicon.hpp"
 
 namespace fixture {
 

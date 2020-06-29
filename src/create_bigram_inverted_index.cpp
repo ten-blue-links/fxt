@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Tesserae authors.
+ * Copyright 2018 The Fxt authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -17,9 +17,9 @@
 #include "CLI/CLI.hpp"
 #include "cereal/archives/binary.hpp"
 
-#include "tesserae/inverted_index.hpp"
-#include "tesserae/query_train_file.hpp"
-#include "tesserae/w_scanner.hpp"
+#include "fxt/inverted_index.hpp"
+#include "fxt/query_train_file.hpp"
+#include "fxt/w_scanner.hpp"
 
 using namespace indri::api;
 

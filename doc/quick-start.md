@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Tesserae is comprised of a number of components which we will cover briefly
+Fxt is comprised of a number of components which we will cover briefly
 here to give an overview of how to setup and configure a feature extraction
 pipeline.
 
@@ -30,7 +30,7 @@ The Indri index will need to have the following fields indexed:
 [indri]: https://lemurproject.org/indri.php
 
 Assuming you already have an Indri index at the path `qs-indri` you can build a
-Tesserae index with the following:
+Fxt index with the following:
 
 ```sh
 indexer qs-indri myindex
@@ -66,7 +66,7 @@ component via the `extractor` program. To do this we need to:
 
 3. Configuration options via INI file:
 
-    The path to the Tesserae index and the features to be extracted are
+    The path to the Fxt index and the features to be extracted are
     configured via an INI configuration file. Each available feature can be
     configured for extraction. Features must be explicitly enabled for
     extraction. See the example [configuration file](/doc/configuration.md).

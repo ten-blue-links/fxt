@@ -1,10 +1,10 @@
 #include "catch2/catch.hpp"
 
-#include "tesserae/features/proximity/sdm.hpp"
-#include "tesserae/forward_index.hpp"
-#include "tesserae/inverted_index.hpp"
-#include "tesserae/lexicon.hpp"
-#include "tesserae/query_train_file.hpp"
+#include "fxt/features/proximity/sdm.hpp"
+#include "fxt/forward_index.hpp"
+#include "fxt/inverted_index.hpp"
+#include "fxt/lexicon.hpp"
+#include "fxt/query_train_file.hpp"
 
 #include "fixture/stub_index.hpp"
 #include "fixture/stub_query.hpp"

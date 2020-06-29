@@ -11,7 +11,7 @@ if [ ! $(which $CLANGFMT) ]; then
     exit 1
 fi
 
-for f in $BASE/include/tesserae/{doc_entry,statdoc_entry}.hpp; do
+for f in $BASE/include/fxt/{doc_entry,statdoc_entry}.hpp; do
 header=$(basename ${f%.hpp})_flag
 awk '/^struct\s+(doc_entry|statdoc_entry)\s+{/ {
     foo = 1
@@ -27,7 +27,7 @@ awk '/^struct\s+(doc_entry|statdoc_entry)\s+{/ {
 }' $f \
     | awk -v type=$header 'BEGIN {
 print "/*"
-print " * Copyright " strftime("%Y") " The Tesserae authors."
+print " * Copyright " strftime("%Y") " The Fxt authors."
 print " *"
 print " * For the full copyright and license information, please view the LICENSE file"
 print " * that was distributed with this source code."
@@ -44,5 +44,5 @@ print "struct " type " {"
 { print "bool f_" $2 " = false;"}
 END {
 print "};"
-}' | $CLANGFMT -style=file > $BASE/include/tesserae/${header}.hpp
+}' | $CLANGFMT -style=file > $BASE/include/fxt/${header}.hpp
 done

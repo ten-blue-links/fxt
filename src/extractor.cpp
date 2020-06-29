@@ -1,13 +1,13 @@
 /*
- * Copyright 2018 The Tesserae authors.
+ * Copyright 2018 The Fxt authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
  */
 
-#include <iostream>
 #include <chrono>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -17,22 +17,22 @@
 #include "cereal/archives/binary.hpp"
 #include "indri/QueryEnvironment.hpp"
 
-#include "tesserae/doc_entry.hpp"
-#include "tesserae/doc_entry_flag.hpp"
-#include "tesserae/statdoc_entry.hpp"
-#include "tesserae/statdoc_entry_flag.hpp"
+#include "fxt/doc_entry.hpp"
+#include "fxt/doc_entry_flag.hpp"
+#include "fxt/statdoc_entry.hpp"
+#include "fxt/statdoc_entry_flag.hpp"
 
-#include "tesserae/feature_extractor.hpp"
-#include "tesserae/feature_presenter.hpp"
-#include "tesserae/features/features.hpp"
-#include "tesserae/field_id.hpp"
-#include "tesserae/forward_index.hpp"
-#include "tesserae/inverted_index.hpp"
-#include "tesserae/lexicon.hpp"
-#include "tesserae/query_environment_adapter.hpp"
-#include "tesserae/query_train_file.hpp"
-#include "tesserae/static_feature.hpp"
-#include "tesserae/trec_run_file.hpp"
+#include "fxt/feature_extractor.hpp"
+#include "fxt/feature_presenter.hpp"
+#include "fxt/features/features.hpp"
+#include "fxt/field_id.hpp"
+#include "fxt/forward_index.hpp"
+#include "fxt/inverted_index.hpp"
+#include "fxt/lexicon.hpp"
+#include "fxt/query_environment_adapter.hpp"
+#include "fxt/query_train_file.hpp"
+#include "fxt/static_feature.hpp"
+#include "fxt/trec_run_file.hpp"
 
 /*
  * Perform feature extraction.

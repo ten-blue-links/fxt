@@ -1,12 +1,12 @@
 /*
- * Copyright 2020 The Tesserae authors.
+ * Copyright 2020 The Fxt authors.
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
  */
 
-#include "tesserae/forward_index.hpp"
-#include "tesserae/inverted_index.hpp"
+#include "fxt/forward_index.hpp"
+#include "fxt/inverted_index.hpp"
 
 #include "FastPFor/headers/codecfactory.h"
 #include "FastPFor/headers/deltautil.h"

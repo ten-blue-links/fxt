@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "tesserae/forward_index.hpp"
+#include "fxt/forward_index.hpp"
 
 TEST_CASE("set terms on index of one document") {
   std::vector<uint32_t> terms = {1, 2, 3, 1, 4, 5, 6, 7, 1, 1};
