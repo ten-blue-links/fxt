@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 project(fxt CXX C)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
-        message(FATAL_ERROR "Fxt requires GCC version 6.0.0 or greater you have " ${CMAKE_CXX_COMPILER_VERSION})
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0.0")
+        message(FATAL_ERROR "Fxt requires GCC version 9 or greater you have " ${CMAKE_CXX_COMPILER_VERSION})
     endif()
 endif()
 
