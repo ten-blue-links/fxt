@@ -52,7 +52,7 @@ class DocSdmFeature {
       // Fetch postings and setup data structures required for scoring the
       // current query.
       sdm_.set_context(query, invidx);
-      query_id = query.id;
+      query_id_ = query.id;
     }
     score_ = sdm_.extract(query, document, lexicon, fwdidx, invidx);
     dentry.sdm = score_;
