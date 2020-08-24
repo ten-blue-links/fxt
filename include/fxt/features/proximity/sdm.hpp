@@ -418,7 +418,9 @@ class Sdm {
   }
 
   /**
-   * Setup the current scoring context.
+   * Set the scoring context for `qry`. Fetch the term postings and setup
+   * auxillary data structures for the query bigrams and the intersection of
+   * document id's having the given query bigrams.
    */
   void set_context(const query_train &qry, const InvertedIndex invidx) {
     // Bigrams from the query
@@ -447,9 +449,6 @@ class Sdm {
 
     std::vector<double> feature_scores;
     std::vector<double> feature_weights;
-
-    // Setup data structures required for scoring.
-    set_context(qry, invidx);
 
     // Score the independent terms and compute the weights within
     // Indri's `#combine()` operator. For example `#weight(0.8 #combine(foo

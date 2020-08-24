@@ -28,6 +28,11 @@ class DocSdmFeature {
   double score_ = 0.0;
 
   /**
+   * Query with the current scoring context.
+   */
+  std::string query_id_ = "";
+
+  /**
    * The SDM scoring function.
    */
   Sdm sdm_;
@@ -43,6 +48,12 @@ class DocSdmFeature {
    */
   void compute(query_train &query, doc_entry &dentry, Document &document,
                Lexicon &lexicon, ForwardIndex &fwdidx, InvertedIndex &invidx) {
+    if (query_id_ != query.id) {
+      // Fetch postings and setup data structures required for scoring the
+      // current query.
+      sdm_.set_context(query, invidx);
+      query_id = query.id;
+    }
     score_ = sdm_.extract(query, document, lexicon, fwdidx, invidx);
     dentry.sdm = score_;
   }

@@ -117,6 +117,7 @@ TEST_CASE("empty query has score 0") {
   Document doc = fwdidx[1];
   query_train qry = fixture::stub_query({}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
 
   double score = sdm.extract(qry, doc, lexicon, fwdidx, invidx);
 
@@ -130,6 +131,7 @@ TEST_CASE("single term query is unweighted language model") {
   Document doc = fwdidx[16];
   query_train qry = fixture::stub_query({"model"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
 
   double score = sdm.extract(qry, doc, lexicon, fwdidx, invidx);
 
@@ -145,7 +147,9 @@ TEST_CASE("score is reset on each call to extract") {
   query_train qry2 = fixture::stub_query({"agnostic"}, lexicon);
   Sdm sdm;
 
+  sdm.set_context(qry1, invidx);
   double score1 = sdm.extract(qry1, doc, lexicon, fwdidx, invidx);
+  sdm.set_context(qry2, invidx);
   double score2 = sdm.extract(qry2, doc, lexicon, fwdidx, invidx);
 
   REQUIRE(Approx(-4.59750) == score1);
@@ -159,6 +163,7 @@ TEST_CASE("SDM score for two term query") {
   Document doc = fwdidx[16];
   query_train qry = fixture::stub_query({"model", "agnostic"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
 
   // The Indri SDM query
   //
@@ -247,6 +252,7 @@ TEST_CASE("SDM score for three term query") {
   query_train qry =
       fixture::stub_query({"model", "agnostic", "learn"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
 
   // The Indri SDM query
   //
@@ -353,6 +359,8 @@ TEST_CASE("SDM score for query 'image segway example'") {
   query_train qry =
       fixture::stub_query({"image", "segway", "example"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
+
 
   double score = sdm.extract(qry, doc, lexicon, fwdidx, invidx);
 
@@ -497,6 +505,7 @@ TEST_CASE("SDM score for query 'one two three four' for doc 12") {
   query_train qry =
       fixture::stub_query({"one", "two", "three", "four"}, lexicon);
   Sdm sdm;
+  sdm.set_context(qry, invidx);
   double score;
 
   score = sdm.extract(qry, doc, lexicon, fwdidx, invidx);
