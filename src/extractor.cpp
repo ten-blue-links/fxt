@@ -595,6 +595,7 @@ int main(int argc, char **argv) {
   DocSdmFeature f_sdm(sdm);
 
   auto queries = qtfile.get_queries();
+  while (true) {
   for (auto &qry : queries) {
     std::vector<double> stage0_scores = trec_run.get_scores(qry.id);
     std::vector<int> docno_labels = trec_run.get_labels(qry.id);
@@ -646,6 +647,7 @@ int main(int argc, char **argv) {
         std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     std::cerr << "qid: " << qry.id << ", " << docids.size() << " docs in "
               << load_time.count() << " ms" << std::endl;
+  }
   }
   return 0;
 }
