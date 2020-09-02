@@ -12,11 +12,11 @@ A large scale feature extraction tool for text-based machine learning.
 2. Clone the [source] with `git`:
 
     ```sh
-    $ git clone https://github.com/rmit-ir/fxt.git
+    $ git clone https://github.com/ten-blue-links/fxt.git
     $ cd fxt
     ```
 
-[source]: https://github.com/rmit-ir/fxt
+[source]: https://github.com/ten-blue-links/fxt
 
 3. Build and install:
 
@@ -40,6 +40,6 @@ the main [documentation](doc/index.md) for specific topics in more detail.
 ## License
 [license]: #license
 
-Tesserae is distributed under the terms of the MIT license.
+Fxt is distributed under the terms of the MIT license.
 
 See [LICENSE](LICENSE) for details.
