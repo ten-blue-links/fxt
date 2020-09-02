@@ -72,6 +72,9 @@ class Term {
 
 class Lexicon {
  public:
+  inline static const size_t oov_id = 0;
+  inline static const std::string oov_str = "xxoov";
+
   // Number of documents in the collection
   inline uint64_t document_count() const { return counts.document_count; }
 
@@ -133,9 +136,6 @@ class Lexicon {
   }
 
  private:
-  const size_t oov_id = 0;
-  const std::string oov_str = "xxoov";
-
   Counts counts;
   std::vector<Term> terms;
   std::vector<std::string> id_term;
