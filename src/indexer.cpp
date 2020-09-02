@@ -5,6 +5,7 @@
  * that was distributed with this source code.
  */
 
+#include <cassert>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -39,6 +40,12 @@ class IndriIndexAdapter {
   }
 };
 
+/**
+ * Convert an Indri index to a Fxt index.
+ *
+ * The `InvertedIndex` is constructed in memory so that the postings lists can
+ * be organized according to their term id's.
+ */
 class IndexerInteractor {
   const std::string sep = "/";  // assume unix like filesystem
   const std::string lexicon_file = "lexicon";
@@ -47,11 +54,6 @@ class IndexerInteractor {
   const std::string invidx_file = "inverted_index";
   const IndriIndexAdapter &indri;
   std::string outpath;
-  // Map of `DocListIterator` index to the `Lexicon` so the `InvertedIndex` has
-  // postings in the correct order.
-  // FIXME - Check if this is actually required. (i.e. does the iteration order
-  // of DocListIterator and VocabularyIterator is equal).
-  std::vector<size_t> idx_lexid_;
 
  public:
   IndexerInteractor(const IndriIndexAdapter &index, const std::string path)
@@ -72,8 +74,6 @@ class IndexerInteractor {
 
     Lexicon lexicon(
         Counts(indri.index->documentCount(), indri.index->termCount()));
-    // Reserve index 0 for OOV term
-    idx_lexid_.push_back(lexicon.oov_term());
 
     while (!iter->finished()) {
       indri::index::DiskTermData *entry = iter->currentEntry();
@@ -86,7 +86,9 @@ class IndexerInteractor {
         field_counts.insert(std::make_pair(field_id, c));
       }
 
-      idx_lexid_.push_back(indri.index->term(termData->term));
+      // `VocabularyIterator` sanity check
+      assert(lexicon.length() + 1 == size_t(indri.index->term(termData->term)));
+
       Counts counts(termData->corpus.documentCount,
                     termData->corpus.totalCount);
       lexicon.push_back(termData->term, counts, field_counts);
@@ -218,8 +220,12 @@ class IndexerInteractor {
     ProgressPresenter pp(indri.index->uniqueTermCount(), 1, 10000,
                          "inverted index: ");
 
-    // Build the inverted index in memory, so it can be organized into the same
-    // order as the lexicon (the lexicon was indexed first)
+    // Indri's `VocabularyIterator` and `DocListIterator` enumerate terms in
+    // different orders. The `VocabularyIterator` was used to construct the
+    // `Lexicon`. The `Lexicon` is constructed before the `InvertedIndex`.
+    // Therefore the inverted index is constructed in memory, so that the
+    // posting lists are put into the correct "slot" in the `InvertedIndex`
+    // according to their term id's.
     InvertedIndex inverted_index;
     // Add 1 for the OOV term
     inverted_index.resize(indri.index->uniqueTermCount() + 1);
@@ -227,11 +233,10 @@ class IndexerInteractor {
     // OOV entry
     // FIXME - Possibly handle this in `InvertedIndex` constructor (which
     // requires changing `InvertedIndex` into a class).
-    PostingList pl_oov("", 0);
+    PostingList pl_oov(Lexicon::oov_str, Lexicon::oov_id);
     pl_oov.coding_off();
-    inverted_index[0] = pl_oov;
+    inverted_index[Lexicon::oov_id] = pl_oov;
 
-    size_t c = 1;  // Skip OOV term
     indri::index::DocListFileIterator *iter =
         indri.index->docListFileIterator();
     iter->startIteration();
@@ -253,7 +258,8 @@ class IndexerInteractor {
         entry->iterator->nextEntry();
       }
       pl.set(docs, freqs);
-      inverted_index[idx_lexid_[c++]] = pl;
+      size_t id = indri.index->term(termData->term);
+      inverted_index[id] = pl;
       pp.progress();
       iter->nextEntry();
     }
@@ -270,14 +276,14 @@ int main(int argc, char **argv) {
   }
 
   std::string indri_path = argv[1];
-  std::string tess_path = argv[2];
+  std::string index_path = argv[2];
 
-  if (fs::exists(tess_path)) {
+  if (fs::exists(index_path)) {
     std::cerr << "error index path exists" << std::endl;
     return 1;
   }
 
-  if (!fs::create_directory(tess_path)) {
+  if (!fs::create_directory(index_path)) {
     std::cerr << "error creating directory" << std::endl;
     return 1;
   }
@@ -289,7 +295,7 @@ int main(int argc, char **argv) {
   // 2. Document lengths
   // 3. Forward index
   // 4. Inverted index
-  IndexerInteractor indexer(indri, tess_path);
+  IndexerInteractor indexer(indri, index_path);
   indexer.lexicon();
   indexer.document_length();
   indexer.forward_index();
