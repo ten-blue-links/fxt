@@ -23,7 +23,7 @@ class doc_stream_feature {
     doc.stream_len_title = doc_idx.field_len(title_id);
     // penalise docs with more than 1 title tag
     if (doc_idx.tag_count(title_id) > 1) {
-      doc.stream_len_title = -doc.stream_len_title;
+      doc.stream_len_title = 0;
     }
     doc.stream_len_heading = doc_idx.field_len(heading_id);
     doc.stream_len_inlink = doc_idx.field_len(inlink_id);
