@@ -25,7 +25,7 @@
 #include "fgen_term_qry.hpp"
 #include "query_features.h"
 
-#define ZETA 1.960
+const float k_zeta = 1.960;
 
 static int is_stopword(std::set<std::string> &set, const std::string &term) {
   int ret = 0;
@@ -97,7 +97,7 @@ void gamma1(query_t &q, std::unordered_map<std::string, term_t> &termmap,
     q.tfidf_avg = avg;
     q.tfidf_variance = variance;
     q.tfidf_std_dev = std_dev;
-    q.tfidf_confidence = ZETA * (q.tfidf_std_dev / (sqrt(q.len_stopped)));
+    q.tfidf_confidence = k_zeta * (q.tfidf_std_dev / (sqrt(q.len_stopped)));
   }
 }
 
