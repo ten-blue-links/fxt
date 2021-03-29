@@ -66,6 +66,10 @@ int q_stopped_len(std::set<std::string> &set, query_t &query) {
  *
  * He and Ounis. Inferring Query Performance Using Pre-retrieval Predictors,
  * SPIRE 2004.
+ *
+ * According to He and Ounis, their definition of query length is the number of
+ * non-stop words in the query, therefore the features here are computed is if
+ * that is also the case.
  */
 void gamma1(query_t &q, std::unordered_map<std::string, term_t> &termmap,
             std::set<std::string> &set) {
