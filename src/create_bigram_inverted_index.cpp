@@ -39,7 +39,7 @@ struct bigram {
 };
 
 int main(int argc, char *argv[]) {
-  constexpr int w_size = 8;  //!< window size
+  constexpr int w_size = -1; // When -1, `WScanner` will use (query-length * 4 + 1)
   std::string query_file;
   std::string lexicon_file;
   std::string repo_path;
