@@ -21,3 +21,39 @@ TEST_CASE("wikipedia.org domain and subdomain is true") {
   REQUIRE(true == is_wikipedia_url("http://az.wikipedia.org"));
   REQUIRE(true == is_wikipedia_url("https://az.wikipedia.org"));
 }
+
+TEST_CASE("set_url_lendep scheme") {
+  statdoc_entry s;
+
+  set_url_lendep(s, ":");
+  REQUIRE(0 == s.url_len);
+  REQUIRE(0 == s.url_depth);
+
+  set_url_lendep(s, "/");
+  REQUIRE(0 == s.url_len);
+  REQUIRE(0 == s.url_depth);
+
+  set_url_lendep(s, "//");
+  REQUIRE(0 == s.url_len);
+  REQUIRE(0 == s.url_depth);
+
+  set_url_lendep(s, "://");
+  REQUIRE(0 == s.url_len);
+  REQUIRE(0 == s.url_depth);
+}
+
+TEST_CASE("set_url_lendep") {
+  statdoc_entry s;
+
+  set_url_lendep(s, "://one");
+  REQUIRE(3 == s.url_len);
+  REQUIRE(0 == s.url_depth);
+
+  set_url_lendep(s, "://one/");
+  REQUIRE(3 == s.url_len);
+  REQUIRE(0 == s.url_depth);
+
+  set_url_lendep(s, "://one/two");
+  REQUIRE(7 == s.url_len);
+  REQUIRE(1 == s.url_depth);
+}

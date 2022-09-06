@@ -45,7 +45,7 @@ bool is_wikipedia_url(const std::string &url) {
  */
 void set_url_lendep(statdoc_entry &s, const std::string &url) {
   size_t depth = 0;
-  size_t idx = url.find_first_of("://");
+  size_t idx = url.find("://");
   std::string cpy = "";
 
   s.url_len = 0;
