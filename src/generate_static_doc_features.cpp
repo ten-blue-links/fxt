@@ -19,9 +19,9 @@
 #include "indri/Repository.hpp"
 #include "indri/greedy_vector"
 
-#include "fxt/features/static/wikipedia.hpp"
-#include "fxt/field_map.hpp"
 #include "fxt/static_feature.hpp"
+#include "fxt/features/static/web_document.hpp"
+#include "fxt/field_map.hpp"
 #include "fxt/web_1t_stopwords.hpp"
 
 uint32_t field_len(
@@ -180,28 +180,6 @@ double frac_table_text(
   }
 
   return ret;
-}
-
-void set_url_lendep(statdoc_entry &s, const std::string &url) {
-  size_t depth = 0;
-  size_t idx = url.find_first_of("://");
-  std::string cpy = "";
-
-  s.url_len = 0;
-  s.url_depth = 0;
-
-  if (std::string::npos != idx) {
-    idx += 3;
-    cpy = std::string(url.begin() + idx, url.end());
-    depth = std::count(cpy.begin(), cpy.end(), '/');
-    if (cpy.size() && '/' == cpy.back()) {
-      cpy.pop_back();
-      depth--;
-    }
-  }
-
-  s.url_len = cpy.size();
-  s.url_depth = depth;
 }
 
 /*
